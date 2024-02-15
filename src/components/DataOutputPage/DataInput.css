@@ -1,0 +1,9 @@
+.data-output-page {
+    background-color: #141414;
+    min-height: 100vh; 
+    overflow: auto;
+    background-size: cover; /* Adjust as needed */
+    background-position: center; /* Adjust as needed */
+    height: 115vh; /* Set the height to cover the entire viewport */
+    color: #ffffff; /* Set text color to white or any other light color */
+  }

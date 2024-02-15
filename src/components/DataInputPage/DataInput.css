@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+
+.typeButtons{
+
+   button {
+    background: #0D0F11;
+   }
+}
+.data-input-page {
+    background-color: #141414;
+    min-height: 100vh; 
+    overflow: auto;
+    background-size: cover; /* Adjust as needed */
+    background-position: center; /* Adjust as needed */
+    height: 115vh; /* Set the height to cover the entire viewport */
+    color: #ffffff; /* Set text color to white or any other light color */
+  }
+  .typeButtons{
+    color: #565656;
+  }
+  
+  .form-control,
+  .text-field {
+    margin-bottom: 2rem;
+  }
+  
+  .sources,
+  label {
+    color: #ffffff; /* Set text color to white or any other light color */
+  }
+  
+  .action-button {
+    background-color: #1976D2;
+    color: #ffffff; /* Set text color to white or any other light color */
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+  

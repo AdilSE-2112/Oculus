@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import LoginPage from './components/LoginPage/LoginPage';
+import DataInputPage from './components/DataInputPage/DataInput';
+import DataOutputPage from './components/DataOutputPage/DataOutput'; 
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route path="/" exact component={LoginPage} />
+          <Route path="/data-input" component={DataInputPage} />
+          <Route path="/data-output" component={DataOutputPage} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
