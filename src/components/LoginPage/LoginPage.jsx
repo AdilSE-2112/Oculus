@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react"
-
+import axios from "axios";
 import '../LoginPage/LoginPage.css'
-
+import { useHistory } from "react-router-dom";
 
 function Login() {
+    
+    const history = useHistory();
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [errorDisplay, setErrorDisplay] = useState(false)
-    const [errorMessage, setErrorMesage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+
 
     const [showPassword, setShowPassword] = useState(false);
     
     useEffect(() => {
         setTimeout(() => {setErrorDisplay(false)}, 5000)
-    }, [errorDisplay == true])
+    }, [errorDisplay === true])
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -24,6 +29,37 @@ function Login() {
         setPassword('')
         setShowPassword(false)
     }
+    
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/login', {
+                username: login,
+                password: password,
+            });
+    
+            if (response.data.access_token) {
+                // Save access token in localStorage
+                localStorage.setItem('access_token', response.data.access_token);
+    
+                // Authentication successful, update isAuthenticated state
+                setIsAuthenticated(true);
+    
+                // Log the value of isAuthenticated
+                console.log('isAuthenticated:', isAuthenticated);
+    
+                // Proceed to the Data Input page
+                console.log('Access Token:', response.data.access_token);
+                history.push("/data-input", { username: login });
+            } else {
+                throw new Error('Login failed');
+            }
+        } catch (error) {
+            console.error('Login failed:', error.message);
+            setErrorDisplay(true);
+            setErrorMessage('Incorrect login or password'); // Set a meaningful error message
+        }
+    };
+
 
     return (
         <>
@@ -88,7 +124,7 @@ function Login() {
                         </div>
                     </div>
                     <div className="footer">
-                        <button className="submit" onClick={() => setErrorDisplay(true)}>Войти</button>
+                    <button className="submit" onClick={handleLogin}>Войти</button>
                         <button className="clear" onClick={() => cleanAll()}>Очистить</button>
                     </div>
                 </div>

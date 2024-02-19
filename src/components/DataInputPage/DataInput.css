@@ -1,4 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+.table-cell {
+  font-size: 12px;
+  font-family: Montserrat, sans-serif;
+  color: #e30000;
+  white-space: nowrap;
+}
 
 
 .typeButtons{

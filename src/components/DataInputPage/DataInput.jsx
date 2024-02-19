@@ -43,9 +43,9 @@ function createData(
   lname,
   user_name
 ) {
+  const formattedDate = new Date(date).toLocaleString();
   return {
-    id,
-    date,
+    date: formattedDate,
     username,
     request_body,
     limit_,
@@ -59,6 +59,10 @@ function createData(
 }
 
 const DataInputPage = () => {
+  const [downloadLoading, setDownloadLoading] = useState(false);  // Add this line
+
+  const [loggedInUser, setLoggedInUser] = useState(""); // Set the logged-in username
+
   const defaultColumnHeaders = [
     { id: "id", label: "ID" },
     { id: "date", label: "Дата" },
@@ -103,6 +107,7 @@ const DataInputPage = () => {
   const [action, setAction] = useState("");
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
+  const [downloadAvailable, setDownloadAvailable] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -152,13 +157,28 @@ const DataInputPage = () => {
       });
     }
   };
+  const handleLogin = (username) => {
+    // Perform your login logic here
+    // After successful login, set the username in the state
+    setLoggedInUser(username);
+  };
 
   const [rows, setRows] = useState([defaultRow]);
 
   const handleSearch = () => {
     setLoading(true);
     let apiUrl = "";
+    const accessToken = localStorage.getItem("access_token");
 
+    if (!accessToken) {
+      // Handle the case where the token is not available (user not logged in)
+      handleError("User not logged in");
+      setLoading(false);
+      return;
+    }
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
     console.log("Source:", source);
     console.log("Input Type:", inputType);
     if (source === "Itap" && inputType === "Username") {
@@ -194,6 +214,16 @@ const DataInputPage = () => {
         { id: "lname", label: "Last Name" },
         { id: "user_name", label: "Username" },
       ]);
+    } else if (source === "Itap" && inputType === "FullName") {
+      // Construct the URL dynamically for the combination of "Full Name" and "Itap"
+      apiUrl = `http://127.0.0.1:8000/log/fullname=${name}`;
+      setColumnHeaders([
+        { id: "id", label: "ID" },
+        { id: "date", label: "Дата" },
+        { id: "username", label: "Пользователь" },
+        { id: "request_body", label: "Запрос" },
+        { id: "limit_", label: "Лимит" },
+      ]);
     }
 
     if (apiUrl === "") {
@@ -204,7 +234,7 @@ const DataInputPage = () => {
 
     console.log("API URL:", apiUrl);
 
-    Axios.get(apiUrl)
+    Axios.get(apiUrl, { headers })
       .then((response) => {
         const searchData = response.data;
 
@@ -231,14 +261,64 @@ const DataInputPage = () => {
             )
           )
         );
+        setDownloadAvailable(searchData.length > 0);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
+        if (error.response && error.response.status === 404) {
+          // Handle the 404 error by displaying a specific error message
+          handleError(
+            "Данные не найдены. Пожалуйста, проверьте введенные данные и повторите попытку."
+          );
+        } else {
+          // Handle other errors
+          handleError("При извлечении данных произошла ошибка.");
+        }
       })
       .finally(() => {
         setLoading(false); // Set loading to false when data retrieval is complete
       });
   };
+
+  const handleDownload = () => {
+    setDownloadLoading(true);
+    const accessToken = localStorage.getItem("access_token");
+
+    // Replace this URL with the actual endpoint for file download
+    let downloadUrl;
+
+    if (inputType === 'IIN' && source === 'Itap') {
+      downloadUrl = `http://127.0.0.1:8000/log/iin=${inn}/download_excel`;
+    } else if (inputType === 'Username' && source === 'Itap') {
+      downloadUrl = `http://127.0.0.1:8000/log/username=${usernameField}/download_excel`;
+    } else if (inputType === 'FullName' && source === 'Itap') {
+      downloadUrl = `http://127.0.0.1:8000/log/fullname=${name}/download_excel`;
+    }
+    console.log("DOWNLOAD URL:",downloadUrl);
+    // Assuming you have logic to download the file using Axios or fetch
+    Axios.get(downloadUrl, { responseType: 'blob' })
+      .then((response) => {
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `downloaded_file.${getExtension(response.headers['content-type'])}`;
+        link.click();
+      })
+      .catch((error) => {
+        console.error("Error downloading file:", error);
+        // Handle download error
+      })
+      .finally(() => {
+        setDownloadLoading(false);
+      });
+  };
+
+  const getExtension = (contentType) => {
+    // Replace this with your logic to determine the file extension based on content type
+    // Example: Assuming content type is 'application/pdf', return 'pdf'
+    return contentType.split('/')[1];
+  };
+
   const renderInputFields = () => {
     switch (inputType) {
       case "IIN":
@@ -342,80 +422,12 @@ const DataInputPage = () => {
               <TextField
                 required
                 id="outlined-firstname"
-                label="Имя"
+                label="ФИО"
                 defaultValue=""
                 margin="normal"
                 variant="outlined"
                 value={name}
                 onChange={handleNameChange}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#fff", height: "45px", width: "300px" },
-                  notchedOutline: {
-                    borderColor: colors.borderColor,
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#fff",
-                    },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-              />
-              <TextField
-                required
-                id="outlined-surname"
-                label="Фамилия"
-                defaultValue=""
-                margin="normal"
-                variant="outlined"
-                value={surname}
-                onChange={handleSurnameChange}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#fff", height: "45px", width: "300px" },
-                  notchedOutline: {
-                    borderColor: colors.borderColor,
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#fff",
-                    },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-              />
-              <TextField
-                required
-                id="outlined-patronymic"
-                label="Отчество"
-                defaultValue=""
-                margin="normal"
-                variant="outlined"
-                value={patronymic}
-                onChange={handlePatronymicChange}
                 InputLabelProps={{
                   style: {
                     fontFamily: "Montserrat, sans-serif",
@@ -570,27 +582,62 @@ const DataInputPage = () => {
             <MenuItem value="Досье">Досье</MenuItem>
             <MenuItem value="Cascade">Cascade</MenuItem>
           </Select>
-
+          <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
+      <Button
+        variant="contained"
+        onClick={handleSearch}
+        sx={{
+          mt: 2,
+          alignSelf: "flex-start",
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: "0.75rem",
+          padding: loading ? "6px 30px 6px 12px" : "6px 12px",
+          backgroundColor: colors.secondary,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        Поиск
+        {loading && (
+          <div
+            style={{
+              position: "absolute",
+              right: "8px",
+              top: "50%",
+              transform: "translateY(-38%)",
+            }}
+          >
+            <img
+              src={Loading}
+              alt=""
+              style={{ width: "20px", height: "20px" }}
+            />
+          </div>
+        )}
+      </Button>
+      {/* Conditionally render the download button */}
+      {downloadAvailable && (
+        <React.Fragment>
           <Button
             variant="contained"
-            onClick={handleSearch}
+            onClick={handleDownload}
             sx={{
               mt: 2,
               alignSelf: "flex-start",
               fontFamily: "Montserrat, sans-serif",
               fontSize: "0.75rem",
-              padding: loading ? "6px 30px 6px 12px" : "6px 12px", // Adjust the padding here
+              padding: downloadLoading ? "6px 30px 6px 12px" : "6px 12px",
               backgroundColor: colors.secondary,
               position: "relative",
-              overflow: "hidden", // Add overflow property to prevent content overflow
+              overflow: "hidden",
             }}
           >
-            Поиск
-            {loading && (
+            Скачать результаты
+            {downloadLoading && (
               <div
                 style={{
                   position: "absolute",
-                  right: "8px", // Adjust the right spacing as needed
+                  right: "8px",
                   top: "50%",
                   transform: "translateY(-38%)",
                 }}
@@ -603,6 +650,9 @@ const DataInputPage = () => {
               </div>
             )}
           </Button>
+        </React.Fragment>
+      )}
+    </Box>
           <Snackbar
             open={errorOpen}
             autoHideDuration={6000}
@@ -620,7 +670,7 @@ const DataInputPage = () => {
           <TableContainer
             component={Paper}
             sx={{
-              maxWidth: 1000,
+              width: "100%", // Set width to 100%
               mt: 4,
               bgcolor: "transparent",
               boxShadow: "none",
@@ -650,18 +700,23 @@ const DataInputPage = () => {
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  {columnHeaders.map((header) => (
-                    <TableCell
-                      key={header.id}
-                      sx={{
-                        fontSize: "12px",
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                      }}
-                    >
-                      {header.label}
-                    </TableCell>
-                  ))}
+                  {columnHeaders
+                    .filter((header) => source !== "Itap" || header.id !== "id")
+                    .map((header) => (
+                      <TableCell
+                        key={header.id}
+                        sx={{
+                          fontSize: "12px",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden", // Add overflow property
+                          textOverflow: "ellipsis", // Add textOverflow property
+                        }}
+                      >
+                        {header.label}
+                      </TableCell>
+                    ))}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -676,19 +731,23 @@ const DataInputPage = () => {
                     key={row.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    {columnHeaders.map((header) => (
-                      <TableCell
-                        key={header.id}
-                        align="left"
-                        sx={{
-                          fontSize: "12px",
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                        }}
-                      >
-                        {row[header.id]}
-                      </TableCell>
-                    ))}
+                    {columnHeaders
+                      .filter(
+                        (header) => source !== "Itap" || header.id !== "id"
+                      )
+                      .map((header) => (
+                        <TableCell
+                          key={header.id}
+                          align="left"
+                          sx={{
+                            fontSize: "12px",
+                            fontFamily: "Montserrat, sans-serif",
+                            color: "#fff",
+                          }}
+                        >
+                          {row[header.id]}
+                        </TableCell>
+                      ))}
                     <TableCell
                       align="left"
                       sx={{
@@ -701,6 +760,7 @@ const DataInputPage = () => {
                 ))}
               </TableBody>
             </Table>
+
             <ThemeProvider theme={darkTheme}>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}

@@ -11,11 +11,16 @@ import {
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import LogoHeader from "../../assets/logoHeader.png";
 import LogoHeader1 from "../../assets/logo.svg";
+import { useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const location = useLocation();
+  const { username } = location.state || {};
+  const history = useHistory();
+
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,6 +29,15 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogout = () => {
+    // Perform any necessary logout actions (e.g., clearing localStorage)
+    localStorage.removeItem('access_token');
+  
+    // Redirect to the login page
+    history.push("/");
+  };
+  
 
   return (
     <Container sx={{ maxWidth: "1200px", padding: 0 }}>
@@ -63,7 +77,7 @@ const Header = () => {
               <img
                 src={LogoHeader1}
                 alt="Image Description"
-                style={{ height: "40px", margin: "5px" }}
+                style={{ height: "35px", margin: "5px" }}
               />
             </div>
             <Box
@@ -75,9 +89,13 @@ const Header = () => {
                 variant="subtitle1"
                 color="inherit"
                 noWrap
-                sx={{ marginLeft: 1 }}
+                sx={{
+                  marginLeft: 1,
+                  fontSize: "16px",
+                  fontFamily: "Montserrat, sans-serif",
+                }}
               >
-                Мадияр Макулычкин
+                {username}
               </Typography>
               <ExpandMoreIcon />
             </Box>
@@ -96,8 +114,26 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Admin Panel</MenuItem>
-              <MenuItem onClick={handleClose}>Log Out</MenuItem>
+              <MenuItem
+                onClick={handleClose}
+                sx={{
+                  marginLeft: 1,
+                  fontSize: "16px",
+                  fontFamily: "Montserrat, sans-serif",
+                }}
+              >
+                Admin Panel
+              </MenuItem>
+              <MenuItem
+                onClick={handleLogout}
+                sx={{
+                  marginLeft: 1,
+                  fontSize: "16px",
+                  fontFamily: "Montserrat, sans-serif",
+                }}
+              >
+                Log Out
+              </MenuItem>
             </Menu>
           </Toolbar>
         </AppBar>
