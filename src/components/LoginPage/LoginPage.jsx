@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import axios from "axios";
 import '../LoginPage/LoginPage.css'
 import { useHistory } from "react-router-dom";
@@ -6,19 +6,32 @@ import { useHistory } from "react-router-dom";
 function Login() {
     
     const history = useHistory();
+
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [errorDisplay, setErrorDisplay] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const isAuthenticatedRef = useRef(isAuthenticated);
+
 
 
 
     const [showPassword, setShowPassword] = useState(false);
-    
+
     useEffect(() => {
-        setTimeout(() => {setErrorDisplay(false)}, 5000)
-    }, [errorDisplay === true])
+        isAuthenticatedRef.current = isAuthenticated;
+      }, [isAuthenticated]);
+    
+      useEffect(() => {
+        console.log("useEffect isAuthenticatedRef.current:", isAuthenticatedRef.current);
+        console.log("useEffect isAuthenticated:", isAuthenticated);
+    
+        if (isAuthenticatedRef.current) {
+            console.log('Redirecting to Data Input page...');
+            history.push("/data-input", { username: login });
+        }
+    }, [isAuthenticated, login, history]);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -32,40 +45,41 @@ function Login() {
     
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:8000/login', {
+            console.log("Trying to login...");
+    
+            const response = await axios.post("http://127.0.0.1:8000/login", {
                 username: login,
                 password: password,
             });
     
+            console.log("Login response:", response);
+    
             if (response.data.access_token) {
-                // Save access token in localStorage
-                localStorage.setItem('access_token', response.data.access_token);
-    
-                // Authentication successful, update isAuthenticated state
+                localStorage.setItem("access_token", response.data.access_token);
                 setIsAuthenticated(true);
+                console.log("isAuthenticated:", isAuthenticated);
     
-                // Log the value of isAuthenticated
-                console.log('isAuthenticated:', isAuthenticated);
-    
-                // Proceed to the Data Input page
-                console.log('Access Token:', response.data.access_token);
+                // Redirect directly after setting isAuthenticated to true
+                console.log('Redirecting to Data Input page...');
                 history.push("/data-input", { username: login });
             } else {
-                throw new Error('Login failed');
+                throw new Error("Login failed");
             }
         } catch (error) {
-            console.error('Login failed:', error.message);
+            console.error("Login failed:", error.message);
+            console.log(error)
             setErrorDisplay(true);
-            setErrorMessage('Incorrect login or password'); // Set a meaningful error message
+            setErrorMessage("Incorrect login or password");
+        } finally {
+            console.log("Login attempt completed.");
         }
     };
-
 
     return (
         <>
             <div className="login-page">
                 <div className="warning-block" style={{left: !errorDisplay ? '-200px' : '10px'}}>
-                    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                         <g id="SVGRepo_iconCarrier">
@@ -87,7 +101,7 @@ function Login() {
                                 <div className="icon">
                                 <svg fill="#none" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#000000" stroke-width="0.096"></g><g id="SVGRepo_iconCarrier"><path d="M15.71,12.71a6,6,0,1,0-7.42,0,10,10,0,0,0-6.22,8.18,1,1,0,0,0,2,.22,8,8,0,0,1,15.9,0,1,1,0,0,0,1,.89h.11a1,1,0,0,0,.88-1.1A10,10,0,0,0,15.71,12.71ZM12,12a4,4,0,1,1,4-4A4,4,0,0,1,12,12Z"></path></g></svg>
                                 </div>
-                                <input type="text" value={login} onChange={(e) => setLogin(e.target.value)} placeholder="Введите логин" name="" id="" />
+                                <input className="inputText" type="text" value={login} onChange={(e) => setLogin(e.target.value)} placeholder="Введите логин" name="" id="" />
 
                             </div>
                         </div>

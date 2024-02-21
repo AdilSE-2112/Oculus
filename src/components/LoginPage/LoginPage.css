@@ -13,6 +13,10 @@
     * {
         font-family: 'Ubuntu';
     }
+    .inputText{
+
+        color: #fff;
+    }
     
     .warning-block {
         position: absolute;
@@ -141,6 +145,7 @@
 
                     .password-input {
                         width: 100%;
+                        color: #fff;
                     }
                     .toggle-password {
                         position: absolute;

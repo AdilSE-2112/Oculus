@@ -77,7 +77,7 @@ const Header = () => {
               <img
                 src={LogoHeader1}
                 alt="Image Description"
-                style={{ height: "35px", margin: "5px" }}
+                style={{ height: "30px", margin: "5px" }}
               />
             </div>
             <Box

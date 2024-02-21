@@ -41,9 +41,11 @@ function createData(
   action,
   fname,
   lname,
-  user_name
+  user_name,
+  log_time
 ) {
   const formattedDate = new Date(date).toLocaleString();
+  const formattedDossieTime = new Date(log_time).toLocaleString();
   return {
     date: formattedDate,
     username,
@@ -55,11 +57,12 @@ function createData(
     fname,
     lname,
     user_name,
+    log_time: formattedDossieTime,
   };
 }
 
 const DataInputPage = () => {
-  const [downloadLoading, setDownloadLoading] = useState(false);  // Add this line
+  const [downloadLoading, setDownloadLoading] = useState(false); // Add this line
 
   const [loggedInUser, setLoggedInUser] = useState(""); // Set the logged-in username
 
@@ -93,6 +96,7 @@ const DataInputPage = () => {
   const history = useHistory();
   const [usernameField, setUsernameField] = useState("");
   const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
+  const [infoType, setInfoType] = useState("WhomThisUserViewed");
   const [inputType, setInputType] = useState("IIN");
   const [source, setSource] = useState("");
   const [name, setName] = useState("");
@@ -147,8 +151,15 @@ const DataInputPage = () => {
     setUsernameField(event.target.value);
   };
   const handleButtonClick = (type, rowData) => {
-    setInputType(type);
-    console.log("Input Type:", type);
+    if (type === "WhomThisUserViewed" || type === "WhoViewedThisUser") {
+      // For the first set of buttons
+      setInfoType(type);
+    } else if (type === "IIN" || type === "Username" || type === "FullName") {
+      // For the second set of buttons
+      setInputType(type);
+    }
+
+    console.log("Type:", type);
 
     if (rowData) {
       history.push({
@@ -181,51 +192,123 @@ const DataInputPage = () => {
     };
     console.log("Source:", source);
     console.log("Input Type:", inputType);
-    if (source === "Itap" && inputType === "Username") {
-      apiUrl = `http://127.0.0.1:8000/log/${usernameField}`;
-      setColumnHeaders([
-        { id: "id", label: "ID" },
-        { id: "date", label: "Дата" },
-        { id: "username", label: "Пользователь" },
-        { id: "request_body", label: "Запрос" },
-        { id: "limit_", label: "Лимит" },
-      ]);
-    } else if (source === "Досье" && inputType === "Username") {
-      apiUrl = `http://127.0.0.1:8000/dossie_log/search/?action=${usernameField}`;
-      // Add the additional fields for "Досье"
-      setColumnHeaders([
-        { id: "action", label: "Action" },
-        { id: "fname", label: "First Name" },
-        { id: "lname", label: "Last Name" },
-        { id: "user_name", label: "Username" },
-      ]);
-    } else if (source === "Cascade" && inputType === "Username") {
-      apiUrl = `http://127.0.0.1:8000/users_log/${usernameField}`;
-      setColumnHeaders([
-        { id: "time", label: "Время" },
-        { id: "username", label: "Пользователь" },
-        { id: "message", label: "Сообщение" },
-      ]);
-    } else if (source === "Досье" && inputType === "IIN") {
-      apiUrl = `http://127.0.0.1:8000/dossie_log/search/?action=${inn}`;
-      setColumnHeaders([
-        { id: "action", label: "Action" },
-        { id: "fname", label: "First Name" },
-        { id: "lname", label: "Last Name" },
-        { id: "user_name", label: "Username" },
-      ]);
-    } else if (source === "Itap" && inputType === "FullName") {
-      // Construct the URL dynamically for the combination of "Full Name" and "Itap"
-      apiUrl = `http://127.0.0.1:8000/log/fullname=${name}`;
-      setColumnHeaders([
-        { id: "id", label: "ID" },
-        { id: "date", label: "Дата" },
-        { id: "username", label: "Пользователь" },
-        { id: "request_body", label: "Запрос" },
-        { id: "limit_", label: "Лимит" },
-      ]);
+    console.log("Info Type", infoType);
+    if (infoType === "WhomThisUserViewed") {
+      if (source === "Itap" && inputType === "Username") {
+        apiUrl = `http://127.0.0.1:8000/log/username=${usernameField}`;
+        setColumnHeaders([
+          { id: "id", label: "ID" },
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "request_body", label: "Запрос" },
+          { id: "limit_", label: "Лимит" },
+        ]);
+      } else if (source === "Досье" && inputType === "Username") {
+        apiUrl = `http://127.0.0.1:8000/dossie_log/username=${usernameField}`;
+        // Add the additional fields for "Досье"
+        setColumnHeaders([
+          { id: "action", label: "Запрос" },
+          { id: "fname", label: "First Name" },
+          { id: "lname", label: "Last Name" },
+          { id: "user_name", label: "Username" },
+          {id: "log_time", label: "Время"},
+        ]);
+      } else if (source === "Cascade" && inputType === "FullName") {
+        apiUrl = `http://127.0.0.1:8000/users_log/fullname=${name}`;
+        setColumnHeaders([
+          { id: "time", label: "Время" },
+          { id: "username", label: "Пользователь" },
+          { id: "message", label: "Сообщение" },
+        ]);
+      } else if (source === "Cascade" && inputType === "Username") {
+        apiUrl = `http://127.0.0.1:8000/users_log/username=${usernameField}`;
+        setColumnHeaders([
+          { id: "time", label: "Время" },
+          { id: "username", label: "Пользователь" },
+          { id: "message", label: "Запрос" },
+        ]);
+      } else if (source === "Досье" && inputType === "IIN") {
+        apiUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}`;
+        setColumnHeaders([
+          { id: "action", label: "Запрос" },
+          { id: "fname", label: "First Name" },
+          { id: "lname", label: "Last Name" },
+          { id: "user_name", label: "Username" },
+          {id: "log_time", label: "Время"},
+        ]);
+      } else if (source === "Досье" && inputType === "FullName") {
+        apiUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}`;
+        setColumnHeaders([
+          { id: "action", label: "Запрос" },
+          { id: "fname", label: "First Name" },
+          { id: "lname", label: "Last Name" },
+          { id: "user_name", label: "Username" },
+          {id: "log_time", label: "Время"},
+        ]);
+      } else if (source === "Itap" && inputType === "FullName") {
+        // Construct the URL dynamically for the combination of "Full Name" and "Itap"
+        apiUrl = `http://127.0.0.1:8000/log/fullname=${name}`;
+        setColumnHeaders([
+          { id: "id", label: "ID" },
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "request_body", label: "Запрос" },
+          { id: "limit_", label: "Лимит" },
+        ]);
+      }
+    } else if (infoType === "WhoViewedThisUser") {
+      if (source === "Досье" && inputType === "IIN") {
+        apiUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}`;
+        setColumnHeaders([
+          { id: "action", label: "Запрос" },
+          { id: "fname", label: "First Name" },
+          { id: "lname", label: "Last Name" },
+          { id: "user_name", label: "Username" },
+          {id: "log_time", label: "Время"},
+        ]);
+      } else if (source === "Itap" && inputType === "FullName") {
+        apiUrl = `http://127.0.0.1:8000/log/search=${name}`;
+        setColumnHeaders([
+          { id: "id", label: "ID" },
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "request_body", label: "Запрос" },
+          { id: "limit_", label: "Лимит" },
+        ]);
+      } else if (source === "Itap" && inputType === "IIN") {
+        apiUrl = `http://127.0.0.1:8000/log/search=${inn}`;
+        setColumnHeaders([
+          { id: "id", label: "ID" },
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "request_body", label: "Запрос" },
+          { id: "limit_", label: "Лимит" },
+        ]);
+      } else if (source === "Cascade" && inputType === "IIN") {
+        apiUrl = `http://127.0.0.1:8000/users_log/message=${inn}`;
+        setColumnHeaders([
+          { id: "time", label: "Время" },
+          { id: "username", label: "Пользователь" },
+          { id: "message", label: "Запрос" },
+        ]);
+      } else if (source === "Досье" && inputType === "FullName") {
+        apiUrl = `http://127.0.0.1:8000/dossie_log/action=${name}`;
+        setColumnHeaders([
+          { id: "action", label: "Запрос" },
+          { id: "fname", label: "First Name" },
+          { id: "lname", label: "Last Name" },
+          { id: "user_name", label: "Username" },
+          {id: "log_time", label: "Время"},
+        ]);
+      }else if (source === "Cascade" && inputType === "FullName") {
+        apiUrl = `http://127.0.0.1:8000/users_log/message=${name}`;
+        setColumnHeaders([
+          { id: "time", label: "Время" },
+          { id: "username", label: "Пользователь" },
+          { id: "message", label: "Запрос" },
+        ]);
+      }
     }
-
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
       setLoading(false);
@@ -257,7 +340,8 @@ const DataInputPage = () => {
               data.action,
               data.fname,
               data.lname,
-              data.user_name
+              data.user_name,
+              data.log_time,
             )
           )
         );
@@ -283,25 +367,60 @@ const DataInputPage = () => {
   const handleDownload = () => {
     setDownloadLoading(true);
     const accessToken = localStorage.getItem("access_token");
+    console.log("Access Token:", accessToken);
 
     // Replace this URL with the actual endpoint for file download
     let downloadUrl;
-
-    if (inputType === 'IIN' && source === 'Itap') {
-      downloadUrl = `http://127.0.0.1:8000/log/iin=${inn}/download_excel`;
-    } else if (inputType === 'Username' && source === 'Itap') {
-      downloadUrl = `http://127.0.0.1:8000/log/username=${usernameField}/download_excel`;
-    } else if (inputType === 'FullName' && source === 'Itap') {
-      downloadUrl = `http://127.0.0.1:8000/log/fullname=${name}/download_excel`;
+    if (infoType === "WhomThisUserViewed") {
+      if (inputType === "IIN" && source === "Itap") {
+        downloadUrl = `http://127.0.0.1:8000/log/iin=${inn}/download_excel`;
+      } else if (inputType === "Username" && source === "Itap") {
+        downloadUrl = `http://127.0.0.1:8000/log/username=${usernameField}/download_excel`;
+      } else if (inputType === "FullName" && source === "Itap") {
+        downloadUrl = `http://127.0.0.1:8000/log/fullname=${name}/download_excel`;
+      } else if (inputType === "Username" && source === "Cascade") {
+        downloadUrl = `http://127.0.0.1:8000/user_log/username=${usernameField}/download_excel`;
+      } else if (inputType === "FullName" && source === "Cascade") {
+        downloadUrl = `http://127.0.0.1:8000/user_log/fullname=${name}/download_excel`;
+      } else if (inputType === "Username" && source === "Досье") {
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/username=${usernameField}/download`;
+      } else if (inputType === "IIN" && source === "Досье") {
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}/download`;
+      } else if (inputType === "FullName" && source === "Досье") {
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}/download`;
+      }
+    } else if (infoType === "WhoViewedThisUser") {
+      if (inputType === "IIN" && source === "Itap") {
+        downloadUrl = `http://127.0.0.1:8000/log/search=${inn}/download_excel`;
+      } else if (inputType === "FullName" && source === "Itap") {
+        downloadUrl = `http://127.0.0.1:8000/log/search=${name}/download_excel`;
+      } else if (inputType === "IIN" && source === "Досье") {
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}/download`;
+      } else if (inputType === "FullName" && source === "Досье") {
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${name}/download`;
+      } else if (inputType === "FullName" && source === "Cascade") {
+        downloadUrl = `http://127.0.0.1:8000/user_log/message=${name}/download_excel`;
+      } else if (inputType === "IIN" && source === "Cascade") {
+        downloadUrl = `http://127.0.0.1:8000/user_log/message=${inn}/download_excel`;
+      }
     }
-    console.log("DOWNLOAD URL:",downloadUrl);
+    console.log("DOWNLOAD URL:", downloadUrl);
+
     // Assuming you have logic to download the file using Axios or fetch
-    Axios.get(downloadUrl, { responseType: 'blob' })
+    Axios.get(downloadUrl, {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
       .then((response) => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
-        const link = document.createElement('a');
+        const blob = new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+
+        const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = `downloaded_file.${getExtension(response.headers['content-type'])}`;
+        link.download = `downloaded_file.xlsx`;
         link.click();
       })
       .catch((error) => {
@@ -316,7 +435,7 @@ const DataInputPage = () => {
   const getExtension = (contentType) => {
     // Replace this with your logic to determine the file extension based on content type
     // Example: Assuming content type is 'application/pdf', return 'pdf'
-    return contentType.split('/')[1];
+    return contentType.split("/")[1];
   };
 
   const renderInputFields = () => {
@@ -479,58 +598,152 @@ const DataInputPage = () => {
           noValidate
           autoComplete="off"
         >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "left",
+              gap: 2,
+              marginBottom: 2,
+            }}
+          >
+            {/* Two new buttons added */}
+            <Button
+              variant="contained"
+              style={{
+                fontSize: "12px",
+                fontFamily: "Montserrat, sans-serif",
+                padding: "2px 4px",
+                backgroundColor:
+                  infoType === "WhomThisUserViewed"
+                    ? colors.secondary
+                    : colors.primary,
+              }}
+              onClick={() => {
+                setInfoType("WhomThisUserViewed");
+                handleButtonClick("WhomThisUserViewed");
+              }}
+            >
+              Кого просматривал данный пользователь
+            </Button>
+
+            <Button
+              variant="contained"
+              style={{
+                fontSize: "12px",
+                fontFamily: "Montserrat, sans-serif",
+                padding: "2px 4px",
+                backgroundColor:
+                  infoType === "WhoViewedThisUser"
+                    ? colors.secondary
+                    : colors.primary,
+              }}
+              onClick={() => {
+                setInfoType("WhoViewedThisUser");
+                handleButtonClick("WhoViewedThisUser");
+              }}
+            >
+              Кто просматривал данного объекта
+            </Button>
+            {/* ... Rest of your existing buttons */}
+          </Box>
           {/* Buttons for selecting input type */}
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-            <Button
-              variant="contained"
-              style={{
-                fontSize: "12px",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "2px 4px",
-                backgroundColor:
-                  inputType === "IIN" ? colors.secondary : colors.primary,
-              }} // Change color to secondary if selected
-              onClick={() => {
-                setValue("IIN");
-                handleButtonClick("IIN");
-              }}
-            >
-              ИНН
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                fontSize: "12px",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "2px 4px",
+            {infoType === "WhomThisUserViewed" && (
+              <>
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "IIN" ? colors.secondary : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("IIN");
+                    handleButtonClick("IIN");
+                  }}
+                >
+                  ИНН
+                </Button>
 
-                backgroundColor:
-                  inputType === "Username" ? colors.secondary : colors.primary,
-              }} // Change color to secondary if selected
-              onClick={() => {
-                setValue("Username");
-                handleButtonClick("Username");
-              }}
-            >
-              Username
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                fontSize: "12px",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "2px 4px",
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "Username"
+                        ? colors.secondary
+                        : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("Username");
+                    handleButtonClick("Username");
+                  }}
+                >
+                  Имя Пользователя
+                </Button>
 
-                backgroundColor:
-                  inputType === "FullName" ? colors.secondary : colors.primary,
-              }} // Change color to secondary if selected
-              onClick={() => {
-                setValue("FullName");
-                handleButtonClick("FullName");
-              }}
-            >
-              ФИО
-            </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "FullName"
+                        ? colors.secondary
+                        : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("FullName");
+                    handleButtonClick("FullName");
+                  }}
+                >
+                  ФИО
+                </Button>
+              </>
+            )}
+            {infoType === "WhoViewedThisUser" && (
+              <>
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "IIN" ? colors.secondary : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("IIN");
+                    handleButtonClick("IIN");
+                  }}
+                >
+                  ИНН
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "FullName"
+                        ? colors.secondary
+                        : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("FullName");
+                    handleButtonClick("FullName");
+                  }}
+                >
+                  ФИО
+                </Button>
+              </>
+            )}
           </Box>
 
           {/* Dynamic Input Fields */}
@@ -552,107 +765,213 @@ const DataInputPage = () => {
               Источник
             </InputLabel>
           </ThemeProvider>
-          <Select
-            labelId="demo-simple-select-outlined-label"
-            id="outlined-source"
-            value={source}
-            onChange={handleChange}
-            label="Источник"
-            sx={{
-              fontSize: "14px",
-              fontFamily: "Montserrat, sans-serif",
-              color: "#fff",
-              height: "45px",
-              width: "300px",
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#fff !important",
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#fff !important",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#fff !important",
-              },
-              "& .MuiSelect-icon": {
-                color: "#fff !important",
-              },
-            }}
-          >
-            <MenuItem value="Itap">Itap</MenuItem>
-            <MenuItem value="Досье">Досье</MenuItem>
-            <MenuItem value="Cascade">Cascade</MenuItem>
-          </Select>
-          <Box sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
-      <Button
-        variant="contained"
-        onClick={handleSearch}
-        sx={{
-          mt: 2,
-          alignSelf: "flex-start",
-          fontFamily: "Montserrat, sans-serif",
-          fontSize: "0.75rem",
-          padding: loading ? "6px 30px 6px 12px" : "6px 12px",
-          backgroundColor: colors.secondary,
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        Поиск
-        {loading && (
-          <div
-            style={{
-              position: "absolute",
-              right: "8px",
-              top: "50%",
-              transform: "translateY(-38%)",
-            }}
-          >
-            <img
-              src={Loading}
-              alt=""
-              style={{ width: "20px", height: "20px" }}
-            />
-          </div>
-        )}
-      </Button>
-      {/* Conditionally render the download button */}
-      {downloadAvailable && (
-        <React.Fragment>
-          <Button
-            variant="contained"
-            onClick={handleDownload}
-            sx={{
-              mt: 2,
-              alignSelf: "flex-start",
-              fontFamily: "Montserrat, sans-serif",
-              fontSize: "0.75rem",
-              padding: downloadLoading ? "6px 30px 6px 12px" : "6px 12px",
-              backgroundColor: colors.secondary,
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            Скачать результаты
-            {downloadLoading && (
-              <div
-                style={{
-                  position: "absolute",
-                  right: "8px",
-                  top: "50%",
-                  transform: "translateY(-38%)",
+          {infoType === "WhomThisUserViewed" && (
+            <>
+              {inputType === "IIN" && (
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="outlined-source"
+                  value={source}
+                  onChange={handleChange}
+                  label="Источник"
+                  sx={{
+                    fontSize: "14px",
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    height: "45px",
+                    width: "300px",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "& .MuiSelect-icon": {
+                      color: "#fff !important",
+                    },
+                  }}
+                >
+                  <MenuItem value="Досье">Досье</MenuItem>
+                </Select>
+              )}
+
+              {inputType === "Username" && (
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="outlined-source"
+                  value={source}
+                  onChange={handleChange}
+                  label="Источник"
+                  sx={{
+                    fontSize: "14px",
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    height: "45px",
+                    width: "300px",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "& .MuiSelect-icon": {
+                      color: "#fff !important",
+                    },
+                  }}
+                >
+                  <MenuItem value="Itap">Itap</MenuItem>
+                  <MenuItem value="Досье">Досье</MenuItem>
+                  <MenuItem value="Cascade">Cascade</MenuItem>
+                </Select>
+              )}
+
+              {inputType === "FullName" && (
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="outlined-source"
+                  value={source}
+                  onChange={handleChange}
+                  label="Источник"
+                  sx={{
+                    fontSize: "14px",
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    height: "45px",
+                    width: "300px",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "& .MuiSelect-icon": {
+                      color: "#fff !important",
+                    },
+                  }}
+                >
+                  <MenuItem value="Itap">Itap</MenuItem>
+                  <MenuItem value="Досье">Досье</MenuItem>
+                  <MenuItem value="Cascade">Cascade</MenuItem>
+                </Select>
+              )}
+            </>
+          )}
+
+          {infoType === "WhoViewedThisUser" && (
+            <>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="outlined-source"
+                value={source}
+                onChange={handleChange}
+                label="Источник"
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Montserrat, sans-serif",
+                  color: "#fff",
+                  height: "45px",
+                  width: "300px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "& .MuiSelect-icon": {
+                    color: "#fff !important",
+                  },
                 }}
               >
-                <img
-                  src={Loading}
-                  alt=""
-                  style={{ width: "20px", height: "20px" }}
-                />
-              </div>
+                <MenuItem value="Itap">Itap</MenuItem>
+                <MenuItem value="Досье">Досье</MenuItem>
+                <MenuItem value="Cascade">Cascade</MenuItem>
+              </Select>
+            </>
+          )}
+
+          <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+            <Button
+              variant="contained"
+              onClick={handleSearch}
+              sx={{
+                mt: 2,
+                alignSelf: "flex-start",
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "0.75rem",
+                padding: loading ? "6px 30px 6px 12px" : "6px 12px",
+                backgroundColor: colors.secondary,
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              Поиск
+              {loading && (
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "8px",
+                    top: "50%",
+                    transform: "translateY(-38%)",
+                  }}
+                >
+                  <img
+                    src={Loading}
+                    alt=""
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </div>
+              )}
+            </Button>
+            {/* Conditionally render the download button */}
+            {downloadAvailable && (
+              <React.Fragment>
+                <Button
+                  variant="contained"
+                  onClick={handleDownload}
+                  sx={{
+                    mt: 2,
+                    alignSelf: "flex-start",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "0.75rem",
+                    padding: downloadLoading ? "6px 30px 6px 12px" : "6px 12px",
+                    backgroundColor: colors.secondary,
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  Скачать результаты
+                  {downloadLoading && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: "8px",
+                        top: "50%",
+                        transform: "translateY(-38%)",
+                      }}
+                    >
+                      <img
+                        src={Loading}
+                        alt=""
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </div>
+                  )}
+                </Button>
+              </React.Fragment>
             )}
-          </Button>
-        </React.Fragment>
-      )}
-    </Box>
+          </Box>
           <Snackbar
             open={errorOpen}
             autoHideDuration={6000}
@@ -690,8 +1009,13 @@ const DataInputPage = () => {
             >
               {rows.length > 1 ? (
                 <>
-                  Результаты запросов пользователя:{" "}
-                  {source === "Досье" ? rows[0].user_name : rows[0].username}
+                  {infoType === "WhoViewedThisUser"
+                    ? `Кто просматривал объект: ${inn}`
+                    : `Результаты запросов пользователя: ${
+                        source === "Досье"
+                          ? rows[0].user_name
+                          : rows[0].username
+                      }`}
                 </>
               ) : (
                 "Сделайте запрос чтобы увидеть данные"
@@ -717,6 +1041,7 @@ const DataInputPage = () => {
                         {header.label}
                       </TableCell>
                     ))}
+                  <TableCell align="right"> </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
