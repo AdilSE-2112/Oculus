@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import axios from "axios";
 import '../LoginPage/LoginPage.css'
 import { useHistory } from "react-router-dom";
+import backVideoLogin from '../../assets/backVideoLogin.mp4';  // Adjust the path to your video file
 
 function Login() {
     
@@ -77,6 +78,10 @@ function Login() {
 
     return (
         <>
+      <video autoPlay muted loop className="video-background">
+        <source src={backVideoLogin} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
             <div className="login-page">
                 <div className="warning-block" style={{left: !errorDisplay ? '-200px' : '10px'}}>
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

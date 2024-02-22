@@ -208,9 +208,9 @@ const DataInputPage = () => {
         // Add the additional fields for "Досье"
         setColumnHeaders([
           { id: "action", label: "Запрос" },
-          { id: "fname", label: "First Name" },
-          { id: "lname", label: "Last Name" },
-          { id: "user_name", label: "Username" },
+          { id: "fname", label: "Имя" },
+          { id: "lname", label: "Фамилия" },
+          { id: "user_name", label: "Имя Пользователя" },
           {id: "log_time", label: "Время"},
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
@@ -231,18 +231,18 @@ const DataInputPage = () => {
         apiUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}`;
         setColumnHeaders([
           { id: "action", label: "Запрос" },
-          { id: "fname", label: "First Name" },
-          { id: "lname", label: "Last Name" },
-          { id: "user_name", label: "Username" },
+          { id: "fname", label: "Имя" },
+          { id: "lname", label: "Фамилия" },
+          { id: "user_name", label: "Имя пользователя" },
           {id: "log_time", label: "Время"},
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
         apiUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}`;
         setColumnHeaders([
           { id: "action", label: "Запрос" },
-          { id: "fname", label: "First Name" },
-          { id: "lname", label: "Last Name" },
-          { id: "user_name", label: "Username" },
+          { id: "fname", label: "Имя" },
+          { id: "lname", label: "Фамилия" },
+          { id: "user_name", label: "Имя пользователя" },
           {id: "log_time", label: "Время"},
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
@@ -261,9 +261,9 @@ const DataInputPage = () => {
         apiUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}`;
         setColumnHeaders([
           { id: "action", label: "Запрос" },
-          { id: "fname", label: "First Name" },
-          { id: "lname", label: "Last Name" },
-          { id: "user_name", label: "Username" },
+          { id: "fname", label: "Имя" },
+          { id: "lname", label: "Фамилия" },
+          { id: "user_name", label: "Имя Полььзователя" },
           {id: "log_time", label: "Время"},
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
@@ -295,9 +295,9 @@ const DataInputPage = () => {
         apiUrl = `http://127.0.0.1:8000/dossie_log/action=${name}`;
         setColumnHeaders([
           { id: "action", label: "Запрос" },
-          { id: "fname", label: "First Name" },
-          { id: "lname", label: "Last Name" },
-          { id: "user_name", label: "Username" },
+          { id: "fname", label: "Имя" },
+          { id: "lname", label: "Фамилия" },
+          { id: "user_name", label: "Имя пользователя" },
           {id: "log_time", label: "Время"},
         ]);
       }else if (source === "Cascade" && inputType === "FullName") {
