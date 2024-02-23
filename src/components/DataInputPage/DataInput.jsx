@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../DataInputPage/DataInput.css";
 import Header from "../Header/Header";
 import colors from "../../themes/palette.json";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import Menu from "@mui/material/Menu";
 import { MenuItem as MuiMenuItem } from "@mui/material";
@@ -31,7 +31,6 @@ import {
 } from "@mui/material";
 
 function createData(
-  id,
   date,
   username,
   request_body,
@@ -67,7 +66,6 @@ const DataInputPage = () => {
   const [loggedInUser, setLoggedInUser] = useState(""); // Set the logged-in username
 
   const defaultColumnHeaders = [
-    { id: "id", label: "ID" },
     { id: "date", label: "Дата" },
     { id: "username", label: "Пользователь" },
     { id: "request_body", label: "Запрос" },
@@ -93,7 +91,7 @@ const DataInputPage = () => {
       mode: "dark",
     },
   });
-  const history = useHistory();
+  const navigate = useNavigate();
   const [usernameField, setUsernameField] = useState("");
   const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
   const [infoType, setInfoType] = useState("WhomThisUserViewed");
@@ -112,6 +110,38 @@ const DataInputPage = () => {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [downloadAvailable, setDownloadAvailable] = useState(false);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
+  const [fullName, setFullName] = useState("");
+  // State variables to track initial values
+  const [initialInfoType, setInitialInfoType] = useState("");
+  const [initialInputType, setInitialInputType] = useState("");
+  const [initialSource, setInitialSource] = useState("");
+
+  // State variable to track if filter has changed
+  const [isFilterChanged, setIsFilterChanged] = useState(false);
+
+  useEffect(() => {
+    // Set initial values when component mounts
+    setInitialInfoType(infoType);
+    setInitialInputType(inputType);
+    setInitialSource(source);
+  }, [infoType, inputType, source]);
+
+  const handleSubmit = () => {
+    // Check if source is selected
+    if (!source) {
+      setErrorMessage("Please choose a source");
+      return;
+    }
+
+    // ... (your existing handleSubmit logic)
+  };
+
+  const handleNameChangeF = (e) => {
+    setFullName(e.target.value);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -144,9 +174,20 @@ const DataInputPage = () => {
     setErrorMessage(message);
     setErrorOpen(true);
   };
-  const handleInnChange = (event) => {
-    setInn(event.target.value);
+  const handleInnChange = (e) => {
+    // Remove non-digit characters
+    const cleanedInput = e.target.value.replace(/\D/g, "");
+
+    // Limit the input to 12 characters
+    const truncatedInput = cleanedInput.slice(0, 12);
+
+    // Update the state variable
+    setInn(truncatedInput);
+
+    // Check if the input has exactly 12 digits
   };
+
+  const count = value.length;
   const handleUsernameFieldChange = (event) => {
     setUsernameField(event.target.value);
   };
@@ -162,10 +203,7 @@ const DataInputPage = () => {
     console.log("Type:", type);
 
     if (rowData) {
-      history.push({
-        pathname: "/data-output",
-        state: { rowData: rowData },
-      });
+      navigate("/data-output", { state: { rowData: rowData } });
     }
   };
   const handleLogin = (username) => {
@@ -174,10 +212,20 @@ const DataInputPage = () => {
     setLoggedInUser(username);
   };
 
-  const [rows, setRows] = useState([defaultRow]);
+  const [rows, setRows] = useState([]);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setLoading(true);
+    if (
+      initialInfoType !== infoType ||
+      initialInputType !== inputType ||
+      initialSource !== source
+    ) {
+      setIsFilterChanged(true);
+    } else {
+      setIsFilterChanged(false);
+    }
+
     let apiUrl = "";
     const accessToken = localStorage.getItem("access_token");
 
@@ -197,7 +245,6 @@ const DataInputPage = () => {
       if (source === "Itap" && inputType === "Username") {
         apiUrl = `http://127.0.0.1:8000/log/username=${usernameField}`;
         setColumnHeaders([
-          { id: "id", label: "ID" },
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "request_body", label: "Запрос" },
@@ -211,7 +258,7 @@ const DataInputPage = () => {
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя Пользователя" },
-          {id: "log_time", label: "Время"},
+          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
         apiUrl = `http://127.0.0.1:8000/users_log/fullname=${name}`;
@@ -234,7 +281,7 @@ const DataInputPage = () => {
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя пользователя" },
-          {id: "log_time", label: "Время"},
+          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
         apiUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}`;
@@ -243,13 +290,12 @@ const DataInputPage = () => {
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя пользователя" },
-          {id: "log_time", label: "Время"},
+          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
         // Construct the URL dynamically for the combination of "Full Name" and "Itap"
         apiUrl = `http://127.0.0.1:8000/log/fullname=${name}`;
         setColumnHeaders([
-          { id: "id", label: "ID" },
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "request_body", label: "Запрос" },
@@ -264,12 +310,11 @@ const DataInputPage = () => {
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя Полььзователя" },
-          {id: "log_time", label: "Время"},
+          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
         apiUrl = `http://127.0.0.1:8000/log/search=${name}`;
         setColumnHeaders([
-          { id: "id", label: "ID" },
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "request_body", label: "Запрос" },
@@ -278,7 +323,6 @@ const DataInputPage = () => {
       } else if (source === "Itap" && inputType === "IIN") {
         apiUrl = `http://127.0.0.1:8000/log/search=${inn}`;
         setColumnHeaders([
-          { id: "id", label: "ID" },
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "request_body", label: "Запрос" },
@@ -292,15 +336,27 @@ const DataInputPage = () => {
           { id: "message", label: "Запрос" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
-        apiUrl = `http://127.0.0.1:8000/dossie_log/action=${name}`;
+        apiUrl = "http://127.0.0.1:8000/dossie_log/";
+
+        if (inputType === "FullName") {
+          apiUrl += "fio/?";
+
+          if (lastName) apiUrl += `lname=${lastName}&`;
+          if (firstName) apiUrl += `fname=${firstName}&`;
+          if (middleName) apiUrl += `mname=${middleName}&`;
+        }
+
+        // Remove the trailing "&" if there are parameters
+        apiUrl = apiUrl.slice(0, -1);
+
         setColumnHeaders([
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя пользователя" },
-          {id: "log_time", label: "Время"},
+          { id: "log_time", label: "Время" },
         ]);
-      }else if (source === "Cascade" && inputType === "FullName") {
+      } else if (source === "Cascade" && inputType === "FullName") {
         apiUrl = `http://127.0.0.1:8000/users_log/message=${name}`;
         setColumnHeaders([
           { id: "time", label: "Время" },
@@ -330,7 +386,6 @@ const DataInputPage = () => {
         setRows(
           (searchData || []).map((data, index) =>
             createData(
-              data.id,
               data.date,
               data.username,
               data.request_body,
@@ -341,11 +396,12 @@ const DataInputPage = () => {
               data.fname,
               data.lname,
               data.user_name,
-              data.log_time,
+              data.log_time
             )
           )
         );
         setDownloadAvailable(searchData.length > 0);
+        setPage(0);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -354,9 +410,11 @@ const DataInputPage = () => {
           handleError(
             "Данные не найдены. Пожалуйста, проверьте введенные данные и повторите попытку."
           );
+          setRows([]);
         } else {
           // Handle other errors
           handleError("При извлечении данных произошла ошибка.");
+          setRows([]);
         }
       })
       .finally(() => {
@@ -396,8 +454,21 @@ const DataInputPage = () => {
         downloadUrl = `http://127.0.0.1:8000/log/search=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Досье") {
         downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}/download`;
-      } else if (inputType === "FullName" && source === "Досье") {
-        downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${name}/download`;
+      }
+      // else if (inputType === "FullName" && source === "Досье") {
+      //   downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${name}/download`;
+      // }
+      else if (inputType === "FullName" && source === "Досье") {
+        downloadUrl = "http://127.0.0.1:8000/dossie_log/download/";
+
+        if (inputType === "FullName") {
+          downloadUrl += "fio/?";
+
+          if (lastName) downloadUrl += `lname=${lastName}&`;
+          if (firstName) downloadUrl += `fname=${firstName}&`;
+          if (middleName) downloadUrl += `mname=${middleName}&`;
+        }
+        downloadUrl = downloadUrl.slice(0, -1);
       } else if (inputType === "FullName" && source === "Cascade") {
         downloadUrl = `http://127.0.0.1:8000/user_log/message=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Cascade") {
@@ -443,55 +514,67 @@ const DataInputPage = () => {
       case "IIN":
         return (
           <ThemeProvider theme={darkTheme}>
-            <TextField
-              required
-              id="outlined-required"
-              label="ИНН"
-              defaultValue=""
-              margin="normal"
-              variant="outlined"
-              value={inn}
-              onChange={handleInnChange}
-              InputLabelProps={{
-                style: {
-                  fontFamily: "Montserrat, sans-serif",
+            <Box display="flex" alignItems="center">
+              <TextField
+                required
+                id="outlined-required"
+                label="ИНН"
+                defaultValue=""
+                margin="normal"
+                variant="outlined"
+                value={inn}
+                onChange={handleInnChange}
+                InputLabelProps={{
+                  style: {
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    fontSize: "12px",
+                  },
+                }}
+                InputProps={{
+                  style: {
+                    color: "#fff",
+                    fontSize: "14px",
+                    height: "45px",
+                    width: "300px",
+                    "&:hover": {
+                      "& fieldset": {
+                        borderColor: "#fff !important",
+                      },
+                    },
+                    "& .Mui-focused": {
+                      "& fieldset": {
+                        borderColor: "#fff !important",
+                      },
+                    },
+                    "& fieldset": {
+                      borderColor: "#fff !important",
+                    },
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#fff",
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#fff",
+                    fontSize: "14px",
+                  },
+                }}
+              />
+              <div
+                style={{
                   color: "#fff",
                   fontSize: "12px",
-                },
-              }}
-              InputProps={{
-                style: {
-                  color: "#fff",
-                  fontSize: "14px",
-                  height: "45px",
-                  width: "300px",
-                  "&:hover": {
-                    "& fieldset": {
-                      borderColor: "#fff !important",
-                    },
-                  },
-                  "& .Mui-focused": {
-                    "& fieldset": {
-                      borderColor: "#fff !important",
-                    },
-                  },
-                  "& fieldset": {
-                    borderColor: "#fff !important",
-                  },
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#fff",
-                  },
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "#fff",
-                  fontSize: "14px",
-                },
-              }}
-            />
+                  marginLeft: "10px",
+                  marginTop: "5px",
+                }}
+              >
+                {inn.length}/12
+              </div>
+            </Box>
           </ThemeProvider>
         );
       case "Username":
@@ -538,40 +621,147 @@ const DataInputPage = () => {
         return (
           <ThemeProvider theme={darkTheme}>
             <>
-              <TextField
-                required
-                id="outlined-firstname"
-                label="ФИО"
-                defaultValue=""
-                margin="normal"
-                variant="outlined"
-                value={name}
-                onChange={handleNameChange}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#fff", height: "45px", width: "300px" },
-                  notchedOutline: {
-                    borderColor: colors.borderColor,
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#fff",
+              {infoType === "WhoViewedThisUser" ? (
+                <>
+                  <TextField
+                    required
+                    id="outlined-lastname"
+                    label="Фамилия"
+                    defaultValue=""
+                    margin="normal"
+                    variant="outlined"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value.trim())}
+                    InputLabelProps={{
+                      style: {
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                    InputProps={{
+                      style: { color: "#fff", height: "45px", width: "300px" },
+                      notchedOutline: {
+                        borderColor: colors.borderColor,
+                      },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#fff",
+                        },
+                      },
+                      "& .MuiOutlinedInput-input": {
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+                  <TextField
+                    required
+                    id="outlined-firstname"
+                    label="Имя"
+                    defaultValue=""
+                    margin="normal"
+                    variant="outlined"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value.trim())}
+                    InputLabelProps={{
+                      style: {
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                    InputProps={{
+                      style: { color: "#fff", height: "45px", width: "300px" },
+                      notchedOutline: {
+                        borderColor: colors.borderColor,
+                      },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#fff",
+                        },
+                      },
+                      "& .MuiOutlinedInput-input": {
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+                  <TextField
+                    required
+                    id="outlined-middlename"
+                    label="Отчество"
+                    defaultValue=""
+                    margin="normal"
+                    variant="outlined"
+                    value={middleName}
+                    onChange={(e) => setMiddleName(e.target.value.trim())}
+                    InputLabelProps={{
+                      style: {
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                    InputProps={{
+                      style: { color: "#fff", height: "45px", width: "300px" },
+                      notchedOutline: {
+                        borderColor: colors.borderColor,
+                      },
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#fff",
+                        },
+                      },
+                      "& .MuiOutlinedInput-input": {
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+                </>
+              ) : (
+                <TextField
+                  required
+                  id="outlined-fullname"
+                  label="ФИО"
+                  defaultValue=""
+                  margin="normal"
+                  variant="outlined"
+                  value={name}
+                  onChange={handleNameChange}
+                  InputLabelProps={{
+                    style: {
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      fontSize: "14px",
                     },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-              />
+                  }}
+                  InputProps={{
+                    style: { color: "#fff", height: "45px", width: "300px" },
+                    notchedOutline: {
+                      borderColor: colors.borderColor,
+                    },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#fff",
+                      },
+                    },
+                    "& .MuiOutlinedInput-input": {
+                      color: "#fff",
+                      fontSize: "14px",
+                    },
+                  }}
+                />
+              )}
             </>
           </ThemeProvider>
         );
@@ -768,34 +958,44 @@ const DataInputPage = () => {
           {infoType === "WhomThisUserViewed" && (
             <>
               {inputType === "IIN" && (
-                <Select
-                  labelId="demo-simple-select-outlined-label"
-                  id="outlined-source"
-                  value={source}
-                  onChange={handleChange}
-                  label="Источник"
-                  sx={{
-                    fontSize: "14px",
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    height: "45px",
-                    width: "300px",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "& .MuiSelect-icon": {
-                      color: "#fff !important",
-                    },
-                  }}
-                >
-                  <MenuItem value="Досье">Досье</MenuItem>
-                </Select>
+                <>
+                  <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="outlined-source"
+                    value={source}
+                    onChange={handleChange}
+                    label="Источник"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      height: "45px",
+                      width: "300px",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="Досье">Досье</MenuItem>
+                  </Select>
+                  {isFilterChanged && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                    >
+                      Необходимо сделать новый запрос для обновления данных.
+                    </Typography>
+                  )}
+                </>
               )}
 
               {inputType === "Username" && (
@@ -827,7 +1027,15 @@ const DataInputPage = () => {
                 >
                   <MenuItem value="Itap">Itap</MenuItem>
                   <MenuItem value="Досье">Досье</MenuItem>
-                  <MenuItem value="Cascade">Cascade</MenuItem>
+                  <MenuItem value="Cascade">Каскад</MenuItem>
+                  {isFilterChanged && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                    >
+                      Необходимо сделать новый запрос для обновления данных.
+                    </Typography>
+                  )}
                 </Select>
               )}
 
@@ -860,7 +1068,15 @@ const DataInputPage = () => {
                 >
                   <MenuItem value="Itap">Itap</MenuItem>
                   <MenuItem value="Досье">Досье</MenuItem>
-                  <MenuItem value="Cascade">Cascade</MenuItem>
+                  <MenuItem value="Cascade">Каскад</MenuItem>
+                  {isFilterChanged && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                    >
+                      Необходимо сделать новый запрос для обновления данных.
+                    </Typography>
+                  )}
                 </Select>
               )}
             </>
@@ -896,8 +1112,16 @@ const DataInputPage = () => {
               >
                 <MenuItem value="Itap">Itap</MenuItem>
                 <MenuItem value="Досье">Досье</MenuItem>
-                <MenuItem value="Cascade">Cascade</MenuItem>
+                <MenuItem value="Cascade">Каскад</MenuItem>
               </Select>
+              {isFilterChanged && (
+                <Typography
+                  variant="caption"
+                  sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                >
+                  Необходимо сделать новый запрос для обновления данных.
+                </Typography>
+              )}
             </>
           )}
 
@@ -1070,7 +1294,11 @@ const DataInputPage = () => {
                             color: "#fff",
                           }}
                         >
-                          {row[header.id]}
+                          {header.id === "request_body"
+                            ? Array.isArray(row.request_body)
+                              ? row.request_body.join(", ")
+                              : ""
+                            : row[header.id]}
                         </TableCell>
                       ))}
                     <TableCell

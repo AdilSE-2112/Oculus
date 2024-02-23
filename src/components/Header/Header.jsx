@@ -12,15 +12,13 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LogoHeader1 from "../../assets/logo.svg";
-import { useLocation } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const { username } = location.state || {};
-  const history = useHistory();
-
+  const navigate = useNavigate(); // Update this line
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,12 +30,16 @@ const Header = () => {
 
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing localStorage)
-    localStorage.removeItem('access_token');
-  
+    localStorage.removeItem("access_token");
+
     // Redirect to the login page
-    history.push("/");
+    navigate("/");
   };
-  
+  const handleAdminPanelClick = () => {
+    // Redirect to the Admin Panel page
+    navigate("/admin-panel");
+    handleClose();
+  };
 
   return (
     <Container sx={{ maxWidth: "1200px", padding: 0 }}>
@@ -114,16 +116,18 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem
-                onClick={handleClose}
-                sx={{
-                  marginLeft: 1,
-                  fontSize: "16px",
-                  fontFamily: "Montserrat, sans-serif",
-                }}
-              >
-                Admin Panel
-              </MenuItem>
+              {username === "Zhakhangir_Zhangaliev" && (
+                <MenuItem
+                  onClick={handleAdminPanelClick}
+                  sx={{
+                    marginLeft: 1,
+                    fontSize: "16px",
+                    fontFamily: "Montserrat, sans-serif",
+                  }}
+                >
+                  Admin Panel
+                </MenuItem>
+              )}
               <MenuItem
                 onClick={handleLogout}
                 sx={{

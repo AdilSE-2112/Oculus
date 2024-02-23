@@ -1,34 +1,32 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage/LoginPage';
 import DataInputPage from './components/DataInputPage/DataInput';
 import DataOutputPage from './components/DataOutputPage/DataOutput';
-import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import AdminPanel from './components/AdminPanel/AdminPanel';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token'); // Check if the user is authenticated
+  const isAuthenticated = !!localStorage.getItem('access_token');
 
   return (
     <Router>
       <div className="App">
-        <Switch>
-          {/* Public route (accessible to everyone) */}
-          <Route path="/" exact component={LoginPage} />
-
-          {/* Protected routes (require authentication) */}
-          <PrivateRoute
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route
             path="/data-input"
-            component={DataInputPage}
-            isAuthenticated={isAuthenticated}
+            element={isAuthenticated ? <DataInputPage /> : <Navigate to="/" />}
           />
-          <PrivateRoute
+          <Route
             path="/data-output"
-            component={DataOutputPage}
-            isAuthenticated={isAuthenticated}
+            element={isAuthenticated ? <DataOutputPage /> : <Navigate to="/" />}
           />
-        </Switch>
+          <Route
+            path="/admin-panel"
+            element={isAuthenticated ? <AdminPanel /> : <Navigate to="/" />}
+          />
+        </Routes>
       </div>
     </Router>
   );

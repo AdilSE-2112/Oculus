@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../DataInputPage/DataInput.css";
 import Header from "../Header/Header";
 import colors from "../../themes/palette.json";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Update import
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import {
@@ -65,7 +65,7 @@ const DataInputPage = () => {
   const [patronymic, setPatronymic] = useState("");
   const [inn, setInn] = useState("");
   const [value, setValue] = useState("");
-  const history = useHistory(); // Initialize useHistory
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -98,7 +98,7 @@ const DataInputPage = () => {
   };
   const handleReturnButtonClick = () => {
     // Navigate back to the data-input page
-    history.push("/data-input"); // Update the path based on your route configuration
+    navigate("/data-input"); // Update the path based on your route configuration
   };
 
   return (

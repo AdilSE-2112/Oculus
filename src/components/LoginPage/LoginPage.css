@@ -3,12 +3,27 @@
     font-family: 'Ubuntu';
     src: local('Ubuntu'), url('../../font/Ubuntu/Ubuntu-Regular.ttf') format('truetype');
 }
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the video covers the entire container */
+  }
 .login-page {
     margin-top: 0;
+    /* background-color: #ffffff; */
+    /* background-image: url('../../assets/backgroundImage.PNG'); */
+    background-image: url('../../assets/backgroundLoginV2.jpg');
+    background-color: #000000;
+    background-blend-mode:luminosity;
     background-size: cover; 
     background-position: center; 
     height: 100vh; 
     width: 100vw; 
+    position: relative;
+    /* filter: grayscale(100%); */
     * {
         font-family: 'Ubuntu';
     }
@@ -16,15 +31,7 @@
 
         color: #fff;
     }
-    .video-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: -1;
-      }
+    
     .warning-block {
         position: absolute;
         top: 10px;
@@ -50,6 +57,10 @@
     }
 
     .login-form-block {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         padding: 15px 40px 15px 40px;
         background-color: #0D0F11;
         border-radius: 9px;
@@ -198,7 +209,8 @@
                 border: 1px solid #1b376f;
                 color: #1b376f;
                 &:hover {
-                    background-color: #33B6FF;
+                    background-color: #3c76eb;
+                    color: #060c17;
                 }
             }
             .clear {
