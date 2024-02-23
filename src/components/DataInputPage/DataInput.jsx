@@ -832,7 +832,7 @@ const DataInputPage = () => {
                 handleButtonClick("WhoViewedThisUser");
               }}
             >
-              Кто просматривал данного объекта
+              Кто просматривал данный объекта
             </Button>
             {/* ... Rest of your existing buttons */}
           </Box>
@@ -1231,20 +1231,41 @@ const DataInputPage = () => {
                 fontWeight: "600",
               }}
             >
-              {rows.length > 1 ? (
+              {rows.length > 0 ? (
                 <>
-                  {infoType === "WhoViewedThisUser"
-                    ? `Кто просматривал объект: ${inn}`
-                    : `Результаты запросов пользователя: ${
-                        source === "Досье"
+                  {infoType === "WhoViewedThisUser" && inputType === "IIN" && (
+                    <>Кто просматривал объект: {inn}</>
+                  )}
+                  {infoType === "WhoViewedThisUser" &&
+                    inputType === "FullName" && (
+                      <>
+                        Кто просматривал объект:{" "}
+                        {`${lastName || ""} ${firstName || ""} ${middleName || ""}`}
+                      </>
+                    )}
+                  {infoType === "WhoViewedThisUser" &&
+                    inputType === "Username" && (
+                      <>
+                        Кто просматривал объект:{" "}
+                        {source === "Досье"
                           ? rows[0].user_name
-                          : rows[0].username
-                      }`}
+                          : rows[0].username}
+                      </>
+                    )}
+                  {infoType !== "WhoViewedThisUser" && (
+                    <>
+                      Результаты запросов пользователя:{" "}
+                      {source === "Досье"
+                        ? rows[0].user_name
+                        : rows[0].username}
+                    </>
+                  )}
                 </>
               ) : (
-                "Сделайте запрос чтобы увидеть данные"
+                "Сделайте запрос, чтобы увидеть данные"
               )}
             </Typography>
+
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
