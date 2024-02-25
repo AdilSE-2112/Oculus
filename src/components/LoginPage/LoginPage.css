@@ -1,7 +1,7 @@
 
 @font-face {
-    font-family: 'Ubuntu';
-    src: local('Ubuntu'), url('../../font/Ubuntu/Ubuntu-Regular.ttf') format('truetype');
+    font-family: 'Montserrat';
+    src: url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
 }
 .video-background {
     position: fixed;
@@ -25,7 +25,7 @@
     position: relative;
     /* filter: grayscale(100%); */
     * {
-        font-family: 'Ubuntu';
+        font-family: 'Montserrat', sans-serif;
     }
     .inputText{
 
@@ -127,15 +127,14 @@
                 
                 input {
                     width: 100%;
+                    height: 80%;
                     font-size: 16px;
                     font-weight: 400;
                     padding: 4px;
                     border: none;
                     border-radius: 6px;
                     
-                    &:hover {
-                        border-bottom: 1px solid #636363;
-                    }
+
                     &:focus {
                         outline: none;
                         border-bottom: 1px solid #636363;
@@ -175,6 +174,7 @@
                         cursor: pointer;
                         svg {
                             width: 24px;
+                            color: #fff
                         }
                     }
                 }
@@ -183,18 +183,25 @@
         }
 
         .footer {
+            display: flex;
+
             padding-bottom: 25px;
             padding-top: 25px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 10px;
             justify-content: right;
+            gap: 20px;
 
             button {
-                padding: 10px 30px 10px 30px;
+                padding: 1px 11px;
+                height: 30px;
                 background: none;
+                box-sizing: content-box;
                 font-size: 16px;
                 font-weight: 500;
+                font-style: normal;
+                line-height: 17px;
                 border-radius: 5px;
                 cursor: pointer;
 
@@ -206,10 +213,11 @@
             }
 
             .submit {
+                background: #25488e;
                 border: 1px solid #1b376f;
-                color: #1b376f;
+                color: #ffffff;
                 &:hover {
-                    background-color: #3c76eb;
+                    background-color: #25488e;
                     color: #060c17;
                 }
             }

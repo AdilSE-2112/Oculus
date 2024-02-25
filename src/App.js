@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage/LoginPage';
 import DataInputPage from './components/DataInputPage/DataInput';
@@ -7,7 +7,13 @@ import AdminPanel from './components/AdminPanel/AdminPanel';
 import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check authentication status (e.g., retrieve token from localStorage)
+    const token = localStorage.getItem('access_token');
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
     <Router>

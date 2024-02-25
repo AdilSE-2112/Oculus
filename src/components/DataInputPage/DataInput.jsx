@@ -118,6 +118,10 @@ const DataInputPage = () => {
   const [initialInfoType, setInitialInfoType] = useState("");
   const [initialInputType, setInitialInputType] = useState("");
   const [initialSource, setInitialSource] = useState("");
+  const [searchClicked, setSearchClicked] = useState(false);
+  const [additionalInfo, setAdditionalInfo] = useState(
+    "Сделайте запрос, чтобы увидеть данные"
+  );
 
   // State variable to track if filter has changed
   const [isFilterChanged, setIsFilterChanged] = useState(false);
@@ -215,6 +219,8 @@ const DataInputPage = () => {
   const [rows, setRows] = useState([]);
 
   const handleSearch = async () => {
+    setSearchClicked(true);
+
     setLoading(true);
     if (
       initialInfoType !== infoType ||
@@ -243,7 +249,8 @@ const DataInputPage = () => {
     console.log("Info Type", infoType);
     if (infoType === "WhomThisUserViewed") {
       if (source === "Itap" && inputType === "Username") {
-        apiUrl = `http://192.168.30.24:3220/log/username=${usernameField}`;
+        apiUrl = `http://127.0.0.1:8000/log/username=${usernameField}`;
+        setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
@@ -251,7 +258,8 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Досье" && inputType === "Username") {
-        apiUrl = `http://192.168.30.24:3220/dossie_log/username=${usernameField}`;
+        apiUrl = `http://127.0.0.1:8000/dossie_log/username=${usernameField}`;
+        setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
         // Add the additional fields for "Досье"
         setColumnHeaders([
           { id: "action", label: "Запрос" },
@@ -261,21 +269,27 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:3220/users_log/fullname=${name}`;
+        apiUrl = `http://127.0.0.1:8000/users_log/fullname=${name}`;
+        setAdditionalInfo(`Кого просматривал сотрудник: ${name}`);
+
         setColumnHeaders([
           { id: "time", label: "Время" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Сообщение" },
         ]);
       } else if (source === "Cascade" && inputType === "Username") {
-        apiUrl = `http://192.168.30.24:3220/users_log/username=${usernameField}`;
+        apiUrl = `http://127.0.0.1:8000/users_log/username=${usernameField}`;
+        setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
+
         setColumnHeaders([
           { id: "time", label: "Время" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Запрос" },
         ]);
       } else if (source === "Досье" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:3220/dossie_log/username=${inn}`;
+        apiUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}`;
+        setAdditionalInfo(`Кого просматривал пользователь с ИИН: ${inn}`);
+
         setColumnHeaders([
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
@@ -284,7 +298,9 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:3220/dossie_log/fullname=${name}`;
+        apiUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}`;
+        setAdditionalInfo(`Кого просматривал сотрудник : ${name}`);
+
         setColumnHeaders([
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
@@ -294,7 +310,8 @@ const DataInputPage = () => {
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
         // Construct the URL dynamically for the combination of "Full Name" and "Itap"
-        apiUrl = `http://192.168.30.24:3220/log/fullname=${name}`;
+        apiUrl = `http://127.0.0.1:8000/log/fullname=${name}`;
+        setAdditionalInfo(`Кого просматривал сотрудник : ${name}`);
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
@@ -304,7 +321,9 @@ const DataInputPage = () => {
       }
     } else if (infoType === "WhoViewedThisUser") {
       if (source === "Досье" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:3220/dossie_log/action=${inn}`;
+        apiUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}`;
+        setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
+
         setColumnHeaders([
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
@@ -313,7 +332,9 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:3220/log/search=${name}`;
+        apiUrl = `http://127.0.0.1:8000/log/search=${name}`;
+        setAdditionalInfo(`Кто просматривал объект : ${name}`);
+
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
@@ -321,7 +342,9 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Itap" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:3220/log/search=${inn}`;
+        apiUrl = `http://127.0.0.1:8000/log/search=${inn}`;
+        setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
+
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
@@ -329,14 +352,26 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Cascade" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:3220/users_log/message=${inn}`;
+        apiUrl = `http://127.0.0.1:8000/users_log/message=${inn}`;
+        setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
+
         setColumnHeaders([
           { id: "time", label: "Время" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Запрос" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
-        apiUrl = "http://192.168.30.24:3220/dossie_log/";
+        apiUrl = "http://127.0.0.1:8000/dossie_log/";
+        let fullNameInfo = "";
+
+        if (lastName || firstName || middleName) {
+          if (lastName) fullNameInfo += `${lastName} `;
+          if (firstName) fullNameInfo += `${firstName} `;
+          if (middleName) fullNameInfo += middleName;
+
+          // Set additional info
+          setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
+        }
 
         if (inputType === "FullName") {
           apiUrl += "fio/?";
@@ -357,7 +392,9 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:3220/users_log/message=${name}`;
+        apiUrl = `http://127.0.0.1:8000/users_log/message=${name}`;
+        setAdditionalInfo(`Кто просматривал объект : ${name}`);
+
         setColumnHeaders([
           { id: "time", label: "Время" },
           { id: "username", label: "Пользователь" },
@@ -431,35 +468,35 @@ const DataInputPage = () => {
     let downloadUrl;
     if (infoType === "WhomThisUserViewed") {
       if (inputType === "IIN" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:3220/log/iin=${inn}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/log/iin=${inn}/download_excel`;
       } else if (inputType === "Username" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:3220/log/username=${usernameField}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/log/username=${usernameField}/download_excel`;
       } else if (inputType === "FullName" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:3220/log/fullname=${name}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/log/fullname=${name}/download_excel`;
       } else if (inputType === "Username" && source === "Cascade") {
-        downloadUrl = `http://192.168.30.24:3220/user_log/username=${usernameField}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/user_log/username=${usernameField}/download_excel`;
       } else if (inputType === "FullName" && source === "Cascade") {
-        downloadUrl = `http://192.168.30.24:3220/user_log/fullname=${name}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/user_log/fullname=${name}/download_excel`;
       } else if (inputType === "Username" && source === "Досье") {
-        downloadUrl = `http://192.168.30.24:3220/dossie_log/username=${usernameField}/download`;
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/username=${usernameField}/download`;
       } else if (inputType === "IIN" && source === "Досье") {
-        downloadUrl = `http://192.168.30.24:3220/dossie_log/username=${inn}/download`;
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}/download`;
       } else if (inputType === "FullName" && source === "Досье") {
-        downloadUrl = `http://192.168.30.24:3220/dossie_log/fullname=${name}/download`;
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}/download`;
       }
     } else if (infoType === "WhoViewedThisUser") {
       if (inputType === "IIN" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:3220/log/search=${inn}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/log/search=${inn}/download_excel`;
       } else if (inputType === "FullName" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:3220/log/search=${name}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/log/search=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Досье") {
-        downloadUrl = `http://192.168.30.24:3220/dossie_log/action=${inn}/download`;
+        downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}/download`;
       }
       // else if (inputType === "FullName" && source === "Досье") {
-      //   downloadUrl = `http://192.168.30.24:3220/dossie_log/action=${name}/download`;
+      //   downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${name}/download`;
       // }
       else if (inputType === "FullName" && source === "Досье") {
-        downloadUrl = "http://192.168.30.24:3220/dossie_log/download/";
+        downloadUrl = "http://127.0.0.1:8000/dossie_log/download/";
 
         if (inputType === "FullName") {
           downloadUrl += "fio/?";
@@ -470,9 +507,9 @@ const DataInputPage = () => {
         }
         downloadUrl = downloadUrl.slice(0, -1);
       } else if (inputType === "FullName" && source === "Cascade") {
-        downloadUrl = `http://192.168.30.24:3220/user_log/message=${name}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/user_log/message=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Cascade") {
-        downloadUrl = `http://192.168.30.24:3220/user_log/message=${inn}/download_excel`;
+        downloadUrl = `http://127.0.0.1:8000/user_log/message=${inn}/download_excel`;
       }
     }
     console.log("DOWNLOAD URL:", downloadUrl);
@@ -832,7 +869,7 @@ const DataInputPage = () => {
                 handleButtonClick("WhoViewedThisUser");
               }}
             >
-              Кто просматривал данный объекта
+              Кто просматривал данный объект
             </Button>
             {/* ... Rest of your existing buttons */}
           </Box>
@@ -1226,44 +1263,12 @@ const DataInputPage = () => {
               noWrap
               sx={{
                 marginRight: 1,
-                fontSize: "1.75rem",
+                fontSize: "1.55rem",
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: "600",
               }}
             >
-              {rows.length > 0 ? (
-                <>
-                  {infoType === "WhoViewedThisUser" && inputType === "IIN" && (
-                    <>Кто просматривал объект: {inn}</>
-                  )}
-                  {infoType === "WhoViewedThisUser" &&
-                    inputType === "FullName" && (
-                      <>
-                        Кто просматривал объект:{" "}
-                        {`${lastName || ""} ${firstName || ""} ${middleName || ""}`}
-                      </>
-                    )}
-                  {infoType === "WhoViewedThisUser" &&
-                    inputType === "Username" && (
-                      <>
-                        Кто просматривал объект:{" "}
-                        {source === "Досье"
-                          ? rows[0].user_name
-                          : rows[0].username}
-                      </>
-                    )}
-                  {infoType !== "WhoViewedThisUser" && (
-                    <>
-                      Результаты запросов пользователя:{" "}
-                      {source === "Досье"
-                        ? rows[0].user_name
-                        : rows[0].username}
-                    </>
-                  )}
-                </>
-              ) : (
-                "Сделайте запрос, чтобы увидеть данные"
-              )}
+              {additionalInfo}
             </Typography>
 
             <Table aria-label="simple table">

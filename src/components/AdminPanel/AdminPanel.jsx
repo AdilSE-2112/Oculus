@@ -81,8 +81,9 @@ const AdminPanel = () => {
               alignItems: "center",
               justifyContent: "center",
               bgcolor: "#0D0F11",
-              p: 4,
+              p: 5,
               borderRadius: "10px",
+              
             }}
           >
             <Typography
@@ -95,12 +96,27 @@ const AdminPanel = () => {
                 marginBottom: 2,
               }}
             >
-              Registration Form
+             Форма Регестрации
             </Typography>
+            <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              marginBottom: 2,
+              margin: "auto",
+              maxWidth: "800px", // Adjust the maximum width as needed
+
+
+            }}
+          >
+            {/* First Column */}
+            <Box sx={{ width: "45%" }}>
             <TextField
               required
               id="username"
-              label="Username"
+              label="Имя пользоватля"
               variant="outlined"
               value={formData.username}
               onChange={handleInputChange}
@@ -110,7 +126,7 @@ const AdminPanel = () => {
             <TextField
               required
               id="email"
-              label="Email"
+              label="Почта"
               variant="outlined"
               value={formData.email}
               onChange={handleInputChange}
@@ -120,7 +136,7 @@ const AdminPanel = () => {
             <TextField
               required
               id="password"
-              label="Password"
+              label="Пароль"
               type="password"
               variant="outlined"
               value={formData.password}
@@ -128,12 +144,66 @@ const AdminPanel = () => {
               name="password"
               sx={{ marginBottom: 2, width: "300px" }}
             />
+             <TextField
+              required
+              id="reason"
+              label="Причина доступа"
+              type="access"
+              variant="outlined"
+              value={formData.access}
+              onChange={handleInputChange}
+              name="access"
+              sx={{ marginBottom: 2, width: "300px" }}
+            />
+            </Box>
+            <Box sx={{ width: "45%" }}>
+             <TextField
+              id="firstName"
+              label="Имя"
+              variant="outlined"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              name="firstName"
+              sx={{ marginBottom: 2, width: "300px" }}
+            />
+            <TextField
+              id="lastName"
+              label="Фамилия"
+              variant="outlined"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              name="lastName"
+              sx={{ marginBottom: 2, width: "300px" }}
+            />
+            <TextField
+              id="address"
+              label="Адрес"
+              variant="outlined"
+              value={formData.address}
+              onChange={handleInputChange}
+              name="address"
+              sx={{ marginBottom: 2, width: "300px" }}
+            />
+            <TextField
+              id="phoneNumber"
+              label="Номер телефона"
+              variant="outlined"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              name="phoneNumber"
+              sx={{ marginBottom: 2, width: "300px" }}
+            />
+            </Box>
+            </Box>
             <Button
               variant="contained"
               onClick={handleRegistration}
               sx={{
                 fontFamily: "Montserrat, sans-serif",
                 fontSize: "0.75rem",
+                marginLeft: "-57px",
+
+
               }}
             >
               Register

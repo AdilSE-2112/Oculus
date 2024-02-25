@@ -36,8 +36,10 @@ const Header = () => {
     navigate("/");
   };
   const handleAdminPanelClick = () => {
+    const username = "Zhakhangir_Zhangaliev"; // Replace with your desired username
+
     // Redirect to the Admin Panel page
-    navigate("/admin-panel");
+    navigate("/admin-panel", { state: { username } });
     handleClose();
   };
 
@@ -73,13 +75,13 @@ const Header = () => {
                 alignItems: "flex-start", // Align to the top
                 justifyContent: "flex-start",
                 marginLeft: "-20px", // Adjust the left margin as needed
-                marginTop: "10px", // Adjust the top margin as needed
+                marginTop: "4px", // Adjust the top margin as needed
               }}
             >
               <img
                 src={LogoHeader1}
                 alt="Image Description"
-                style={{ height: "30px", margin: "5px" }}
+                style={{ height: "25px", margin: "5px", }}
               />
             </div>
             <Box
