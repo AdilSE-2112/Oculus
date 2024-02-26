@@ -46,7 +46,7 @@ function Login() {
     try {
       console.log("Trying to login...");
 
-      const response = await axios.post("http://127.0.0.1:8000/login", {
+      const response = await axios.post("http://192.168.30.24:5220/login", {
         username: login,
         password: password,
       }, {
