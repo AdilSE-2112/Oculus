@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "../LoginPage/LoginPage.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 // import backVideoLogin from "../../assets/backVideoLogin.mp4";
 function Login() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [errorDisplay, setErrorDisplay] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, setIsAuthenticated, logout } = useAuth();
   const isAuthenticatedRef = useRef(isAuthenticated);
 
   const [showPassword, setShowPassword] = useState(false);

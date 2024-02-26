@@ -13,9 +13,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LogoHeader1 from "../../assets/logo.svg";
 import { useLocation, useNavigate } from "react-router-dom";
+import {useAuth} from "../AuthContext";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const {setIsAuthenticated} = useAuth();
   const location = useLocation();
   const { username } = location.state || {};
   const navigate = useNavigate(); // Update this line
@@ -31,7 +33,7 @@ const Header = () => {
   const handleLogout = () => {
     // Perform any necessary logout actions (e.g., clearing localStorage)
     localStorage.removeItem("access_token");
-
+    setIsAuthenticated(false);
     // Redirect to the login page
     navigate("/");
   };
@@ -81,7 +83,7 @@ const Header = () => {
               <img
                 src={LogoHeader1}
                 alt="Image Description"
-                style={{ height: "25px", margin: "5px", }}
+                style={{ height: "25px", width: "40px", margin: "5px", }}
               />
             </div>
             <Box
