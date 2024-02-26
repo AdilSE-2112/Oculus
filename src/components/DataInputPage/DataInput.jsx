@@ -249,7 +249,7 @@ const DataInputPage = () => {
     console.log("Info Type", infoType);
     if (infoType === "WhomThisUserViewed") {
       if (source === "Itap" && inputType === "Username") {
-        apiUrl = `http://127.0.0.1:8000/log/username=${usernameField}`;
+        apiUrl = `http://192.168.30.24:5220/log/username=${usernameField}`;
         setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
         setColumnHeaders([
           { id: "date", label: "Дата" },
@@ -258,7 +258,7 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Досье" && inputType === "Username") {
-        apiUrl = `http://127.0.0.1:8000/dossie_log/username=${usernameField}`;
+        apiUrl = `http://192.168.30.24:5220/dossie_log/username=${usernameField}`;
         setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
         // Add the additional fields for "Досье"
         setColumnHeaders([
@@ -269,7 +269,7 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
-        apiUrl = `http://127.0.0.1:8000/users_log/fullname=${name}`;
+        apiUrl = `http://192.168.30.24:5220/users_log/fullname=${name}`;
         setAdditionalInfo(`Кого просматривал сотрудник: ${name}`);
 
         setColumnHeaders([
@@ -278,7 +278,7 @@ const DataInputPage = () => {
           { id: "message", label: "Сообщение" },
         ]);
       } else if (source === "Cascade" && inputType === "Username") {
-        apiUrl = `http://127.0.0.1:8000/users_log/username=${usernameField}`;
+        apiUrl = `http://192.168.30.24:5220/users_log/username=${usernameField}`;
         setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
 
         setColumnHeaders([
@@ -287,7 +287,7 @@ const DataInputPage = () => {
           { id: "message", label: "Запрос" },
         ]);
       } else if (source === "Досье" && inputType === "IIN") {
-        apiUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}`;
+        apiUrl = `http://192.168.30.24:5220/dossie_log/username=${inn}`;
         setAdditionalInfo(`Кого просматривал пользователь с ИИН: ${inn}`);
 
         setColumnHeaders([
@@ -298,7 +298,7 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
-        apiUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}`;
+        apiUrl = `http://192.168.30.24:5220/dossie_log/fullname=${name}`;
         setAdditionalInfo(`Кого просматривал сотрудник : ${name}`);
 
         setColumnHeaders([
@@ -310,7 +310,7 @@ const DataInputPage = () => {
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
         // Construct the URL dynamically for the combination of "Full Name" and "Itap"
-        apiUrl = `http://127.0.0.1:8000/log/fullname=${name}`;
+        apiUrl = `http://192.168.30.24:5220/log/fullname=${name}`;
         setAdditionalInfo(`Кого просматривал сотрудник : ${name}`);
         setColumnHeaders([
           { id: "date", label: "Дата" },
@@ -321,7 +321,7 @@ const DataInputPage = () => {
       }
     } else if (infoType === "WhoViewedThisUser") {
       if (source === "Досье" && inputType === "IIN") {
-        apiUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}`;
+        apiUrl = `http://192.168.30.24:5220/dossie_log/action=${inn}`;
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
@@ -332,7 +332,7 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
-        apiUrl = `http://127.0.0.1:8000/log/search=${name}`;
+        apiUrl = `http://192.168.30.24:5220/log/search=${name}`;
         setAdditionalInfo(`Кто просматривал объект : ${name}`);
 
         setColumnHeaders([
@@ -342,7 +342,7 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Itap" && inputType === "IIN") {
-        apiUrl = `http://127.0.0.1:8000/log/search=${inn}`;
+        apiUrl = `http://192.168.30.24:5220/log/search=${inn}`;
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
@@ -352,7 +352,7 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Cascade" && inputType === "IIN") {
-        apiUrl = `http://127.0.0.1:8000/users_log/message=${inn}`;
+        apiUrl = `http://192.168.30.24:5220/users_log/message=${inn}`;
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
@@ -361,7 +361,7 @@ const DataInputPage = () => {
           { id: "message", label: "Запрос" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
-        apiUrl = "http://127.0.0.1:8000/dossie_log/";
+        apiUrl = "http://192.168.30.24:5220/dossie_log/";
         let fullNameInfo = "";
 
         if (lastName || firstName || middleName) {
@@ -392,7 +392,7 @@ const DataInputPage = () => {
           { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
-        apiUrl = `http://127.0.0.1:8000/users_log/message=${name}`;
+        apiUrl = `http://192.168.30.24:5220/users_log/message=${name}`;
         setAdditionalInfo(`Кто просматривал объект : ${name}`);
 
         setColumnHeaders([
@@ -468,35 +468,35 @@ const DataInputPage = () => {
     let downloadUrl;
     if (infoType === "WhomThisUserViewed") {
       if (inputType === "IIN" && source === "Itap") {
-        downloadUrl = `http://127.0.0.1:8000/log/iin=${inn}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/log/iin=${inn}/download_excel`;
       } else if (inputType === "Username" && source === "Itap") {
-        downloadUrl = `http://127.0.0.1:8000/log/username=${usernameField}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/log/username=${usernameField}/download_excel`;
       } else if (inputType === "FullName" && source === "Itap") {
-        downloadUrl = `http://127.0.0.1:8000/log/fullname=${name}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/log/fullname=${name}/download_excel`;
       } else if (inputType === "Username" && source === "Cascade") {
-        downloadUrl = `http://127.0.0.1:8000/user_log/username=${usernameField}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/user_log/username=${usernameField}/download_excel`;
       } else if (inputType === "FullName" && source === "Cascade") {
-        downloadUrl = `http://127.0.0.1:8000/user_log/fullname=${name}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/user_log/fullname=${name}/download_excel`;
       } else if (inputType === "Username" && source === "Досье") {
-        downloadUrl = `http://127.0.0.1:8000/dossie_log/username=${usernameField}/download`;
+        downloadUrl = `http://192.168.30.24:5220/dossie_log/username=${usernameField}/download`;
       } else if (inputType === "IIN" && source === "Досье") {
-        downloadUrl = `http://127.0.0.1:8000/dossie_log/username=${inn}/download`;
+        downloadUrl = `http://192.168.30.24:5220/dossie_log/username=${inn}/download`;
       } else if (inputType === "FullName" && source === "Досье") {
-        downloadUrl = `http://127.0.0.1:8000/dossie_log/fullname=${name}/download`;
+        downloadUrl = `http://192.168.30.24:5220/dossie_log/fullname=${name}/download`;
       }
     } else if (infoType === "WhoViewedThisUser") {
       if (inputType === "IIN" && source === "Itap") {
-        downloadUrl = `http://127.0.0.1:8000/log/search=${inn}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/log/search=${inn}/download_excel`;
       } else if (inputType === "FullName" && source === "Itap") {
-        downloadUrl = `http://127.0.0.1:8000/log/search=${name}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/log/search=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Досье") {
-        downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${inn}/download`;
+        downloadUrl = `http://192.168.30.24:5220/dossie_log/action=${inn}/download`;
       }
       // else if (inputType === "FullName" && source === "Досье") {
-      //   downloadUrl = `http://127.0.0.1:8000/dossie_log/action=${name}/download`;
+      //   downloadUrl = `http://192.168.30.24:5220/dossie_log/action=${name}/download`;
       // }
       else if (inputType === "FullName" && source === "Досье") {
-        downloadUrl = "http://127.0.0.1:8000/dossie_log/download/";
+        downloadUrl = "http://192.168.30.24:5220/dossie_log/download/";
 
         if (inputType === "FullName") {
           downloadUrl += "fio/?";
@@ -507,9 +507,9 @@ const DataInputPage = () => {
         }
         downloadUrl = downloadUrl.slice(0, -1);
       } else if (inputType === "FullName" && source === "Cascade") {
-        downloadUrl = `http://127.0.0.1:8000/user_log/message=${name}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/user_log/message=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Cascade") {
-        downloadUrl = `http://127.0.0.1:8000/user_log/message=${inn}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/user_log/message=${inn}/download_excel`;
       }
     }
     console.log("DOWNLOAD URL:", downloadUrl);
