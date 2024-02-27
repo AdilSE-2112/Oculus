@@ -10,6 +10,11 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Loading from "../../assets/loading.gif";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import CustomTablePagination from "../Pagination/CustomTablePagination";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+
 import {
   Box,
   Button,
@@ -147,11 +152,12 @@ const DataInputPage = () => {
     setFullName(e.target.value);
   };
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (newPage) => {
+    console.log(newPage, typeof newPage);
     setPage(newPage);
   };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const handleChangeRowsPerPage = (_rowsPerPage) => {
+    setRowsPerPage(_rowsPerPage);
     setPage(0);
   };
 
@@ -555,7 +561,7 @@ const DataInputPage = () => {
               <TextField
                 required
                 id="outlined-required"
-                label="ИНН"
+                label="ИИН"
                 defaultValue=""
                 margin="normal"
                 variant="outlined"
@@ -588,6 +594,11 @@ const DataInputPage = () => {
                       borderColor: "#fff !important",
                     },
                   },
+                  endAdornment: (
+                    <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
+                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                    </InputAdornment>
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -638,6 +649,11 @@ const DataInputPage = () => {
                 notchedOutline: {
                   borderColor: colors.borderColor,
                 },
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
+                    <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                  </InputAdornment>
+                ),
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -649,6 +665,7 @@ const DataInputPage = () => {
                   color: "#fff",
                   fontSize: "14px",
                 },
+                
               }}
             />
           </ThemeProvider>
@@ -681,6 +698,11 @@ const DataInputPage = () => {
                       notchedOutline: {
                         borderColor: colors.borderColor,
                       },
+                      endAdornment: (
+                        <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
+                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                        </InputAdornment>
+                      ),
                     }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
@@ -715,6 +737,11 @@ const DataInputPage = () => {
                       notchedOutline: {
                         borderColor: colors.borderColor,
                       },
+                      endAdornment: (
+                        <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
+                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                        </InputAdornment>
+                      ),
                     }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
@@ -749,6 +776,11 @@ const DataInputPage = () => {
                       notchedOutline: {
                         borderColor: colors.borderColor,
                       },
+                      endAdornment: (
+                        <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
+                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                        </InputAdornment>
+                      ),
                     }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
@@ -785,6 +817,11 @@ const DataInputPage = () => {
                     notchedOutline: {
                       borderColor: colors.borderColor,
                     },
+                    endAdornment: (
+                      <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
+                        <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                      </InputAdornment>
+                    ),
                   }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
@@ -891,7 +928,7 @@ const DataInputPage = () => {
                     handleButtonClick("IIN");
                   }}
                 >
-                  ИНН
+                  ИИН
                 </Button>
 
                 <Button
@@ -1341,7 +1378,7 @@ const DataInputPage = () => {
             </Table>
 
             <ThemeProvider theme={darkTheme}>
-              <TablePagination
+              {/* <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
                 count={rows.length}
@@ -1408,6 +1445,14 @@ const DataInputPage = () => {
                   ),
                   MenuItem: (props) => <MuiMenuItem {...props} />,
                 }}
+              /> */}
+
+              <CustomTablePagination
+                rows={rows}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
               />
             </ThemeProvider>
           </TableContainer>
