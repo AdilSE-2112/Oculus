@@ -20,14 +20,9 @@ function Login() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    console.log(
-      "useEffect isAuthenticatedRef.current:",
-      isAuthenticatedRef.current
-    );
-    console.log("useEffect isAuthenticated:", isAuthenticated);
+
 
     if (isAuthenticatedRef.current) {
-      console.log("Redirecting to Data Input page...");
       navigate("/data-input", { state: { username: login } });
     }
   }, [isAuthenticatedRef.current, login, navigate]);
@@ -44,7 +39,6 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      console.log("Trying to login...");
 
       const response = await axios.post("http://192.168.30.24:5220/login", {
         username: login,
@@ -53,26 +47,20 @@ function Login() {
         maxRedirects: 0,
       });
 
-      console.log("Login response:", response);
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
 
         setIsAuthenticated(true);
 
-        console.log("isAuthenticated:", isAuthenticated);
-        console.log("Redirecting to Data Input page...");
         navigate("/data-input", { state: { username: login } });
       } else {
         throw new Error("Login failed");
       }
     } catch (error) {
-      console.error("Login failed:", error.message);
-      console.log(error);
       setErrorDisplay(true);
       setErrorMessage("Incorrect login or password");
     } finally {
-      console.log("Login attempt completed.");
     }
   };
 
@@ -119,7 +107,7 @@ function Login() {
               <div className="login-container">
                 <div className="icon">
                   <svg
-                    fill="#FFF"
+                    fill="#808080"
                     viewBox="-2.4 -2.4 28.80 28.80"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -128,7 +116,7 @@ function Login() {
                       id="SVGRepo_tracerCarrier"
                       stroke-linecap="round"
                       stroke-linejoin="round"
-                      stroke="#FFF"
+                      stroke="#808080"
                       stroke-width="0.096"
                     ></g>
                     <g id="SVGRepo_iconCarrier">
@@ -166,17 +154,17 @@ function Login() {
                       {" "}
                       <path
                         d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z"
-                        stroke="#FFF"
+                        stroke="#808080"
                         stroke-width="1.5"
                       ></path>{" "}
                       <path
                         d="M11 12C11 13.3807 9.88071 14.5 8.5 14.5C7.11929 14.5 6 13.3807 6 12C6 10.6193 7.11929 9.5 8.5 9.5C9.88071 9.5 11 10.6193 11 12Z"
-                        stroke="#FFF"
+                        stroke="#808080"
                         stroke-width="1.5"
                       ></path>{" "}
                       <path
                         d="M11 12H15.5M15.5 12H17C17.5523 12 18 12.4477 18 13V14M15.5 12V13.5"
-                        stroke="#FFF"
+                        stroke="#808080"
                         stroke-width="1.5"
                         stroke-linecap="round"
                       ></path>{" "}

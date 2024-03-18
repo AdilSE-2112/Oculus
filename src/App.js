@@ -26,7 +26,7 @@ const App = () => {
             element={
               <PrivateRoute
                 element={<DataInputPage />}
-                redirectTo="/" // Redirect to "/" if not authenticated
+                redirectTo="/" 
               />
             } />
           <Route 
@@ -34,7 +34,7 @@ const App = () => {
             element={
               <PrivateRoute
                 element={<DataOutputPage />}
-                redirectTo="/" // Redirect to "/" if not authenticated
+                redirectTo="/" 
               />
             } />
           <Route 
@@ -42,7 +42,7 @@ const App = () => {
             element={
               <PrivateRoute
                 element={<AdminPanel />}
-                redirectTo="/" // Redirect to "/" if not authenticated
+                redirectTo="/" 
               />
             } />
           </Routes>

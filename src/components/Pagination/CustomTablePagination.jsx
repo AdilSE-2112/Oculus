@@ -18,9 +18,9 @@ const CustomTablePagination = ({
   };
 
   const handleChangeRowsPerPage = (event) => {
-    console.log('event:', event); // Log the event object for debugging
+    console.log('event:', event); 
     const newRowsPerPage = event?.target?.value ? +event.target.value : 5;
-    console.log('newRowsPerPage:', newRowsPerPage); // Log the new rows per page value for debugging
+    console.log('newRowsPerPage:', newRowsPerPage); 
     onChangeRowsPerPage(newRowsPerPage);
   };
 

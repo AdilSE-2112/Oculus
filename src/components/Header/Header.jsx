@@ -13,6 +13,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LogoHeader1 from "../../assets/logo.svg";
+import LogoHeader2 from "../../assets/LOGOL.png"
 import { useLocation, useNavigate } from "react-router-dom";
 import {useAuth} from "../AuthContext";
 
@@ -21,7 +22,7 @@ const Header = () => {
   const {setIsAuthenticated} = useAuth();
   const location = useLocation();
   const { username } = location.state || {};
-  const navigate = useNavigate(); // Update this line
+  const navigate = useNavigate(); 
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,16 +33,14 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    // Perform any necessary logout actions (e.g., clearing localStorage)
     localStorage.removeItem("access_token");
     setIsAuthenticated(false);
     // Redirect to the login page
     navigate("/");
   };
   const handleAdminPanelClick = () => {
-    const username = "Zhakhangir_Zhangaliev"; // Replace with your desired username
+    const username = "Zhakhangir_Zhangaliev"; 
 
-    // Redirect to the Admin Panel page
     navigate("/admin-panel", { state: { username } });
     handleClose();
   };
@@ -75,16 +74,16 @@ const Header = () => {
             <div
               style={{
                 display: "flex",
-                alignItems: "flex-start", // Align to the top
+                alignItems: "flex-start", 
                 justifyContent: "flex-start",
-                marginLeft: "-20px", // Adjust the left margin as needed
-                marginTop: "4px", // Adjust the top margin as needed
+                marginLeft: "-20px", 
+                marginTop: "4px", 
               }}
             >
               <img
-                src={LogoHeader1}
+                src={LogoHeader2}
                 alt="Image Description"
-                style={{ height: "25px", width: "40px", margin: "5px", }}
+                style={{ height: "35px", width: "70px", margin: "5px", }}
               />
             </div>
             <Box

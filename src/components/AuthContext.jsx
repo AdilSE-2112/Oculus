@@ -13,12 +13,10 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const login = () => {
-    // Perform login logic and set isAuthenticated to true
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    // Perform logout logic and set isAuthenticated to false
     setIsAuthenticated(false);
   };
 

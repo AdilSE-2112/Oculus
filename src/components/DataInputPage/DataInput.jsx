@@ -4,8 +4,6 @@ import Header from "../Header/Header";
 import colors from "../../themes/palette.json";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import Menu from "@mui/material/Menu";
-import { MenuItem as MuiMenuItem } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Loading from "../../assets/loading.gif";
 import Snackbar from "@mui/material/Snackbar";
@@ -13,7 +11,7 @@ import MuiAlert from "@mui/material/Alert";
 import CustomTablePagination from "../Pagination/CustomTablePagination";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
+import EventIcon from "@mui/icons-material/Event";
 
 import {
   Box,
@@ -33,6 +31,7 @@ import {
   Paper,
   Typography,
   TablePagination,
+  IconButton,
 } from "@mui/material";
 
 function createData(
@@ -66,9 +65,9 @@ function createData(
 }
 
 const DataInputPage = () => {
-  const [downloadLoading, setDownloadLoading] = useState(false); // Add this line
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
-  const [loggedInUser, setLoggedInUser] = useState(""); // Set the logged-in username
+  const [loggedInUser, setLoggedInUser] = useState("");
 
   const defaultColumnHeaders = [
     { id: "date", label: "Дата" },
@@ -78,7 +77,7 @@ const DataInputPage = () => {
 
   const defaultRow = createData(
     0,
-    "Пусто", // Replace with an actual date
+    "Пусто",
     "Пусто",
     "Пусто",
     "Пусто",
@@ -115,11 +114,23 @@ const DataInputPage = () => {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [downloadAvailable, setDownloadAvailable] = useState(false);
+
+  const [searchTypeLastName, setSearchTypeLastName] = useState("startingWith");
+  const [searchTypeFirstName, setSearchTypeFirstName] =
+    useState("startingWith");
+  const [searchTypeMiddleName, setSearchTypeMiddleName] =
+    useState("startingWith");
+  const [searchTypeFullName, setSearchTypeFullName] = useState("startingWith");
+  const [searchTypeUserName, setSearchTypeUserName] = useState("startingWith");
+
+  const [showFilters, setShowFilters] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [fullName, setFullName] = useState("");
-  // State variables to track initial values
   const [initialInfoType, setInitialInfoType] = useState("");
   const [initialInputType, setInitialInputType] = useState("");
   const [initialSource, setInitialSource] = useState("");
@@ -128,30 +139,29 @@ const DataInputPage = () => {
     "Сделайте запрос, чтобы увидеть данные"
   );
 
-  // State variable to track if filter has changed
   const [isFilterChanged, setIsFilterChanged] = useState(false);
 
   useEffect(() => {
-    // Set initial values when component mounts
     setInitialInfoType(infoType);
     setInitialInputType(inputType);
     setInitialSource(source);
   }, [infoType, inputType, source]);
 
   const handleSubmit = () => {
-    // Check if source is selected
     if (!source) {
       setErrorMessage("Please choose a source");
       return;
     }
-
-    // ... (your existing handleSubmit logic)
   };
 
   const handleNameChangeF = (e) => {
     setFullName(e.target.value);
   };
-
+  const handleToggleFilters = () => {
+    setShowFilters(!showFilters);
+    setStartDate(null);
+    setEndDate(null);
+  };
   const handleChangePage = (newPage) => {
     console.log(newPage, typeof newPage);
     setPage(newPage);
@@ -217,16 +227,15 @@ const DataInputPage = () => {
     }
   };
   const handleLogin = (username) => {
-    // Perform your login logic here
-    // After successful login, set the username in the state
     setLoggedInUser(username);
   };
 
   const [rows, setRows] = useState([]);
-
+  
   const handleSearch = async () => {
     setSearchClicked(true);
-
+    console.log('Selected Start Date:', startDate);
+    console.log('Selected End Date:', endDate);
     setLoading(true);
     if (
       initialInfoType !== infoType ||
@@ -242,7 +251,6 @@ const DataInputPage = () => {
     const accessToken = localStorage.getItem("access_token");
 
     if (!accessToken) {
-      // Handle the case where the token is not available (user not logged in)
       handleError("User not logged in");
       setLoading(false);
       return;
@@ -255,8 +263,16 @@ const DataInputPage = () => {
     console.log("Info Type", infoType);
     if (infoType === "WhomThisUserViewed") {
       if (source === "Itap" && inputType === "Username") {
-        apiUrl = `http://192.168.30.24:5220/log/username=${usernameField}`;
-        setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
+        let additionalInfo;
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/log/username_partial=${usernameField}`;
+          additionalInfo = `Кого просматривал пользователь (начинается с): ${usernameField}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/log/username=${usernameField}`;
+          additionalInfo = `Кого просматривал пользователь (в точности): ${usernameField}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
@@ -264,15 +280,23 @@ const DataInputPage = () => {
           { id: "limit_", label: "Лимит" },
         ]);
       } else if (source === "Досье" && inputType === "Username") {
-        apiUrl = `http://192.168.30.24:5220/dossie_log/username=${usernameField}`;
-        setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
-        // Add the additional fields for "Досье"
+        let additionalInfo;
+
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/dossie_log/username_partial=${usernameField}`;
+          additionalInfo = `Кого просматривал пользователь (начинается с): ${usernameField}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/dossie_log/username=${usernameField}`;
+          additionalInfo = `Кого просматривал пользователь (в точности): ${usernameField}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
         setColumnHeaders([
+          { id: "log_time", label: "Время" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя Пользователя" },
-          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
         apiUrl = `http://192.168.30.24:5220/users_log/fullname=${name}`;
@@ -284,8 +308,16 @@ const DataInputPage = () => {
           { id: "message", label: "Сообщение" },
         ]);
       } else if (source === "Cascade" && inputType === "Username") {
-        apiUrl = `http://192.168.30.24:5220/users_log/username=${usernameField}`;
-        setAdditionalInfo(`Кого просматривал пользователь: ${usernameField}`);
+        let additionalInfo;
+
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/users_log/username_partial=${usernameField}`;
+          additionalInfo = `Кого просматривал пользователь (начинается с): ${usernameField}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/users_log/username=${usernameField}`;
+          additionalInfo = `Кого просматривал пользователь (в точности): ${usernameField}`;
+        }
+        setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
           { id: "time", label: "Время" },
@@ -297,27 +329,42 @@ const DataInputPage = () => {
         setAdditionalInfo(`Кого просматривал пользователь с ИИН: ${inn}`);
 
         setColumnHeaders([
+          { id: "log_time", label: "Время" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя пользователя" },
-          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:5220/dossie_log/fullname=${name}`;
-        setAdditionalInfo(`Кого просматривал сотрудник : ${name}`);
+        let additionalInfo;
+
+        if (searchTypeFullName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/dossie_log/fullname=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (начинается с): ${name}`;
+        } else if (searchTypeFullName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/dossie_log/fullname_full=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (в точности): ${name}`;
+        }
+        setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
+          { id: "log_time", label: "Время" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя пользователя" },
-          { id: "log_time", label: "Время" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
-        // Construct the URL dynamically for the combination of "Full Name" and "Itap"
-        apiUrl = `http://192.168.30.24:5220/log/fullname=${name}`;
-        setAdditionalInfo(`Кого просматривал сотрудник : ${name}`);
+        let additionalInfo;
+        if (searchTypeFullName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/log/fullname=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (начинается с): ${name}`;
+        } else if (searchTypeFullName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/log/fullname_full=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (в точности): ${name}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
@@ -331,24 +378,26 @@ const DataInputPage = () => {
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
+          { id: "log_time", label: "Время" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя Полььзователя" },
-          { id: "log_time", label: "Время" },
         ]);
-      } else if (source === "Itap" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:5220/log/search=${name}`;
-        setAdditionalInfo(`Кто просматривал объект : ${name}`);
+      }
+      // else if (source === "Itap" && inputType === "FullName") {
+      //   apiUrl = `http://192.168.30.24:5220/log/search=${name}`;
+      //   setAdditionalInfo(`Кто просматривал объект : ${name}`);
 
-        setColumnHeaders([
-          { id: "date", label: "Дата" },
-          { id: "username", label: "Пользователь" },
-          { id: "request_body", label: "Запрос" },
-          { id: "limit_", label: "Лимит" },
-        ]);
-      } else if (source === "Itap" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:5220/log/search=${inn}`;
+      //   setColumnHeaders([
+      //     { id: "date", label: "Дата" },
+      //     { id: "username", label: "Пользователь" },
+      //     { id: "request_body", label: "Запрос" },
+      //     { id: "limit_", label: "Лимит" },
+      //   ]);
+      // }
+      else if (source === "Itap" && inputType === "IIN") {
+        apiUrl = `http://192.168.30.24:5220/log/iin=${inn}`;
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
@@ -375,7 +424,100 @@ const DataInputPage = () => {
           if (firstName) fullNameInfo += `${firstName} `;
           if (middleName) fullNameInfo += middleName;
 
-          // Set additional info
+          setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
+        }
+
+        if (inputType === "FullName") {
+          apiUrl += "fio/?";
+
+          if (searchTypeLastName === "startingWith") {
+            if (lastName) apiUrl += `lname=${lastName}&`;
+          } else if (searchTypeLastName === "exactly") {
+            if (lastName) apiUrl += `full_lname=${lastName}&`;
+          }
+          if (searchTypeFirstName === "startingWith") {
+            if (firstName) apiUrl += `fname=${firstName}&`;
+          } else if (searchTypeFirstName === "exactly") {
+            if (firstName) apiUrl += `full_fname=${firstName}&`;
+          }
+          if (searchTypeMiddleName === "startingWith") {
+            if (middleName) apiUrl += `mname=${middleName}&`;
+          } else if (searchTypeMiddleName === "exactly") {
+            if (middleName) apiUrl += `full_mname=${middleName}&`;
+          }
+        }
+
+        apiUrl = apiUrl.slice(0, -1);
+
+        setColumnHeaders([
+          { id: "log_time", label: "Время" },
+          { id: "action", label: "Запрос" },
+          { id: "fname", label: "Имя" },
+          { id: "lname", label: "Фамилия" },
+          { id: "user_name", label: "Имя пользователя" },
+        ]);
+      } else if (source === "Itap" && inputType === "FullName") {
+        apiUrl = "http://192.168.30.24:5220/log/search";
+        let fullNameInfo = "";
+
+        if (lastName || firstName || middleName) {
+          if (lastName) fullNameInfo += `${lastName} `;
+          if (firstName) fullNameInfo += `${firstName} `;
+          if (middleName) fullNameInfo += middleName;
+
+          setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
+        }
+
+        if (inputType === "FullName") {
+          apiUrl += "_fio/?";
+          if (searchTypeLastName === "startingWith") {
+            if (lastName) apiUrl += `lname=${lastName}&`;
+          } else if (searchTypeLastName === "exactly") {
+            if (lastName) apiUrl += `full_lname=${lastName}&`;
+          }
+
+          if (searchTypeFirstName === "startingWith") {
+            if (firstName) apiUrl += `fname=${firstName}&`;
+          } else if (searchTypeFirstName === "exactly") {
+            if (firstName) apiUrl += `full_fname=${firstName}&`;
+          }
+
+          if (searchTypeMiddleName === "startingWith") {
+            if (middleName) apiUrl += `mname=${middleName}&`;
+          } else if (searchTypeMiddleName === "exactly") {
+            if (middleName) apiUrl += `full_mname=${middleName}&`;
+          }
+        }
+
+        apiUrl = apiUrl.slice(0, -1);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "request_body", label: "Запрос" },
+          { id: "limit_", label: "Лимит" },
+        ]);
+      }
+
+      // else if (source === "Cascade" && inputType === "FullName") {
+      //   apiUrl = `http://192.168.30.24:5220/users_log/message=${name}`;
+      //   setAdditionalInfo(`Кто просматривал объект : ${name}`);
+
+      //   setColumnHeaders([
+      //     { id: "time", label: "Время" },
+      //     { id: "username", label: "Пользователь" },
+      //     { id: "message", label: "Запрос" },
+      //   ]);
+      // }
+      else if (source === "Cascade" && inputType === "FullName") {
+        apiUrl = "http://192.168.30.24:5220/users_log/message/";
+        let fullNameInfo = "";
+
+        if (lastName || firstName || middleName) {
+          if (lastName) fullNameInfo += `${lastName} `;
+          if (firstName) fullNameInfo += `${firstName} `;
+          if (middleName) fullNameInfo += middleName;
+
           setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
         }
 
@@ -387,19 +529,7 @@ const DataInputPage = () => {
           if (middleName) apiUrl += `mname=${middleName}&`;
         }
 
-        // Remove the trailing "&" if there are parameters
         apiUrl = apiUrl.slice(0, -1);
-
-        setColumnHeaders([
-          { id: "action", label: "Запрос" },
-          { id: "fname", label: "Имя" },
-          { id: "lname", label: "Фамилия" },
-          { id: "user_name", label: "Имя пользователя" },
-          { id: "log_time", label: "Время" },
-        ]);
-      } else if (source === "Cascade" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:5220/users_log/message=${name}`;
-        setAdditionalInfo(`Кто просматривал объект : ${name}`);
 
         setColumnHeaders([
           { id: "time", label: "Время" },
@@ -407,11 +537,57 @@ const DataInputPage = () => {
           { id: "message", label: "Запрос" },
         ]);
       }
+
+      // else if (source === "Itap" && inputType === "FullName") {
+      //   apiUrl = "http://192.168.30.24:5220/log/search/";
+      //   let fullNameInfo = "";
+
+      //   if (lastName || firstName || middleName) {
+      //     if (lastName) fullNameInfo += `${lastName} `;
+      //     if (firstName) fullNameInfo += `${firstName} `;
+      //     if (middleName) fullNameInfo += middleName;
+
+      //     setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
+      //   }
+
+      //   if (inputType === "FullName") {
+      //     apiUrl += "fio/?";
+
+      //     if (lastName) apiUrl += `lname=${lastName}&`;
+      //     if (firstName) apiUrl += `fname=${firstName}&`;
+      //     if (middleName) apiUrl += `mname=${middleName}&`;
+      //   }
+
+      //   apiUrl = apiUrl.slice(0, -1);
+
+      //   setColumnHeaders([
+      //     { id: "date", label: "Дата" },
+      //     { id: "username", label: "Пользователь" },
+      //     { id: "request_body", label: "Запрос" },
+      //     { id: "limit_", label: "Лимит" },
+      //   ]);
+      // }
     }
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
       setLoading(false);
       return;
+    }
+    if (startDate || endDate) {
+      apiUrl += '/?';
+    
+      if (startDate) {
+        apiUrl += `start_date=${startDate}`;
+    
+        // Append '&' only if both start_date and end_date exist
+        if (endDate) {
+          apiUrl += '&';
+        }
+      }
+    
+      if (endDate) {
+        apiUrl += `end_date=${endDate}`;
+      }
     }
 
     console.log("API URL:", apiUrl);
@@ -425,7 +601,6 @@ const DataInputPage = () => {
           return;
         }
 
-        // Update the rows state with the retrieved data
         setRows(
           (searchData || []).map((data, index) =>
             createData(
@@ -449,19 +624,17 @@ const DataInputPage = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
         if (error.response && error.response.status === 404) {
-          // Handle the 404 error by displaying a specific error message
           handleError(
             "Данные не найдены. Пожалуйста, проверьте введенные данные и повторите попытку."
           );
           setRows([]);
         } else {
-          // Handle other errors
           handleError("При извлечении данных произошла ошибка.");
           setRows([]);
         }
       })
       .finally(() => {
-        setLoading(false); // Set loading to false when data retrieval is complete
+        setLoading(false);
       });
   };
 
@@ -494,7 +667,38 @@ const DataInputPage = () => {
       if (inputType === "IIN" && source === "Itap") {
         downloadUrl = `http://192.168.30.24:5220/log/search=${inn}/download_excel`;
       } else if (inputType === "FullName" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:5220/log/search=${name}/download_excel`;
+        downloadUrl = "http://192.168.30.24:5220/log/download/search";
+        let fullNameInfo = "";
+        if (lastName || firstName || middleName) {
+          if (lastName) fullNameInfo += `${lastName} `;
+          if (firstName) fullNameInfo += `${firstName} `;
+          if (middleName) fullNameInfo += middleName;
+
+          setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
+        }
+        if (inputType === "FullName") {
+          downloadUrl += "_fio/?";
+
+          if (searchTypeLastName === "startingWith") {
+            if (lastName) downloadUrl += `lname=${lastName}&`;
+          } else if (searchTypeLastName === "exactly") {
+            if (lastName) downloadUrl += `full_lname=${lastName}&`;
+          }
+
+          if (searchTypeFirstName === "startingWith") {
+            if (firstName) downloadUrl += `fname=${firstName}&`;
+          } else if (searchTypeFirstName === "exactly") {
+            if (firstName) downloadUrl += `full_fname=${firstName}&`;
+          }
+
+          if (searchTypeMiddleName === "startingWith") {
+            if (middleName) downloadUrl += `mname=${middleName}&`;
+          } else if (searchTypeMiddleName === "exactly") {
+            if (middleName) downloadUrl += `full_mname=${middleName}&`;
+          }
+        }
+
+        downloadUrl = downloadUrl.slice(0, -1);
       } else if (inputType === "IIN" && source === "Досье") {
         downloadUrl = `http://192.168.30.24:5220/dossie_log/action=${inn}/download`;
       }
@@ -507,15 +711,46 @@ const DataInputPage = () => {
         if (inputType === "FullName") {
           downloadUrl += "fio/?";
 
-          if (lastName) downloadUrl += `lname=${lastName}&`;
-          if (firstName) downloadUrl += `fname=${firstName}&`;
-          if (middleName) downloadUrl += `mname=${middleName}&`;
+          if (searchTypeLastName === "startingWith") {
+            if (lastName) downloadUrl += `lname=${lastName}&`;
+          } else if (searchTypeLastName === "exactly") {
+            if (lastName) downloadUrl += `full_lname=${lastName}&`;
+          }
+
+          if (searchTypeFirstName === "startingWith") {
+            if (firstName) downloadUrl += `fname=${firstName}&`;
+          } else if (searchTypeFirstName === "exactly") {
+            if (firstName) downloadUrl += `full_fname=${firstName}&`;
+          }
+
+          if (searchTypeMiddleName === "startingWith") {
+            if (middleName) downloadUrl += `mname=${middleName}&`;
+          } else if (searchTypeMiddleName === "exactly") {
+            if (middleName) downloadUrl += `full_mname=${middleName}&`;
+          }
         }
         downloadUrl = downloadUrl.slice(0, -1);
       } else if (inputType === "FullName" && source === "Cascade") {
         downloadUrl = `http://192.168.30.24:5220/user_log/message=${name}/download_excel`;
       } else if (inputType === "IIN" && source === "Cascade") {
         downloadUrl = `http://192.168.30.24:5220/user_log/message=${inn}/download_excel`;
+      }
+
+    }
+    if (startDate || endDate) {
+      downloadUrl += '/?';
+    
+      if (startDate) {
+        downloadUrl += `start_date=${startDate}`;
+    
+        // Append '&' only if both start_date and end_date exist
+        if (endDate) {
+          downloadUrl += '&';
+        }
+      }
+    
+      if (endDate) {
+        downloadUrl += `end_date=${endDate}`;
       }
     }
     console.log("DOWNLOAD URL:", downloadUrl);
@@ -547,8 +782,6 @@ const DataInputPage = () => {
   };
 
   const getExtension = (contentType) => {
-    // Replace this with your logic to determine the file extension based on content type
-    // Example: Assuming content type is 'application/pdf', return 'pdf'
     return contentType.split("/")[1];
   };
 
@@ -579,7 +812,7 @@ const DataInputPage = () => {
                     color: "#fff",
                     fontSize: "14px",
                     height: "45px",
-                    width: "300px",
+                    width: "629px",
                     "&:hover": {
                       "& fieldset": {
                         borderColor: "#fff !important",
@@ -595,8 +828,8 @@ const DataInputPage = () => {
                     },
                   },
                   endAdornment: (
-                    <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
-                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
+                    <InputAdornment position="end" sx={{ marginRight: "-5px" }}>
+                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
                     </InputAdornment>
                   ),
                 }}
@@ -628,46 +861,74 @@ const DataInputPage = () => {
       case "Username":
         return (
           <ThemeProvider theme={darkTheme}>
-            <TextField
-              required
-              id="outlined-username"
-              label="Username"
-              defaultValue=""
-              margin="normal"
-              variant="outlined"
-              value={usernameField}
-              onChange={handleUsernameFieldChange}
-              InputLabelProps={{
-                style: {
+            <Box display="flex" alignItems="center" gap="10px">
+              <Select
+                value={searchTypeUserName}
+                onChange={(e) => setSearchTypeUserName(e.target.value)}
+                sx={{
+                  fontSize: "14px",
                   fontFamily: "Montserrat, sans-serif",
                   color: "#fff",
-                  fontSize: "14px",
-                },
-              }}
-              InputProps={{
-                style: { color: "#fff", height: "45px", width: "300px" },
-                notchedOutline: {
-                  borderColor: colors.borderColor,
-                },
-                endAdornment: (
-                  <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
-                    <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#fff",
+                  height: "45px",
+                  width: "180px",
+                  marginTop: "7px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
                   },
-                },
-                "& .MuiOutlinedInput-input": {
-                  color: "#fff",
-                  fontSize: "14px",
-                },
-                
-              }}
-            />
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "& .MuiSelect-icon": {
+                    color: "#fff !important",
+                  },
+                }}
+              >
+                <MenuItem value="startingWith">Начинается с</MenuItem>
+                <MenuItem value="exactly">В точности с</MenuItem>
+              </Select>
+              <TextField
+                required
+                id="outlined-username"
+                label="Username"
+                defaultValue=""
+                margin="normal"
+                variant="outlined"
+                value={usernameField}
+                onChange={handleUsernameFieldChange}
+                InputLabelProps={{
+                  style: {
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    fontSize: "14px",
+                  },
+                }}
+                InputProps={{
+                  style: { color: "#fff", height: "45px", width: "440px" },
+                  notchedOutline: {
+                    borderColor: colors.borderColor,
+                  },
+                  endAdornment: (
+                    <InputAdornment position="end" sx={{ marginRight: "-5px" }}>
+                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#fff",
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#fff",
+                    fontSize: "14px",
+                  },
+                }}
+              />
+            </Box>
           </ThemeProvider>
         );
 
@@ -677,164 +938,325 @@ const DataInputPage = () => {
             <>
               {infoType === "WhoViewedThisUser" ? (
                 <>
-                  <TextField
-                    required
-                    id="outlined-lastname"
-                    label="Фамилия"
-                    defaultValue=""
-                    margin="normal"
-                    variant="outlined"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value.trim())}
-                    InputLabelProps={{
-                      style: {
+                  <Box display="flex" alignItems="center" gap="10px">
+                    <Select
+                      value={
+                        source === "Cascade"
+                          ? "startingWith"
+                          : searchTypeLastName
+                      }
+                      onChange={(e) => setSearchTypeLastName(e.target.value)}
+                      disabled={source === "Cascade"}
+                      // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
+
+                      sx={{
+                        fontSize: "14px",
                         fontFamily: "Montserrat, sans-serif",
                         color: "#fff",
-                        fontSize: "14px",
-                      },
-                    }}
-                    InputProps={{
-                      style: { color: "#fff", height: "45px", width: "300px" },
-                      notchedOutline: {
-                        borderColor: colors.borderColor,
-                      },
-                      endAdornment: (
-                        <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
-                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": {
+                        height: "45px",
+                        width: "180px",
+                        marginTop: "7px",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#fff !important",
+                        },
+                      }}
+                    >
+                      <MenuItem value="startingWith">Начинается с</MenuItem>
+                      <MenuItem value="exactly">В точности с</MenuItem>
+                    </Select>
+                    <TextField
+                      required
+                      id="outlined-lastname"
+                      label="Фамилия"
+                      defaultValue=""
+                      margin="normal"
+                      variant="outlined"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value.trim())}
+                      InputLabelProps={{
+                        style: {
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          fontSize: "14px",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: "#fff",
+                          height: "45px",
+                          width: "440px",
+                        },
+                        notchedOutline: {
                           borderColor: "#fff",
                         },
-                      },
-                      "& .MuiOutlinedInput-input": {
-                        color: "#fff",
+                        endAdornment: (
+                          <InputAdornment
+                            position="end"
+                            sx={{ marginRight: "-5px" }}
+                          >
+                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: "#fff",
+                          },
+                        },
+                        "& .MuiOutlinedInput-input": {
+                          color: "#fff",
+                          fontSize: "14px",
+                        },
+                      }}
+                    />
+                  </Box>
+                  <Box display="flex" alignItems="center" gap="10px">
+                    <Select
+                      value={
+                        source === "Cascade"
+                          ? "startingWith"
+                          : searchTypeFirstName
+                      }
+                      onChange={(e) => setSearchTypeFirstName(e.target.value)}
+                      disabled={source === "Cascade"}
+                      // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
+
+                      sx={{
                         fontSize: "14px",
-                      },
-                    }}
-                  />
-                  <TextField
-                    required
-                    id="outlined-firstname"
-                    label="Имя"
-                    defaultValue=""
-                    margin="normal"
-                    variant="outlined"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value.trim())}
-                    InputLabelProps={{
-                      style: {
                         fontFamily: "Montserrat, sans-serif",
                         color: "#fff",
-                        fontSize: "14px",
-                      },
-                    }}
-                    InputProps={{
-                      style: { color: "#fff", height: "45px", width: "300px" },
-                      notchedOutline: {
-                        borderColor: colors.borderColor,
-                      },
-                      endAdornment: (
-                        <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
-                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": {
-                          borderColor: "#fff",
+                        height: "45px",
+                        width: "180px",
+                        marginTop: "7px",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
                         },
-                      },
-                      "& .MuiOutlinedInput-input": {
-                        color: "#fff",
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#fff !important",
+                        },
+                      }}
+                    >
+                      <MenuItem value="startingWith">Начинается с</MenuItem>
+                      <MenuItem value="exactly">В точности с</MenuItem>
+                    </Select>
+                    <TextField
+                      required
+                      id="outlined-firstname"
+                      label="Имя"
+                      defaultValue=""
+                      margin="normal"
+                      variant="outlined"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value.trim())}
+                      InputLabelProps={{
+                        style: {
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          fontSize: "14px",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: "#fff",
+                          height: "45px",
+                          width: "440px",
+                        },
+                        notchedOutline: {
+                          borderColor: colors.borderColor,
+                        },
+                        endAdornment: (
+                          <InputAdornment
+                            position="end"
+                            sx={{ marginRight: "-5px" }}
+                          >
+                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: "#fff",
+                          },
+                        },
+                        "& .MuiOutlinedInput-input": {
+                          color: "#fff",
+                          fontSize: "14px",
+                        },
+                      }}
+                    />
+                  </Box>
+                  <Box display="flex" alignItems="center" gap="10px">
+                    <Select
+                      value={
+                        source === "Cascade"
+                          ? "startingWith"
+                          : searchTypeMiddleName
+                      }
+                      onChange={(e) => setSearchTypeMiddleName(e.target.value)}
+                      disabled={source === "Cascade"}
+                      // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
+
+                      sx={{
                         fontSize: "14px",
-                      },
-                    }}
-                  />
-                  <TextField
-                    required
-                    id="outlined-middlename"
-                    label="Отчество"
-                    defaultValue=""
-                    margin="normal"
-                    variant="outlined"
-                    value={middleName}
-                    onChange={(e) => setMiddleName(e.target.value.trim())}
-                    InputLabelProps={{
-                      style: {
                         fontFamily: "Montserrat, sans-serif",
                         color: "#fff",
-                        fontSize: "14px",
-                      },
-                    }}
-                    InputProps={{
-                      style: { color: "#fff", height: "45px", width: "300px" },
-                      notchedOutline: {
-                        borderColor: colors.borderColor,
-                      },
-                      endAdornment: (
-                        <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
-                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": {
-                          borderColor: "#fff",
+                        height: "45px",
+                        width: "180px",
+                        marginTop: "7px",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
                         },
-                      },
-                      "& .MuiOutlinedInput-input": {
-                        color: "#fff",
-                        fontSize: "14px",
-                      },
-                    }}
-                  />
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#fff !important",
+                        },
+                      }}
+                    >
+                      <MenuItem value="startingWith">Начинается с</MenuItem>
+                      <MenuItem value="exactly">В точности с</MenuItem>
+                    </Select>
+                    <TextField
+                      required
+                      id="outlined-middlename"
+                      label="Отчество"
+                      defaultValue=""
+                      margin="normal"
+                      variant="outlined"
+                      value={middleName}
+                      onChange={(e) => setMiddleName(e.target.value.trim())}
+                      InputLabelProps={{
+                        style: {
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          fontSize: "14px",
+                        },
+                      }}
+                      InputProps={{
+                        style: {
+                          color: "#fff",
+                          height: "45px",
+                          width: "440px",
+                        },
+                        notchedOutline: {
+                          borderColor: colors.borderColor,
+                        },
+                        endAdornment: (
+                          <InputAdornment
+                            position="end"
+                            sx={{ marginRight: "-5px" }}
+                          >
+                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: "#fff",
+                          },
+                        },
+                        "& .MuiOutlinedInput-input": {
+                          color: "#fff",
+                          fontSize: "14px",
+                        },
+                      }}
+                    />
+                  </Box>
                 </>
               ) : (
-                <TextField
-                  required
-                  id="outlined-fullname"
-                  label="ФИО"
-                  defaultValue=""
-                  margin="normal"
-                  variant="outlined"
-                  value={name}
-                  onChange={handleNameChange}
-                  InputLabelProps={{
-                    style: {
+                <Box display="flex" alignItems="center" gap="10px">
+                  <Select
+                    value={searchTypeFullName}
+                    onChange={(e) => setSearchTypeFullName(e.target.value)}
+                    sx={{
+                      fontSize: "14px",
                       fontFamily: "Montserrat, sans-serif",
                       color: "#fff",
-                      fontSize: "14px",
-                    },
-                  }}
-                  InputProps={{
-                    style: { color: "#fff", height: "45px", width: "300px" },
-                    notchedOutline: {
-                      borderColor: colors.borderColor,
-                    },
-                    endAdornment: (
-                      <InputAdornment position="end" sx={{ marginRight: '-5px' }}>
-                        <SearchIcon sx={{ fontSize: 20, color: "#fff" }}/>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "#fff",
+                      height: "45px",
+                      width: "180px",
+                      marginTop: "7px",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
                       },
-                    },
-                    "& .MuiOutlinedInput-input": {
-                      color: "#fff",
-                      fontSize: "14px",
-                    },
-                  }}
-                />
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="startingWith">Начинается с</MenuItem>
+                    <MenuItem value="exactly">В точности с</MenuItem>
+                  </Select>
+                  <TextField
+                    required
+                    id="outlined-fullname"
+                    label="ФИО"
+                    defaultValue=""
+                    margin="normal"
+                    variant="outlined"
+                    value={name}
+                    onChange={handleNameChange}
+                    InputLabelProps={{
+                      style: {
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                    InputProps={{
+                      style: { color: "#fff", height: "45px", width: "440px" },
+                      notchedOutline: {
+                        borderColor: colors.borderColor,
+                      },
+                      endAdornment: (
+                        <InputAdornment
+                          position="end"
+                          sx={{ marginRight: "-5px" }}
+                        >
+                          <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#fff",
+                        },
+                      },
+                      "& .MuiOutlinedInput-input": {
+                        color: "#fff",
+                        fontSize: "14px",
+                      },
+                    }}
+                  />
+                </Box>
               )}
             </>
           </ThemeProvider>
@@ -843,7 +1265,7 @@ const DataInputPage = () => {
         return null;
     }
   };
-
+  
   return (
     <div className="data-input-page">
       <Header />
@@ -870,7 +1292,6 @@ const DataInputPage = () => {
               marginBottom: 2,
             }}
           >
-            {/* Two new buttons added */}
             <Button
               variant="contained"
               style={{
@@ -903,14 +1324,14 @@ const DataInputPage = () => {
               }}
               onClick={() => {
                 setInfoType("WhoViewedThisUser");
+                setInputType("IIN");
                 handleButtonClick("WhoViewedThisUser");
               }}
             >
               Кто просматривал данный объект
             </Button>
-            {/* ... Rest of your existing buttons */}
           </Box>
-          {/* Buttons for selecting input type */}
+
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
             {infoType === "WhomThisUserViewed" && (
               <>
@@ -986,7 +1407,7 @@ const DataInputPage = () => {
                     handleButtonClick("IIN");
                   }}
                 >
-                  ИНН
+                  ИИН
                 </Button>
                 <Button
                   variant="contained"
@@ -1010,7 +1431,6 @@ const DataInputPage = () => {
             )}
           </Box>
 
-          {/* Dynamic Input Fields */}
           {renderInputFields()}
           <ThemeProvider theme={darkTheme}>
             <InputLabel
@@ -1020,7 +1440,7 @@ const DataInputPage = () => {
                 fontFamily: "Montserrat, sans-serif",
                 color: "#fff",
                 height: "40px",
-                width: "150px",
+                width: "630px",
                 "&:hover": {
                   color: "#fff",
                 },
@@ -1028,7 +1448,7 @@ const DataInputPage = () => {
             >
               Источник
             </InputLabel>
-          </ThemeProvider>
+          
           {infoType === "WhomThisUserViewed" && (
             <>
               {inputType === "IIN" && (
@@ -1044,7 +1464,7 @@ const DataInputPage = () => {
                       fontFamily: "Montserrat, sans-serif",
                       color: "#fff",
                       height: "45px",
-                      width: "300px",
+                      width: "630px",
                       "& .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
@@ -1084,7 +1504,7 @@ const DataInputPage = () => {
                     fontFamily: "Montserrat, sans-serif",
                     color: "#fff",
                     height: "45px",
-                    width: "300px",
+                    width: "630px",
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#fff !important",
                     },
@@ -1112,6 +1532,7 @@ const DataInputPage = () => {
                   )}
                 </Select>
               )}
+              
 
               {inputType === "FullName" && (
                 <Select
@@ -1125,7 +1546,7 @@ const DataInputPage = () => {
                     fontFamily: "Montserrat, sans-serif",
                     color: "#fff",
                     height: "45px",
-                    width: "300px",
+                    width: "630px",
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderColor: "#fff !important",
                     },
@@ -1155,50 +1576,190 @@ const DataInputPage = () => {
               )}
             </>
           )}
+          
 
           {infoType === "WhoViewedThisUser" && (
             <>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                id="outlined-source"
-                value={source}
-                onChange={handleChange}
-                label="Источник"
-                sx={{
-                  fontSize: "14px",
-                  fontFamily: "Montserrat, sans-serif",
-                  color: "#fff",
-                  height: "45px",
-                  width: "300px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "& .MuiSelect-icon": {
-                    color: "#fff !important",
-                  },
-                }}
-              >
-                <MenuItem value="Itap">Itap</MenuItem>
-                <MenuItem value="Досье">Досье</MenuItem>
-                <MenuItem value="Cascade">Каскад</MenuItem>
-              </Select>
-              {isFilterChanged && (
-                <Typography
-                  variant="caption"
-                  sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+              {inputType === "IIN" && (
+                <>
+                  <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="outlined-source"
+                    value={source}
+                    onChange={handleChange}
+                    label="Источник"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      height: "45px",
+                      width: "630px",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="Itap">Itap</MenuItem>
+                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Cascade">Каскад</MenuItem>
+                  </Select>
+                  {isFilterChanged && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                    >
+                      Необходимо сделать новый запрос для обновления данных.
+                    </Typography>
+                  )}
+                </>
+              )}
+              {inputType === "FullName" && (
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="outlined-source"
+                  value={source}
+                  onChange={handleChange}
+                  label="Источник"
+                  sx={{
+                    fontSize: "14px",
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    height: "45px",
+                    width: "630px",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#fff !important",
+                    },
+                    "& .MuiSelect-icon": {
+                      color: "#fff !important",
+                    },
+                  }}
                 >
-                  Необходимо сделать новый запрос для обновления данных.
-                </Typography>
+                  <MenuItem value="Itap">Itap</MenuItem>
+                  <MenuItem value="Досье">Досье</MenuItem>
+                  {isFilterChanged && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                    >
+                      Необходимо сделать новый запрос для обновления данных.
+                    </Typography>
+                  )}
+                </Select>
               )}
             </>
           )}
+          </ThemeProvider>
+          <ThemeProvider theme={darkTheme}>
+            <Box mt={2}>
+              <Button
+                variant="text"
+                size="small"
+                onClick={handleToggleFilters}
+                style={{ color: "white" }} // Set text color
+              >
+                Дополнительные фильтры
+              </Button>
+            </Box>
+            {showFilters && (
+              <Box mt={2} sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+                <TextField
+                  label="Дата начала"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                    style: {
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      fontSize: "13px",
+                      '& svg': {
+                        fill: 'white', // Color for the icon
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    style: {
+                      color: "white", // Text color for the input
+                      fontSize: "14px",
+                      height: "45px",
+                      width: "307px",
+                      "&:hover": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& .Mui-focused": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& fieldset": {
+                        borderColor: "#fff !important",
+                      },
+                    },
+                  }}
+                />
 
+                <TextField
+                  label="Дата окончания"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                    style: {
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      fontSize: "13px",
+                      // '& svg': {
+                      //   fill: 'white', // Color for the icon
+                      //   color: 'white',
+                      //   border: '1px solid red'
+                      // },
+                    },
+                  }}
+                  InputProps={{
+                    style: {
+                      color: "white", // Text color for the input
+                      fontSize: "14px",
+                      height: "45px",
+                      width: "307px",
+                      "&:hover": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& .Mui-focused": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& fieldset": {
+                        borderColor: "#fff !important",
+                      },
+                      
+                    },
+                  }}
+                />
+              </Box>
+            )}
+          </ThemeProvider>
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
             <Button
               variant="contained"
@@ -1232,7 +1793,6 @@ const DataInputPage = () => {
                 </div>
               )}
             </Button>
-            {/* Conditionally render the download button */}
             {downloadAvailable && (
               <React.Fragment>
                 <Button
@@ -1287,7 +1847,7 @@ const DataInputPage = () => {
           <TableContainer
             component={Paper}
             sx={{
-              width: "100%", // Set width to 100%
+              width: "100%",
               mt: 4,
               bgcolor: "transparent",
               boxShadow: "none",
@@ -1321,8 +1881,8 @@ const DataInputPage = () => {
                           fontFamily: "Montserrat, sans-serif",
                           color: "#fff",
                           whiteSpace: "nowrap",
-                          overflow: "hidden", // Add overflow property
-                          textOverflow: "ellipsis", // Add textOverflow property
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         {header.label}
@@ -1378,75 +1938,6 @@ const DataInputPage = () => {
             </Table>
 
             <ThemeProvider theme={darkTheme}>
-              {/* <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={rows.length}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage="Количество строк на странице"
-                SelectProps={{
-                  style: {
-                    fontSize: "14px",
-                    color: "#fff",
-                  },
-                  native: true,
-                  sx: {
-                    "&:focus": {
-                      backgroundColor: "transparent",
-                    },
-                  },
-                }}
-                InputLabelProps={{
-                  style: {
-                    fontSize: "14px",
-                    color: "#fff",
-                  },
-                  sx: {
-                    "&.MuiInputLabel-root": {
-                      marginTop: "-4px",
-                    },
-                  },
-                }}
-                sx={{
-                  color: "#fff",
-                  "& .MuiTablePagination-caption": {
-                    fontSize: "14px",
-                  },
-                  "& .MuiIconButton-root": {
-                    color: "#fff",
-                  },
-                  "& .MuiIconButton-root.Mui-disabled": {
-                    color: "rgba(255, 255, 255, 0.5)",
-                  },
-                  "& .MuiMenu-root": {
-                    backgroundColor: "#2B2D2F",
-                  },
-                  "& .MuiMenuItem-root": {
-                    color: "#fff",
-                  },
-                }}
-                components={{
-                  Menu: (props) => (
-                    <Menu
-                      elevation={0}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "left",
-                      }}
-                      {...props}
-                    />
-                  ),
-                  MenuItem: (props) => <MuiMenuItem {...props} />,
-                }}
-              /> */}
-
               <CustomTablePagination
                 rows={rows}
                 page={page}
