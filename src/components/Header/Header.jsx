@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -21,8 +21,16 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const {setIsAuthenticated} = useAuth();
   const location = useLocation();
-  const { username } = location.state || {};
-  const navigate = useNavigate(); 
+  const [username, setUsername] = useState('');
+  console.log(location)
+    const navigate = useNavigate(); 
+
+    useEffect(() => {
+      const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername);
+      }
+    }, []);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -34,6 +42,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem('username');
     setIsAuthenticated(false);
     // Redirect to the login page
     navigate("/");

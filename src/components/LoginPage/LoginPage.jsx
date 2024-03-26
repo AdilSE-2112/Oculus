@@ -50,10 +50,12 @@ function Login() {
 
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
+        localStorage.setItem("username", login); // Save username in localStorage
+
 
         setIsAuthenticated(true);
 
-        navigate("/data-input", { state: { username: login } });
+        navigate("/data-input");
       } else {
         throw new Error("Login failed");
       }
