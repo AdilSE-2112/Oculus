@@ -91,14 +91,14 @@ const DataInputPage = () => {
     setInn(event.target.value);
   };
   const handleButtonClick = (type) => {
-    // Logic to handle button click and navigate to the output page
-    setInputType(type); // Set the input type based on the clicked button
+    
+    setInputType(type); 
     console.log("Input Type:", type);
-    // Navigate to the output page, you can use React Router or other navigation methods
+    
   };
   const handleReturnButtonClick = () => {
-    // Navigate back to the data-input page
-    navigate("/data-input"); // Update the path based on your route configuration
+   
+    navigate("/data-input"); 
   };
 
   return (
