@@ -69,22 +69,22 @@ function Login() {
       setLoading(false);
       setErrorDisplay(true);
       if (error.response) {
-        // If there is a response from the server
+        
         if (error.response.status === 401) {
-          // Unauthorized error
-          setErrorMessage("Неправильное имя пользователя или пароль"); // Set error message
+          
+          setErrorMessage("Неправильное имя пользователя или пароль"); 
         } else {
-          // Other server errors
-          setErrorMessage("Неизвестная ошибка сервера"); // Set error message
+          
+          setErrorMessage("Неизвестная ошибка сервера"); 
         }
       } else if (error.message === "Network Error") {
-        // Network error
-        setErrorMessage("Ошибка сети: Не удалось подключиться к серверу"); // Set error message
+       
+        setErrorMessage("Ошибка сети: Не удалось подключиться к серверу"); 
       } else {
-        // Other errors
-        setErrorMessage("Неизвестная ошибка"); // Set error message
+       
+        setErrorMessage("Неизвестная ошибка"); 
       }
-      setSnackbarOpen(true); // Open snackbar
+      setSnackbarOpen(true); 
     } finally {
     }
   };
