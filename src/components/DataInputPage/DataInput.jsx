@@ -665,7 +665,7 @@ const DataInputPage = () => {
       }
     } else if (infoType === "WhoViewedThisUser") {
       if (inputType === "IIN" && source === "Itap") {
-        downloadUrl = `http://192.168.30.24:5220/log/search=${inn}/download_excel`;
+        downloadUrl = `http://192.168.30.24:5220/log/iin=${inn}/download_excel`;
       } else if (inputType === "FullName" && source === "Itap") {
         downloadUrl = "http://192.168.30.24:5220/log/download/search";
         let fullNameInfo = "";

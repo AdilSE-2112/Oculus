@@ -19,6 +19,7 @@ import {useAuth} from "../AuthContext";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const { logout } = useAuth();
   const {setIsAuthenticated} = useAuth();
   const location = useLocation();
   const [username, setUsername] = useState('');
@@ -41,10 +42,10 @@ const Header = () => {
   };
 
   const handleLogout = () => {
+    logout();
     localStorage.removeItem("access_token");
     localStorage.removeItem('username');
     setIsAuthenticated(false);
-    // Redirect to the login page
     navigate("/");
   };
   const handleAdminPanelClick = () => {

@@ -4,18 +4,14 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
-
 
   useEffect(() => {
     // Check authentication status (e.g., retrieve token from localStorage)
     const token = localStorage.getItem('access_token');
-    setIsAuthenticated(!!token); 
-    setUsername(localStorage.getItem('username') || '');
-    // Set isAuthenticated based on token existence
-  }, []); // This effect runs only once on mount
+    setIsAuthenticated(!!token);
+  }, []);
 
-  const login = () => {
+  const login = (username) => {
     localStorage.setItem('username', username);
     setIsAuthenticated(true);
     // Save access_token to localStorage upon login
@@ -32,11 +28,12 @@ const AuthProvider = ({ children }) => {
     isAuthenticated,
     login,
     logout,
-    setIsAuthenticated,
+    setIsAuthenticated, // Include logout function in the context value
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
 
 const useAuth = () => {
   const context = useContext(AuthContext);
