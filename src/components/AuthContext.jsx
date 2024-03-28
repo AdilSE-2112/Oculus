@@ -6,20 +6,28 @@ const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check authentication status (e.g., retrieve token from localStorage)
     const token = localStorage.getItem('access_token');
     setIsAuthenticated(!!token);
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
+
+  const handleBeforeUnload = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('username');
+  };
 
   const login = (username) => {
     localStorage.setItem('username', username);
     setIsAuthenticated(true);
-    // Save access_token to localStorage upon login
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    // Clear access_token from localStorage upon logout
     localStorage.removeItem('access_token');
     localStorage.removeItem('username');
   };
@@ -28,7 +36,7 @@ const AuthProvider = ({ children }) => {
     isAuthenticated,
     login,
     logout,
-    setIsAuthenticated, // Include logout function in the context value
+    setIsAuthenticated, 
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
