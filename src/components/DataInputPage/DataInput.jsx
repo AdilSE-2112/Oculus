@@ -1669,7 +1669,7 @@ const DataInputPage = () => {
                   },
                 }}
               >
-                Источник
+                Информационные системы
               </InputLabel>
             )}
 
@@ -1682,7 +1682,7 @@ const DataInputPage = () => {
                       id="outlined-source"
                       value={source}
                       onChange={handleChange}
-                      label="Источник"
+                      label="Информационные системы"
                       sx={{
                         fontSize: "14px",
                         fontFamily: "Montserrat, sans-serif",
@@ -1703,7 +1703,7 @@ const DataInputPage = () => {
                         },
                       }}
                     >
-                      <MenuItem value="Досье">Досье</MenuItem>
+                      <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                     </Select>
                     {isFilterChanged && (
                       <Typography
@@ -1722,7 +1722,7 @@ const DataInputPage = () => {
                     id="outlined-source"
                     value={source}
                     onChange={handleChange}
-                    label="Источник"
+                    label="Информационные системы"
                     sx={{
                       fontSize: "14px",
                       fontFamily: "Montserrat, sans-serif",
@@ -1744,7 +1744,7 @@ const DataInputPage = () => {
                     }}
                   >
                     <MenuItem value="Itap">Itap</MenuItem>
-                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                     <MenuItem value="Cascade">Каскад</MenuItem>
                     {isFilterChanged && (
                       <Typography
@@ -1763,7 +1763,7 @@ const DataInputPage = () => {
                     id="outlined-source"
                     value={source}
                     onChange={handleChange}
-                    label="Источник"
+                    label="Информационные системы"
                     sx={{
                       fontSize: "14px",
                       fontFamily: "Montserrat, sans-serif",
@@ -1785,7 +1785,7 @@ const DataInputPage = () => {
                     }}
                   >
                     <MenuItem value="Itap">Itap</MenuItem>
-                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                     <MenuItem value="Cascade">Каскад</MenuItem>
                     {isFilterChanged && (
                       <Typography
@@ -1809,7 +1809,7 @@ const DataInputPage = () => {
                       id="outlined-source"
                       value={source}
                       onChange={handleChange}
-                      label="Источник"
+                      label="Информационные системы"
                       sx={{
                         fontSize: "14px",
                         fontFamily: "Montserrat, sans-serif",
@@ -1831,7 +1831,7 @@ const DataInputPage = () => {
                       }}
                     >
                       <MenuItem value="Itap">Itap</MenuItem>
-                      <MenuItem value="Досье">Досье</MenuItem>
+                      <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                       <MenuItem value="Cascade">Каскад</MenuItem>
                     </Select>
                     {isFilterChanged && (
@@ -1850,7 +1850,7 @@ const DataInputPage = () => {
                     id="outlined-source"
                     value={source}
                     onChange={handleChange}
-                    label="Источник"
+                    label="Информационные системы"
                     sx={{
                       fontSize: "14px",
                       fontFamily: "Montserrat, sans-serif",
@@ -1872,7 +1872,7 @@ const DataInputPage = () => {
                     }}
                   >
                     <MenuItem value="Itap">Itap</MenuItem>
-                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                     {isFilterChanged && (
                       <Typography
                         variant="caption"
@@ -1894,7 +1894,7 @@ const DataInputPage = () => {
                       id="outlined-source"
                       value={source}
                       onChange={handleChange}
-                      label="Источник"
+                      label="Информационные системы"
                       sx={{
                         fontSize: "14px",
                         fontFamily: "Montserrat, sans-serif",
@@ -1916,7 +1916,7 @@ const DataInputPage = () => {
                       }}
                     >
                       <MenuItem value="Itap">Itap</MenuItem>
-                      <MenuItem value="Досье">Досье</MenuItem>
+                      <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                       <MenuItem value="Cascade">Каскад</MenuItem>
                     </Select>
                     {isFilterChanged && (
@@ -1936,7 +1936,7 @@ const DataInputPage = () => {
                     id="outlined-source"
                     value={source}
                     onChange={handleChange}
-                    label="Источник"
+                    label="Информационные системы"
                     sx={{
                       fontSize: "14px",
                       fontFamily: "Montserrat, sans-serif",
@@ -1958,7 +1958,7 @@ const DataInputPage = () => {
                     }}
                   >
                     <MenuItem value="Itap">Itap</MenuItem>
-                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                     <MenuItem value="Cascade">Каскад</MenuItem>
                     {isFilterChanged && (
                       <Typography
