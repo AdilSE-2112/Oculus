@@ -47,7 +47,7 @@ function createData(
   user_name,
   log_time,
   fio,
-  iin,
+  iin
 ) {
   const formattedDate = new Date(date).toLocaleString();
   const formattedDossieTime = new Date(log_time).toLocaleString();
@@ -306,7 +306,7 @@ const DataInputPage = () => {
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
-          { id: "user_name", label: "Имя Пользователя" },
+          { id: "user_name", label: "Учётная запись" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
         apiUrl = `http://192.168.30.24:5220/users_log/fullname=${name}`;
@@ -336,14 +336,14 @@ const DataInputPage = () => {
         ]);
       } else if (source === "Досье" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/dossie_log/username=${inn}`;
-        setAdditionalInfo(`Кого просматривал пользователь с ИИН: ${inn}`);
+        setAdditionalInfo(`Кого просматривал пользователь с ИИН/БИН: ${inn}`);
 
         setColumnHeaders([
           { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
-          { id: "user_name", label: "Имя пользователя" },
+          { id: "user_name", label: "Учётная запись" },
         ]);
       } else if (source === "Досье" && inputType === "FullName") {
         let additionalInfo;
@@ -362,7 +362,7 @@ const DataInputPage = () => {
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
-          { id: "user_name", label: "Имя пользователя" },
+          { id: "user_name", label: "Учётная запись" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
         let additionalInfo;
@@ -385,7 +385,7 @@ const DataInputPage = () => {
     } else if (infoType === "WhoViewedThisUser") {
       if (source === "Досье" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/dossie_log/action=${inn}`;
-        setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
+        setAdditionalInfo(`Кто просматривал объект с ИИН/БИН: ${inn}`);
 
         setColumnHeaders([
           { id: "log_time", label: "Дата" },
@@ -408,7 +408,7 @@ const DataInputPage = () => {
       // }
       else if (source === "Itap" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/log/iin=${inn}`;
-        setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
+        setAdditionalInfo(`Кто просматривал объект с ИИН/БИН: ${inn}`);
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
@@ -418,7 +418,7 @@ const DataInputPage = () => {
         ]);
       } else if (source === "Cascade" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/users_log/message=${inn}`;
-        setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
+        setAdditionalInfo(`Кто просматривал объект с ИИН/БИН: ${inn}`);
 
         setColumnHeaders([
           { id: "time", label: "Дата" },
@@ -464,7 +464,7 @@ const DataInputPage = () => {
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
-          { id: "user_name", label: "Имя пользователя" },
+          { id: "user_name", label: "Учётная запись" },
         ]);
       } else if (source === "Itap" && inputType === "FullName") {
         apiUrl = "http://192.168.30.24:5220/log/search";
@@ -584,48 +584,60 @@ const DataInputPage = () => {
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
-          { id: "username", label: "Пользователь" },
-          { id: "fio", label: "ИИН объекта" },
-          { id: "iin", label: "ФИО Объекта" },
+          { id: "username", label: "Инициатор запроса" },
+          { id: "fio", label: "ИИН/БИН объекта запроса" },
+          { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      }
-      else if (source === "Cascade" && inputType === "IIN") {
+      } else if (source === "Cascade" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/risks/users_log/iin=${inn}`;
         setAdditionalInfo(`Список рискованных запросов: ${inn}`);
 
         setColumnHeaders([
           { id: "time", label: "Дата" },
-          { id: "username", label: "Пользователь" },
-          { id: "fio", label: "ИИН объекта" },
-          { id: "iin", label: "ФИО Объекта" },
+          { id: "username", label: "Инициатор запроса" },
+          { id: "fio", label: "ИИН/БИН объекта запроса" },
+          { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      } else if (source === "Cascade" && inputType === "FullName") {
-        apiUrl = `http://192.168.30.24:5220/risks/users_log/fio=${name}`;
-        setAdditionalInfo(`Список рискованных запросов: ${name}`);
+      } else if (source === "Cascade" && inputType === "EmployeeType") {
+        apiUrl = `http://192.168.30.24:5220/risks/users_log/fio=${employeeField}`;
+        setAdditionalInfo(`Список рискованных запросов: ${employeeField}`);
 
         setColumnHeaders([
           { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
-          { id: "iin", label: "ИИН объекта" },
-          { id: "fio", label: "ФИО Объекта" },
+          { id: "fio", label: "ИИН/БИН объекта запроса" },
+          { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      }
-      else if (source === "Itap" && inputType === "FullName") {
+      } else if (source === "Itap" && inputType === "EmployeeType") {
         let additionalInfo;
 
-          apiUrl = `http://192.168.30.24:5220/risks/log/fio=${name}`;
-          additionalInfo = `Кого просматривал сотрудник (начинается с): ${name}`;
+        apiUrl = `http://192.168.30.24:5220/risks/log/fio=${employeeField}`;
+        additionalInfo = `cписок рискованных запросов: ${employeeField}`;
 
         setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
-          { id: "iin", label: "ИИН объекта" },
-          { id: "fio", label: "ФИО Объекта" },
+          { id: "fio", label: "ИИН/БИН объекта запроса" },
+          { id: "iin", label: "ФИО Объекта запроса" },
         ]);
       }
-      
+      else if (inputType === "ListRisks") {
+        let additionalInfo;
+
+        apiUrl = `http://192.168.30.24:5220/risks/log`;
+        additionalInfo = `cписок рискованных запросов`;
+
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "fio", label: "ИИН/БИН объекта" },
+          { id: "iin", label: "ФИО Объекта" },
+        ]);
+      }
     }
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
@@ -854,7 +866,7 @@ const DataInputPage = () => {
               <TextField
                 required
                 id="outlined-required"
-                label="ИИН"
+                label="ИИН/БИН"
                 defaultValue=""
                 margin="normal"
                 variant="outlined"
@@ -878,7 +890,7 @@ const DataInputPage = () => {
                         borderColor: "#fff !important",
                       },
                     },
-                    "& .Mui-focused": {
+                    "& .MuiFocused": {
                       "& fieldset": {
                         borderColor: "#fff !important",
                       },
@@ -938,7 +950,7 @@ const DataInputPage = () => {
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#fff !important",
                   },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#fff !important",
                   },
                   "& .MuiSelect-icon": {
@@ -996,7 +1008,7 @@ const DataInputPage = () => {
         return (
           <ThemeProvider theme={darkTheme}>
             <Box display="flex" alignItems="center" gap="10px">
-              <Select
+              {/* <Select
                 value={searchTypeEmployee}
                 onChange={(e) => setSearchTypeEmployee(e.target.value)}
                 disabled={inputType === "EmployeeType"}
@@ -1013,7 +1025,7 @@ const DataInputPage = () => {
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#fff !important",
                   },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#fff !important",
                   },
                   "& .MuiSelect-icon": {
@@ -1023,7 +1035,7 @@ const DataInputPage = () => {
               >
                 <MenuItem value="startingWith">Начинается с</MenuItem>
                 <MenuItem value="exactly">В точности с</MenuItem>
-              </Select>
+              </Select> */}
               <TextField
                 required
                 id="outlined-username"
@@ -1041,7 +1053,7 @@ const DataInputPage = () => {
                   },
                 }}
                 InputProps={{
-                  style: { color: "#fff", height: "45px", width: "440px" },
+                  style: { color: "#fff", height: "45px", width: "630px" },
                   notchedOutline: {
                     borderColor: colors.borderColor,
                   },
@@ -1097,7 +1109,7 @@ const DataInputPage = () => {
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
                         "& .MuiSelect-icon": {
@@ -1179,7 +1191,7 @@ const DataInputPage = () => {
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
                         "& .MuiSelect-icon": {
@@ -1261,7 +1273,7 @@ const DataInputPage = () => {
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
                         "& .MuiSelect-icon": {
@@ -1338,7 +1350,7 @@ const DataInputPage = () => {
                       "&:hover .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
                       "& .MuiSelect-icon": {
@@ -1501,7 +1513,7 @@ const DataInputPage = () => {
                     handleButtonClick("IIN");
                   }}
                 >
-                  ИИН
+                  ИИН/БИН
                 </Button>
 
                 <Button
@@ -1520,7 +1532,7 @@ const DataInputPage = () => {
                     handleButtonClick("Username");
                   }}
                 >
-                  Имя Пользователя
+                  Учётная запись
                 </Button>
 
                 <Button
@@ -1559,7 +1571,7 @@ const DataInputPage = () => {
                     handleButtonClick("IIN");
                   }}
                 >
-                  ИИН
+                  ИИН/БИН
                 </Button>
                 <Button
                   variant="contained"
@@ -1598,7 +1610,7 @@ const DataInputPage = () => {
                     handleButtonClick("IIN");
                   }}
                 >
-                  ИИН
+                  ИИН/БИН
                 </Button>
                 <Button
                   variant="contained"
@@ -1616,29 +1628,50 @@ const DataInputPage = () => {
                     handleButtonClick("EmployeeType");
                   }}
                 >
-                  Сотруднк
+                  Сотрудник
                 </Button>
+                {/* <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "ListRisks"
+                        ? colors.secondary
+                        : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("ListRisks");
+                    handleButtonClick("ListRisks");
+                    handleSearch("ListRisks");
+                  }}
+                >
+                  Полный список рисков
+                </Button> */}
               </>
             )}
           </Box>
 
           {renderInputFields()}
           <ThemeProvider theme={darkTheme}>
-            <InputLabel
-              id="demo-simple-select-outlined-label"
-              sx={{
-                fontSize: "14px",
-                fontFamily: "Montserrat, sans-serif",
-                color: "#fff",
-                height: "40px",
-                width: "630px",
-                "&:hover": {
+            {inputType !== "ListRisks" && (
+              <InputLabel
+                id="demo-simple-select-outlined-label"
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Montserrat, sans-serif",
                   color: "#fff",
-                },
-              }}
-            >
-              Источник
-            </InputLabel>
+                  height: "40px",
+                  width: "630px",
+                  "&:hover": {
+                    color: "#fff",
+                  },
+                }}
+              >
+                Источник
+              </InputLabel>
+            )}
 
             {infoType === "WhomThisUserViewed" && (
               <>
@@ -1662,7 +1695,7 @@ const DataInputPage = () => {
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
                         "& .MuiSelect-icon": {
@@ -1702,7 +1735,7 @@ const DataInputPage = () => {
                       "&:hover .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
                       "& .MuiSelect-icon": {
@@ -1743,7 +1776,7 @@ const DataInputPage = () => {
                       "&:hover .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
                       "& .MuiSelect-icon": {
@@ -1789,7 +1822,7 @@ const DataInputPage = () => {
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
                         "& .MuiSelect-icon": {
@@ -1830,7 +1863,7 @@ const DataInputPage = () => {
                       "&:hover .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
                       "& .MuiSelect-icon": {
@@ -1874,7 +1907,7 @@ const DataInputPage = () => {
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#fff !important",
                         },
                         "& .MuiSelect-icon": {
@@ -1916,7 +1949,7 @@ const DataInputPage = () => {
                       "&:hover .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#fff !important",
                       },
                       "& .MuiSelect-icon": {
@@ -1941,16 +1974,18 @@ const DataInputPage = () => {
             )}
           </ThemeProvider>
           <ThemeProvider theme={darkTheme}>
-            <Box mt={2}>
-              <Button
-                variant="text"
-                size="small"
-                onClick={handleToggleFilters}
-                style={{ color: "white" }} // Set text color
-              >
-                Дополнительные фильтры
-              </Button>
-            </Box>
+            {infoType !== "Risks" && (
+              <Box mt={2}>
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={handleToggleFilters}
+                  style={{ color: "white" }} // Set text color
+                >
+                  Дополнительные фильтры
+                </Button>
+              </Box>
+            )}
             {showFilters && (
               <Box mt={2} sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
                 <TextField
@@ -1980,7 +2015,7 @@ const DataInputPage = () => {
                           borderColor: "#fff !important",
                         },
                       },
-                      "& .Mui-focused": {
+                      "& .MuiFocused": {
                         "& fieldset": {
                           borderColor: "#fff !important",
                         },
@@ -2021,7 +2056,7 @@ const DataInputPage = () => {
                           borderColor: "#fff !important",
                         },
                       },
-                      "& .Mui-focused": {
+                      "& .MuiFocused": {
                         "& fieldset": {
                           borderColor: "#fff !important",
                         },
@@ -2036,39 +2071,41 @@ const DataInputPage = () => {
             )}
           </ThemeProvider>
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-            <Button
-              variant="contained"
-              onClick={handleSearch}
-              sx={{
-                mt: 2,
-                alignSelf: "flex-start",
-                fontFamily: "Montserrat, sans-serif",
-                fontSize: "0.75rem",
-                padding: loading ? "6px 30px 6px 12px" : "6px 12px",
-                backgroundColor: colors.secondary,
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              Поиск
-              {loading && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: "8px",
-                    top: "50%",
-                    transform: "translateY(-38%)",
-                  }}
-                >
-                  <img
-                    src={Loading}
-                    alt=""
-                    style={{ width: "20px", height: "20px" }}
-                  />
-                </div>
-              )}
-            </Button>
-            {downloadAvailable && (
+            {inputType !== "ListRisks" && (
+              <Button
+                variant="contained"
+                onClick={handleSearch}
+                sx={{
+                  mt: 2,
+                  alignSelf: "flex-start",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontSize: "0.75rem",
+                  padding: loading ? "6px 30px 6px 12px" : "6px 12px",
+                  backgroundColor: colors.secondary,
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                Поиск
+                {loading && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: "8px",
+                      top: "50%",
+                      transform: "translateY(-38%)",
+                    }}
+                  >
+                    <img
+                      src={Loading}
+                      alt=""
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </div>
+                )}
+              </Button>
+            )}
+            {infoType !== "Risks" && downloadAvailable && (
               <React.Fragment>
                 <Button
                   variant="contained"
