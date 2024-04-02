@@ -222,10 +222,18 @@ const DataInputPage = () => {
     setEmployeeField(event.target.value);
   };
   const handleButtonClick = (type, rowData) => {
-    if (type === "WhomThisUserViewed" || type === "WhoViewedThisUser") {
+    if (
+      type === "WhomThisUserViewed" ||
+      type === "WhoViewedThisUser" ||
+      type === "Risks"
+    ) {
       // For the first set of buttons
       setInfoType(type);
-    } else if (type === "IIN" || type === "Username" || type === "FullName") {
+    } else if (
+      (type === "IIN" || type === "Username" || type === "FullName",
+      type === "ListRisks",
+      type === "EmployeeType")
+    ) {
       // For the second set of buttons
       setInputType(type);
     }
@@ -612,7 +620,7 @@ const DataInputPage = () => {
         let additionalInfo;
 
         apiUrl = `http://192.168.30.24:5220/risks/log/fio=${employeeField}`;
-        additionalInfo = `cписок рискованных запросов: ${employeeField}`;
+        additionalInfo = `Список рискованных запросов: ${employeeField}`;
 
         setAdditionalInfo(additionalInfo);
 
@@ -622,12 +630,11 @@ const DataInputPage = () => {
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      }
-      else if (inputType === "ListRisks") {
+      } else if (inputType === "ListRisks") {
         let additionalInfo;
 
         apiUrl = `http://192.168.30.24:5220/risks/log`;
-        additionalInfo = `cписок рискованных запросов`;
+        additionalInfo = `Полный список рискованных запросов`;
 
         setAdditionalInfo(additionalInfo);
 
@@ -1642,9 +1649,15 @@ const DataInputPage = () => {
                         : colors.primary,
                   }}
                   onClick={() => {
-                    setInputType("ListRisks");
-                    handleButtonClick("ListRisks");
-                    handleSearch("ListRisks");
+                    handleSearch()
+                      .then(() => {
+                        setInputType("ListRisks");
+                        handleButtonClick("ListRisks");
+                      })
+                      .catch((error) => {
+                        // Handle any errors
+                        console.error("Error in handleSearch:", error);
+                      });
                   }}
                 >
                   Полный список рисков
@@ -1982,7 +1995,7 @@ const DataInputPage = () => {
                   onClick={handleToggleFilters}
                   style={{ color: "white" }} // Set text color
                 >
-                  Дополнительные фильтры
+                  Дополнительные параметры
                 </Button>
               </Box>
             )}
