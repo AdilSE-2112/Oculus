@@ -1486,7 +1486,7 @@ const DataInputPage = () => {
             >
               Инициатор запроса
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               style={{
                 fontSize: "12px",
@@ -1502,7 +1502,7 @@ const DataInputPage = () => {
               }}
             >
               Риски
-            </Button>
+            </Button> */}
           </Box>
 
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
