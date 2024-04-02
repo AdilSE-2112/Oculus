@@ -103,7 +103,7 @@ const DataInputPage = () => {
   const [usernameField, setUsernameField] = useState("");
   const [employeeField, setEmployeeField] = useState("");
   const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
-  const [infoType, setInfoType] = useState("WhomThisUserViewed");
+  const [infoType, setInfoType] = useState("WhoViewedThisUser");
   const [inputType, setInputType] = useState("IIN");
   const [source, setSource] = useState("");
   const [name, setName] = useState("");
