@@ -9,7 +9,6 @@ import Loading from "../../assets/loading.gif";
 // import backVideoLogin from "../../assets/backVideoLogin.mp4";
 function Login() {
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -18,18 +17,24 @@ function Login() {
   const { isAuthenticated, setIsAuthenticated, logout } = useAuth();
   const isAuthenticatedRef = useRef(isAuthenticated);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
+
+  const checkTokenValidity = (token) => {
+    if (!token) return false;
+    const expirationTime = localStorage.getItem("token_expiration");
+    return Date.now() < Number(expirationTime);
+  };
+
 
   useEffect(() => {
     isAuthenticatedRef.current = isAuthenticated;
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (isAuthenticatedRef.current) {
-      navigate("/data-input", { state: { username: login } });
+    if (isAuthenticated) {
+      navigate('/data-input');
     }
-  }, [isAuthenticatedRef.current, login, navigate]);
+  }, [isAuthenticated, navigate]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -54,14 +59,29 @@ function Login() {
           maxRedirects: 0,
         }
       );
-
+  
       if (response.data.access_token) {
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("username", login);
-
+  
+        // Set token expiration time (e.g., 8 hours from now)
+        const expirationTime = new Date().getTime() + 8 * 60 * 60 * 1000;
+        localStorage.setItem("token_expiration", expirationTime);
+  
+        // Update authentication context
         setIsAuthenticated(true);
-
-        navigate("/data-input");
+  
+        // Redirect only if the token is valid
+        if (checkTokenValidity(response.data.access_token)) {
+          navigate("/data-input");
+        } else {
+          // Token expired, clear stored token and logout
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("username");
+          localStorage.removeItem("token_expiration");
+          setIsAuthenticated(false);
+          navigate("/");
+        }
       } else {
         throw new Error("Login failed");
       }
@@ -69,23 +89,17 @@ function Login() {
       setLoading(false);
       setErrorDisplay(true);
       if (error.response) {
-        
         if (error.response.status === 401) {
-          
-          setErrorMessage("Неправильное имя пользователя или пароль"); 
+          setErrorMessage("Неправильное имя пользователя или пароль");
         } else {
-          
-          setErrorMessage("Неизвестная ошибка сервера"); 
+          setErrorMessage("Неизвестная ошибка сервера");
         }
       } else if (error.message === "Network Error") {
-       
-        setErrorMessage("Ошибка сети: Не удалось подключиться к серверу"); 
+        setErrorMessage("Ошибка сети: Не удалось подключиться к серверу");
       } else {
-       
-        setErrorMessage("Неизвестная ошибка"); 
+        setErrorMessage("Неизвестная ошибка");
       }
-      setSnackbarOpen(true); 
-    } finally {
+      setSnackbarOpen(true);
     }
   };
   const handleCloseSnackbar = () => {

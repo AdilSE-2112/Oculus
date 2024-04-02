@@ -45,7 +45,9 @@ function createData(
   fname,
   lname,
   user_name,
-  log_time
+  log_time,
+  fio,
+  iin,
 ) {
   const formattedDate = new Date(date).toLocaleString();
   const formattedDossieTime = new Date(log_time).toLocaleString();
@@ -61,6 +63,8 @@ function createData(
     lname,
     user_name,
     log_time: formattedDossieTime,
+    fio,
+    iin,
   };
 }
 
@@ -97,6 +101,7 @@ const DataInputPage = () => {
   });
   const navigate = useNavigate();
   const [usernameField, setUsernameField] = useState("");
+  const [employeeField, setEmployeeField] = useState("");
   const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
   const [infoType, setInfoType] = useState("WhomThisUserViewed");
   const [inputType, setInputType] = useState("IIN");
@@ -122,6 +127,7 @@ const DataInputPage = () => {
     useState("startingWith");
   const [searchTypeFullName, setSearchTypeFullName] = useState("startingWith");
   const [searchTypeUserName, setSearchTypeUserName] = useState("startingWith");
+  const [searchTypeEmployee, setSearchTypeEmployee] = useState("startingWith");
 
   const [showFilters, setShowFilters] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -211,6 +217,10 @@ const DataInputPage = () => {
   const handleUsernameFieldChange = (event) => {
     setUsernameField(event.target.value);
   };
+
+  const handleEmployeeFieldChange = (event) => {
+    setEmployeeField(event.target.value);
+  };
   const handleButtonClick = (type, rowData) => {
     if (type === "WhomThisUserViewed" || type === "WhoViewedThisUser") {
       // For the first set of buttons
@@ -231,11 +241,11 @@ const DataInputPage = () => {
   };
 
   const [rows, setRows] = useState([]);
-  
+
   const handleSearch = async () => {
     setSearchClicked(true);
-    console.log('Selected Start Date:', startDate);
-    console.log('Selected End Date:', endDate);
+    console.log("Selected Start Date:", startDate);
+    console.log("Selected End Date:", endDate);
     setLoading(true);
     if (
       initialInfoType !== infoType ||
@@ -567,6 +577,55 @@ const DataInputPage = () => {
       //     { id: "limit_", label: "Лимит" },
       //   ]);
       // }
+    } else if (infoType === "Risks") {
+      if (source === "Itap" && inputType === "IIN") {
+        apiUrl = `http://192.168.30.24:5220/risks/log/iin=${inn}`;
+        setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "iin", label: "ИИН объекта" },
+          { id: "fio", label: "ФИО Объекта" },
+        ]);
+      }
+      else if (source === "Cascade" && inputType === "IIN") {
+        apiUrl = `http://192.168.30.24:5220/risks/users_log/iin=${inn}`;
+        setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+
+        setColumnHeaders([
+          { id: "time", label: "Время" },
+          { id: "username", label: "Пользователь" },
+          { id: "iin", label: "ИИН объекта" },
+          { id: "fio", label: "ФИО Объекта" },
+        ]);
+      } else if (source === "Cascade" && inputType === "FullName") {
+        apiUrl = `http://192.168.30.24:5220/risks/users_log/fio=${name}`;
+        setAdditionalInfo(`Список рискованных запросов: ${name}`);
+
+        setColumnHeaders([
+          { id: "time", label: "Время" },
+          { id: "username", label: "Пользователь" },
+          { id: "iin", label: "ИИН объекта" },
+          { id: "fio", label: "ФИО Объекта" },
+        ]);
+      }
+      else if (source === "Itap" && inputType === "FullName") {
+        let additionalInfo;
+
+          apiUrl = `http://192.168.30.24:5220/risks/log/fio=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (начинается с): ${name}`;
+
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          { id: "username", label: "Пользователь" },
+          { id: "iin", label: "ИИН объекта" },
+          { id: "fio", label: "ФИО Объекта" },
+        ]);
+      }
+      
     }
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
@@ -574,17 +633,17 @@ const DataInputPage = () => {
       return;
     }
     if (startDate || endDate) {
-      apiUrl += '/?';
-    
+      apiUrl += "/?";
+
       if (startDate) {
         apiUrl += `start_date=${startDate}`;
-    
+
         // Append '&' only if both start_date and end_date exist
         if (endDate) {
-          apiUrl += '&';
+          apiUrl += "&";
         }
       }
-    
+
       if (endDate) {
         apiUrl += `end_date=${endDate}`;
       }
@@ -735,20 +794,19 @@ const DataInputPage = () => {
       } else if (inputType === "IIN" && source === "Cascade") {
         downloadUrl = `http://192.168.30.24:5220/user_log/message=${inn}/download_excel`;
       }
-
     }
     if (startDate || endDate) {
-      downloadUrl += '/?';
-    
+      downloadUrl += "/?";
+
       if (startDate) {
         downloadUrl += `start_date=${startDate}`;
-    
+
         // Append '&' only if both start_date and end_date exist
         if (endDate) {
-          downloadUrl += '&';
+          downloadUrl += "&";
         }
       }
-    
+
       if (endDate) {
         downloadUrl += `end_date=${endDate}`;
       }
@@ -932,6 +990,81 @@ const DataInputPage = () => {
           </ThemeProvider>
         );
 
+      case "EmployeeType":
+        return (
+          <ThemeProvider theme={darkTheme}>
+            <Box display="flex" alignItems="center" gap="10px">
+              <Select
+                value={searchTypeEmployee}
+                onChange={(e) => setSearchTypeEmployee(e.target.value)}
+                disabled={inputType === "EmployeeType"}
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Montserrat, sans-serif",
+                  color: "#fff",
+                  height: "45px",
+                  width: "180px",
+                  marginTop: "7px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff !important",
+                  },
+                  "& .MuiSelect-icon": {
+                    color: "#fff !important",
+                  },
+                }}
+              >
+                <MenuItem value="startingWith">Начинается с</MenuItem>
+                <MenuItem value="exactly">В точности с</MenuItem>
+              </Select>
+              <TextField
+                required
+                id="outlined-username"
+                label="Сотрудник"
+                defaultValue=""
+                margin="normal"
+                variant="outlined"
+                value={employeeField}
+                onChange={handleEmployeeFieldChange}
+                InputLabelProps={{
+                  style: {
+                    fontFamily: "Montserrat, sans-serif",
+                    color: "#fff",
+                    fontSize: "14px",
+                  },
+                }}
+                InputProps={{
+                  style: { color: "#fff", height: "45px", width: "440px" },
+                  notchedOutline: {
+                    borderColor: colors.borderColor,
+                  },
+                  endAdornment: (
+                    <InputAdornment position="end" sx={{ marginRight: "-5px" }}>
+                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#fff",
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    color: "#fff",
+                    fontSize: "14px",
+                  },
+                }}
+              />
+            </Box>
+          </ThemeProvider>
+        );
+
       case "FullName":
         return (
           <ThemeProvider theme={darkTheme}>
@@ -946,7 +1079,7 @@ const DataInputPage = () => {
                           : searchTypeLastName
                       }
                       onChange={(e) => setSearchTypeLastName(e.target.value)}
-                      disabled={source === "Cascade"}
+                      disabled={source === "Cascade" || infoType === "Risks"}
                       // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
 
                       sx={{
@@ -1028,7 +1161,7 @@ const DataInputPage = () => {
                           : searchTypeFirstName
                       }
                       onChange={(e) => setSearchTypeFirstName(e.target.value)}
-                      disabled={source === "Cascade"}
+                      disabled={source === "Cascade" || infoType === "Risks"}
                       // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
 
                       sx={{
@@ -1110,7 +1243,7 @@ const DataInputPage = () => {
                           : searchTypeMiddleName
                       }
                       onChange={(e) => setSearchTypeMiddleName(e.target.value)}
-                      disabled={source === "Cascade"}
+                      disabled={source === "Cascade" || infoType === "Risks"}
                       // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
 
                       sx={{
@@ -1265,7 +1398,7 @@ const DataInputPage = () => {
         return null;
     }
   };
-  
+
   return (
     <div className="data-input-page">
       <Header />
@@ -1329,6 +1462,23 @@ const DataInputPage = () => {
               }}
             >
               Кто просматривал данный объект
+            </Button>
+            <Button
+              variant="contained"
+              style={{
+                fontSize: "12px",
+                fontFamily: "Montserrat, sans-serif",
+                padding: "2px 4px",
+                backgroundColor:
+                  infoType === "Risks" ? colors.secondary : colors.primary,
+              }}
+              onClick={() => {
+                setInfoType("Risks");
+                setInputType("IIN");
+                handleButtonClick("Risks");
+              }}
+            >
+              Риски
             </Button>
           </Box>
 
@@ -1429,6 +1579,45 @@ const DataInputPage = () => {
                 </Button>
               </>
             )}
+
+            {infoType === "Risks" && (
+              <>
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "IIN" ? colors.secondary : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("IIN");
+                    handleButtonClick("IIN");
+                  }}
+                >
+                  ИИН
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "EmployeeType"
+                        ? colors.secondary
+                        : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("EmployeeType");
+                    handleButtonClick("EmployeeType");
+                  }}
+                >
+                  Сотруднк
+                </Button>
+              </>
+            )}
           </Box>
 
           {renderInputFields()}
@@ -1448,140 +1637,51 @@ const DataInputPage = () => {
             >
               Источник
             </InputLabel>
-          
-          {infoType === "WhomThisUserViewed" && (
-            <>
-              {inputType === "IIN" && (
-                <>
-                  <Select
-                    labelId="demo-simple-select-outlined-label"
-                    id="outlined-source"
-                    value={source}
-                    onChange={handleChange}
-                    label="Источник"
-                    sx={{
-                      fontSize: "14px",
-                      fontFamily: "Montserrat, sans-serif",
-                      color: "#fff",
-                      height: "45px",
-                      width: "630px",
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#fff !important",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#fff !important",
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#fff !important",
-                      },
-                      "& .MuiSelect-icon": {
-                        color: "#fff !important",
-                      },
-                    }}
-                  >
-                    <MenuItem value="Досье">Досье</MenuItem>
-                  </Select>
-                  {isFilterChanged && (
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
-                    >
-                      Необходимо сделать новый запрос для обновления данных.
-                    </Typography>
-                  )}
-                </>
-              )}
 
-              {inputType === "Username" && (
-                <Select
-                  labelId="demo-simple-select-outlined-label"
-                  id="outlined-source"
-                  value={source}
-                  onChange={handleChange}
-                  label="Источник"
-                  sx={{
-                    fontSize: "14px",
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    height: "45px",
-                    width: "630px",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "& .MuiSelect-icon": {
-                      color: "#fff !important",
-                    },
-                  }}
-                >
-                  <MenuItem value="Itap">Itap</MenuItem>
-                  <MenuItem value="Досье">Досье</MenuItem>
-                  <MenuItem value="Cascade">Каскад</MenuItem>
-                  {isFilterChanged && (
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+            {infoType === "WhomThisUserViewed" && (
+              <>
+                {inputType === "IIN" && (
+                  <>
+                    <Select
+                      labelId="demo-simple-select-outlined-label"
+                      id="outlined-source"
+                      value={source}
+                      onChange={handleChange}
+                      label="Источник"
+                      sx={{
+                        fontSize: "14px",
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        height: "45px",
+                        width: "630px",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#fff !important",
+                        },
+                      }}
                     >
-                      Необходимо сделать новый запрос для обновления данных.
-                    </Typography>
-                  )}
-                </Select>
-              )}
-              
+                      <MenuItem value="Досье">Досье</MenuItem>
+                    </Select>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
+                  </>
+                )}
 
-              {inputType === "FullName" && (
-                <Select
-                  labelId="demo-simple-select-outlined-label"
-                  id="outlined-source"
-                  value={source}
-                  onChange={handleChange}
-                  label="Источник"
-                  sx={{
-                    fontSize: "14px",
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    height: "45px",
-                    width: "630px",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "& .MuiSelect-icon": {
-                      color: "#fff !important",
-                    },
-                  }}
-                >
-                  <MenuItem value="Itap">Itap</MenuItem>
-                  <MenuItem value="Досье">Досье</MenuItem>
-                  <MenuItem value="Cascade">Каскад</MenuItem>
-                  {isFilterChanged && (
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
-                    >
-                      Необходимо сделать новый запрос для обновления данных.
-                    </Typography>
-                  )}
-                </Select>
-              )}
-            </>
-          )}
-          
-
-          {infoType === "WhoViewedThisUser" && (
-            <>
-              {inputType === "IIN" && (
-                <>
+                {inputType === "Username" && (
                   <Select
                     labelId="demo-simple-select-outlined-label"
                     id="outlined-source"
@@ -1611,58 +1711,232 @@ const DataInputPage = () => {
                     <MenuItem value="Itap">Itap</MenuItem>
                     <MenuItem value="Досье">Досье</MenuItem>
                     <MenuItem value="Cascade">Каскад</MenuItem>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
                   </Select>
-                  {isFilterChanged && (
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                )}
+
+                {inputType === "FullName" && (
+                  <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="outlined-source"
+                    value={source}
+                    onChange={handleChange}
+                    label="Источник"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      height: "45px",
+                      width: "630px",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="Itap">Itap</MenuItem>
+                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Cascade">Каскад</MenuItem>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
+                  </Select>
+                )}
+              </>
+            )}
+
+            {infoType === "WhoViewedThisUser" && (
+              <>
+                {inputType === "IIN" && (
+                  <>
+                    <Select
+                      labelId="demo-simple-select-outlined-label"
+                      id="outlined-source"
+                      value={source}
+                      onChange={handleChange}
+                      label="Источник"
+                      sx={{
+                        fontSize: "14px",
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        height: "45px",
+                        width: "630px",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#fff !important",
+                        },
+                      }}
                     >
-                      Необходимо сделать новый запрос для обновления данных.
-                    </Typography>
-                  )}
-                </>
-              )}
-              {inputType === "FullName" && (
-                <Select
-                  labelId="demo-simple-select-outlined-label"
-                  id="outlined-source"
-                  value={source}
-                  onChange={handleChange}
-                  label="Источник"
-                  sx={{
-                    fontSize: "14px",
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    height: "45px",
-                    width: "630px",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#fff !important",
-                    },
-                    "& .MuiSelect-icon": {
-                      color: "#fff !important",
-                    },
-                  }}
-                >
-                  <MenuItem value="Itap">Itap</MenuItem>
-                  <MenuItem value="Досье">Досье</MenuItem>
-                  {isFilterChanged && (
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      <MenuItem value="Itap">Itap</MenuItem>
+                      <MenuItem value="Досье">Досье</MenuItem>
+                      <MenuItem value="Cascade">Каскад</MenuItem>
+                    </Select>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
+                  </>
+                )}
+                {inputType === "FullName" && (
+                  <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="outlined-source"
+                    value={source}
+                    onChange={handleChange}
+                    label="Источник"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      height: "45px",
+                      width: "630px",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="Itap">Itap</MenuItem>
+                    <MenuItem value="Досье">Досье</MenuItem>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
+                  </Select>
+                )}
+              </>
+            )}
+            {infoType === "Risks" && (
+              <>
+                {inputType === "IIN" && (
+                  <>
+                    <Select
+                      labelId="demo-simple-select-outlined-label"
+                      id="outlined-source"
+                      value={source}
+                      onChange={handleChange}
+                      label="Источник"
+                      sx={{
+                        fontSize: "14px",
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        height: "45px",
+                        width: "630px",
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#fff !important",
+                        },
+                        "& .MuiSelect-icon": {
+                          color: "#fff !important",
+                        },
+                      }}
                     >
-                      Необходимо сделать новый запрос для обновления данных.
-                    </Typography>
-                  )}
-                </Select>
-              )}
-            </>
-          )}
+                      <MenuItem value="Itap">Itap</MenuItem>
+                      <MenuItem value="Досье">Досье</MenuItem>
+                      <MenuItem value="Cascade">Каскад</MenuItem>
+                    </Select>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
+                  </>
+                )}
+
+                {inputType === "EmployeeType" && (
+                  <Select
+                    labelId="demo-simple-select-outlined-label"
+                    id="outlined-source"
+                    value={source}
+                    onChange={handleChange}
+                    label="Источник"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      height: "45px",
+                      width: "630px",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#fff !important",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="Itap">Itap</MenuItem>
+                    <MenuItem value="Досье">Досье</MenuItem>
+                    <MenuItem value="Cascade">Каскад</MenuItem>
+                    {isFilterChanged && (
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "red", fontSize: "0.8rem", marginTop: 1 }}
+                      >
+                        Необходимо сделать новый запрос для обновления данных.
+                      </Typography>
+                    )}
+                  </Select>
+                )}
+              </>
+            )}
           </ThemeProvider>
           <ThemeProvider theme={darkTheme}>
             <Box mt={2}>
@@ -1688,8 +1962,8 @@ const DataInputPage = () => {
                       fontFamily: "Montserrat, sans-serif",
                       color: "#fff",
                       fontSize: "13px",
-                      '& svg': {
-                        fill: 'white', // Color for the icon
+                      "& svg": {
+                        fill: "white", // Color for the icon
                       },
                     },
                   }}
@@ -1753,7 +2027,6 @@ const DataInputPage = () => {
                       "& fieldset": {
                         borderColor: "#fff !important",
                       },
-                      
                     },
                   }}
                 />

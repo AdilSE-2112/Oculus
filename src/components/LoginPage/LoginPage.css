@@ -14,8 +14,8 @@
 .login-page {
     margin-top: 0;
     /* background-color: #ffffff; */
-    /* background-image: url('../../assets/backgroundImage.PNG'); */
-    background-image: url('../../assets/backgroundLoginV2.jpg');
+    /* background-image: url('../../assets/backgroundImagамеиа кетти дриалоап ким аоманы  1e.PNG'); */
+    background-image: url('../../assets/backgroundLoginV3.jpg');
     background-color: #000000;
     background-blend-mode:luminosity;
     background-size: cover; 
@@ -102,10 +102,12 @@
                     position: relative;
                     .icon {
                         position: absolute;
-                        bottom: 2px;
+                        bottom: -1px;
                         svg {
                             opacity: 0.7;
                             width: 20px;
+                            position: relative; 
+                            bottom: 0;
                         }
                     }
 
@@ -146,10 +148,12 @@
                     position: relative;
                     .icon {
                         position: absolute;
-                        bottom: 2px;
+                        bottom: -1px;
                         svg {
                             opacity: 0.7;
                             width: 20px;
+                            position: relative; 
+                            bottom: 0;
                         }
                     }
                     > input {
@@ -174,7 +178,9 @@
                         cursor: pointer;
                         svg {
                             width: 24px;
-                            color: #fff
+                            color: #fff;
+                            position: relative; 
+                            bottom: -1px;
                         }
                     }
                 }
