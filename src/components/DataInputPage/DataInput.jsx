@@ -630,21 +630,23 @@ const DataInputPage = () => {
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      } else if (inputType === "ListRisks") {
-        let additionalInfo;
+      } 
+      // else if (inputType === "ListRisks") {
+      //   let additionalInfo;
 
-        apiUrl = `http://192.168.30.24:5220/risks/log`;
-        additionalInfo = `Полный список рискованных запросов`;
+      //   apiUrl = `http://192.168.30.24:5220/risks/log`;
+      //   additionalInfo = `Полный список рискованных запросов`;
 
-        setAdditionalInfo(additionalInfo);
+      //   setAdditionalInfo(additionalInfo);
 
-        setColumnHeaders([
-          { id: "date", label: "Дата" },
-          { id: "username", label: "Пользователь" },
-          { id: "fio", label: "ИИН/БИН объекта" },
-          { id: "iin", label: "ФИО Объекта" },
-        ]);
-      }
+      //   setColumnHeaders([
+      //     { id: "date", label: "Дата" },
+      //     { id: "username", label: "Пользователь" },
+      //     { id: "fio", label: "ИИН/БИН объекта" },
+      //     { id: "iin", label: "ФИО Объекта" },
+      //   ]);
+      // }
+      
     }
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
@@ -1757,7 +1759,6 @@ const DataInputPage = () => {
                     }}
                   >
                     <MenuItem value="Itap">Itap</MenuItem>
-                    <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                     <MenuItem value="Cascade">Каскад</MenuItem>
                     {isFilterChanged && (
                       <Typography
