@@ -630,7 +630,7 @@ const DataInputPage = () => {
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      } 
+      }
       // else if (inputType === "ListRisks") {
       //   let additionalInfo;
 
@@ -646,7 +646,6 @@ const DataInputPage = () => {
       //     { id: "iin", label: "ФИО Объекта" },
       //   ]);
       // }
-      
     }
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
@@ -1455,25 +1454,6 @@ const DataInputPage = () => {
                 fontFamily: "Montserrat, sans-serif",
                 padding: "2px 4px",
                 backgroundColor:
-                  infoType === "WhomThisUserViewed"
-                    ? colors.secondary
-                    : colors.primary,
-              }}
-              onClick={() => {
-                setInfoType("WhomThisUserViewed");
-                handleButtonClick("WhomThisUserViewed");
-              }}
-            >
-              Инициатор запроса
-            </Button>
-
-            <Button
-              variant="contained"
-              style={{
-                fontSize: "12px",
-                fontFamily: "Montserrat, sans-serif",
-                padding: "2px 4px",
-                backgroundColor:
                   infoType === "WhoViewedThisUser"
                     ? colors.secondary
                     : colors.primary,
@@ -1484,8 +1464,27 @@ const DataInputPage = () => {
                 handleButtonClick("WhoViewedThisUser");
               }}
             >
+              Инициатор запроса
+            </Button>
+            <Button
+              variant="contained"
+              style={{
+                fontSize: "12px",
+                fontFamily: "Montserrat, sans-serif",
+                padding: "2px 4px",
+                backgroundColor:
+                  infoType === "WhomThisUserViewed"
+                    ? colors.secondary
+                    : colors.primary,
+              }}
+              onClick={() => {
+                setInfoType("WhomThisUserViewed");
+                handleButtonClick("WhomThisUserViewed");
+              }}
+            >
               Объект запроса
             </Button>
+
             {/* <Button
               variant="contained"
               style={{
