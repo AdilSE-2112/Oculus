@@ -302,7 +302,7 @@ const DataInputPage = () => {
         setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
-          { id: "log_time", label: "Время" },
+          { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
@@ -313,7 +313,7 @@ const DataInputPage = () => {
         setAdditionalInfo(`Кого просматривал сотрудник: ${name}`);
 
         setColumnHeaders([
-          { id: "time", label: "Время" },
+          { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Сообщение" },
         ]);
@@ -330,7 +330,7 @@ const DataInputPage = () => {
         setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
-          { id: "time", label: "Время" },
+          { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Запрос" },
         ]);
@@ -339,7 +339,7 @@ const DataInputPage = () => {
         setAdditionalInfo(`Кого просматривал пользователь с ИИН: ${inn}`);
 
         setColumnHeaders([
-          { id: "log_time", label: "Время" },
+          { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
@@ -358,7 +358,7 @@ const DataInputPage = () => {
         setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
-          { id: "log_time", label: "Время" },
+          { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
@@ -388,7 +388,7 @@ const DataInputPage = () => {
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
-          { id: "log_time", label: "Время" },
+          { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
@@ -421,7 +421,7 @@ const DataInputPage = () => {
         setAdditionalInfo(`Кто просматривал объект с ИИН: ${inn}`);
 
         setColumnHeaders([
-          { id: "time", label: "Время" },
+          { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Запрос" },
         ]);
@@ -460,7 +460,7 @@ const DataInputPage = () => {
         apiUrl = apiUrl.slice(0, -1);
 
         setColumnHeaders([
-          { id: "log_time", label: "Время" },
+          { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
           { id: "fname", label: "Имя" },
           { id: "lname", label: "Фамилия" },
@@ -514,7 +514,7 @@ const DataInputPage = () => {
       //   setAdditionalInfo(`Кто просматривал объект : ${name}`);
 
       //   setColumnHeaders([
-      //     { id: "time", label: "Время" },
+      //     { id: "time", label: "Дата" },
       //     { id: "username", label: "Пользователь" },
       //     { id: "message", label: "Запрос" },
       //   ]);
@@ -542,7 +542,7 @@ const DataInputPage = () => {
         apiUrl = apiUrl.slice(0, -1);
 
         setColumnHeaders([
-          { id: "time", label: "Время" },
+          { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "message", label: "Запрос" },
         ]);
@@ -585,8 +585,8 @@ const DataInputPage = () => {
         setColumnHeaders([
           { id: "date", label: "Дата" },
           { id: "username", label: "Пользователь" },
-          { id: "iin", label: "ИИН объекта" },
-          { id: "fio", label: "ФИО Объекта" },
+          { id: "fio", label: "ИИН объекта" },
+          { id: "iin", label: "ФИО Объекта" },
         ]);
       }
       else if (source === "Cascade" && inputType === "IIN") {
@@ -594,17 +594,17 @@ const DataInputPage = () => {
         setAdditionalInfo(`Список рискованных запросов: ${inn}`);
 
         setColumnHeaders([
-          { id: "time", label: "Время" },
+          { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
-          { id: "iin", label: "ИИН объекта" },
-          { id: "fio", label: "ФИО Объекта" },
+          { id: "fio", label: "ИИН объекта" },
+          { id: "iin", label: "ФИО Объекта" },
         ]);
       } else if (source === "Cascade" && inputType === "FullName") {
         apiUrl = `http://192.168.30.24:5220/risks/users_log/fio=${name}`;
         setAdditionalInfo(`Список рискованных запросов: ${name}`);
 
         setColumnHeaders([
-          { id: "time", label: "Время" },
+          { id: "time", label: "Дата" },
           { id: "username", label: "Пользователь" },
           { id: "iin", label: "ИИН объекта" },
           { id: "fio", label: "ФИО Объекта" },
@@ -673,7 +673,9 @@ const DataInputPage = () => {
               data.fname,
               data.lname,
               data.user_name,
-              data.log_time
+              data.log_time,
+              data.iin,
+              data.fio
             )
           )
         );
