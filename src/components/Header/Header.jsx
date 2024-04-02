@@ -154,11 +154,11 @@ const Header = () => {
             <Box
               sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
             >
-              <IconButton color="inherit" onClick={handleNotificationClick}>
+              {/* <IconButton color="inherit" onClick={handleNotificationClick}>
                 <Badge badgeContent={notificationCount} color="error">
                   <NotificationsIcon />
                 </Badge>
-              </IconButton>
+              </IconButton> */}
               <AccountCircleIcon onClick={handleMenu} />
               <Typography
                 variant="subtitle1"
