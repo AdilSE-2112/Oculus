@@ -1462,7 +1462,7 @@ const DataInputPage = () => {
                 handleButtonClick("WhomThisUserViewed");
               }}
             >
-              Кого просматривал данный пользователь
+              Объект запроса
             </Button>
 
             <Button
@@ -1482,7 +1482,7 @@ const DataInputPage = () => {
                 handleButtonClick("WhoViewedThisUser");
               }}
             >
-              Кто просматривал данный объект
+              Инициатор запроса
             </Button>
             <Button
               variant="contained"
