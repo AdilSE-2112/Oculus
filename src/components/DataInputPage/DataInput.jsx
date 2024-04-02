@@ -971,7 +971,7 @@ const DataInputPage = () => {
               <TextField
                 required
                 id="outlined-username"
-                label="Username"
+                label="Учётная запись"
                 defaultValue=""
                 margin="normal"
                 variant="outlined"
