@@ -1464,7 +1464,7 @@ const DataInputPage = () => {
                 handleButtonClick("WhomThisUserViewed");
               }}
             >
-              Объект запроса
+              Инициатор запроса
             </Button>
 
             <Button
@@ -1484,7 +1484,7 @@ const DataInputPage = () => {
                 handleButtonClick("WhoViewedThisUser");
               }}
             >
-              Инициатор запроса
+              Объект запроса
             </Button>
             {/* <Button
               variant="contained"
