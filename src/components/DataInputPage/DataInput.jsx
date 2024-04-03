@@ -587,8 +587,13 @@ const DataInputPage = () => {
       // }
     } else if (infoType === "Risks") {
       if (source === "Itap" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:5220/risks/log/iin=${inn}`;
-        setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+        apiUrl = "http://192.168.30.24:5220/risks/log";
+        if (inn) {
+          apiUrl += `/iin=${inn}`;
+          setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+        } else {
+          setAdditionalInfo("Список рискованных запросов: Все");
+        }
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
@@ -597,8 +602,13 @@ const DataInputPage = () => {
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
       } else if (source === "Cascade" && inputType === "IIN") {
-        apiUrl = `http://192.168.30.24:5220/risks/users_log/iin=${inn}`;
-        setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+        apiUrl = `http://192.168.30.24:5220/risks/users_log`;
+        if (inn) {
+          apiUrl += `/iin=${inn}`;
+          setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+        } else {
+          setAdditionalInfo("Список рискованных запросов: Все");
+        }
 
         setColumnHeaders([
           { id: "time", label: "Дата" },
@@ -607,45 +617,41 @@ const DataInputPage = () => {
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
       } else if (source === "Cascade" && inputType === "EmployeeType") {
-        apiUrl = `http://192.168.30.24:5220/risks/users_log/fio=${employeeField}`;
-        setAdditionalInfo(`Список рискованных запросов: ${employeeField}`);
+        apiUrl = `http://192.168.30.24:5220/risks/users_log`;
 
+        if (employeeField) {
+          apiUrl += `/fio=${employeeField}`;
+          setAdditionalInfo(`Список рискованных запросов: ${employeeField}`);
+        } else {
+          setAdditionalInfo("Список рискованных запросов: Все");
+        }
         setColumnHeaders([
           { id: "time", label: "Дата" },
-          { id: "username", label: "Пользователь" },
+          { id: "username", label: "Инициатор запроса" },
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
       } else if (source === "Itap" && inputType === "EmployeeType") {
         let additionalInfo;
 
-        apiUrl = `http://192.168.30.24:5220/risks/log/fio=${employeeField}`;
-        additionalInfo = `Список рискованных запросов: ${employeeField}`;
+        apiUrl = `http://192.168.30.24:5220/risks/log`;
+       
+        if (employeeField) {
+          apiUrl += `/fio=${employeeField}`;
+          setAdditionalInfo(`Список рискованных запросов: ${employeeField}`);
+        } else {
+          setAdditionalInfo("Список рискованных запросов: Все");
+        }
 
         setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
-          { id: "username", label: "Пользователь" },
+          { id: "username", label: "Инициатор запроса" },
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
       }
-      // else if (inputType === "ListRisks") {
-      //   let additionalInfo;
-
-      //   apiUrl = `http://192.168.30.24:5220/risks/log`;
-      //   additionalInfo = `Полный список рискованных запросов`;
-
-      //   setAdditionalInfo(additionalInfo);
-
-      //   setColumnHeaders([
-      //     { id: "date", label: "Дата" },
-      //     { id: "username", label: "Пользователь" },
-      //     { id: "fio", label: "ИИН/БИН объекта" },
-      //     { id: "iin", label: "ФИО Объекта" },
-      //   ]);
-      // }
     }
     if (apiUrl === "") {
       handleError("Данная функция не доступна на данный момент");
@@ -874,7 +880,7 @@ const DataInputPage = () => {
               <TextField
                 required
                 id="outlined-required"
-                label="ИИН/БИН"
+                label={infoType === "Risks" ? "ИИН/БИН(Не обязательное поле)" : "ИИН/БИН"}
                 defaultValue=""
                 margin="normal"
                 variant="outlined"
@@ -1047,7 +1053,7 @@ const DataInputPage = () => {
               <TextField
                 required
                 id="outlined-username"
-                label="Сотрудник"
+                label="Сотрудник(Не обязательное поле)"
                 defaultValue=""
                 margin="normal"
                 variant="outlined"
@@ -1057,7 +1063,7 @@ const DataInputPage = () => {
                   style: {
                     fontFamily: "Montserrat, sans-serif",
                     color: "#fff",
-                    fontSize: "14px",
+                    fontSize: "12px",
                   },
                 }}
                 InputProps={{
@@ -1460,8 +1466,10 @@ const DataInputPage = () => {
               }}
               onClick={() => {
                 setInfoType("WhoViewedThisUser");
-                setInputType("IIN");
                 handleButtonClick("WhoViewedThisUser");
+                 if (inputType === "EmployeeType") {
+                  setInputType("IIN");
+                }
               }}
             >
               Инициатор запроса
@@ -1480,12 +1488,15 @@ const DataInputPage = () => {
               onClick={() => {
                 setInfoType("WhomThisUserViewed");
                 handleButtonClick("WhomThisUserViewed");
+                if (inputType === "EmployeeType") {
+                  setInputType("IIN");
+                }
               }}
             >
               Объект запроса
             </Button>
 
-            {/* <Button
+            <Button
               variant="contained"
               style={{
                 fontSize: "12px",
@@ -1501,7 +1512,7 @@ const DataInputPage = () => {
               }}
             >
               Риски
-            </Button> */}
+            </Button>
           </Box>
 
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
