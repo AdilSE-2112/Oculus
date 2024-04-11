@@ -14,7 +14,8 @@
    }
 }
 .data-input-page {
-    background-color: #141414;
+    background-color: #141414; /*090913  090f13  091013*/
+    
     min-height: 100vh; 
     overflow: auto;
     background-size: cover; /* Adjust as needed */

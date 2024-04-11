@@ -651,6 +651,38 @@ const DataInputPage = () => {
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
+      }else if (source === "Досье" && inputType === "IIN") {
+        apiUrl = "http://192.168.30.24:5220/risks/dossie_log";
+
+        if (inn) {
+          apiUrl += `/iin=${inn}`;
+          setAdditionalInfo(`Список рискованных запросов: ${inn}`);
+        } else {
+          setAdditionalInfo("Список рискованных запросов: Все");
+        }
+        
+        setColumnHeaders([
+          { id: "log_time", label: "Дата" },
+          { id: "user_name", label: "Инициатор запроса" },
+          { id: "fio", label: "ИИН/БИН объекта запроса" },
+          { id: "iin", label: "ФИО Объекта запроса" },
+        ]);
+      }else if (source === "Досье" && inputType === "EmployeeType") {
+        apiUrl = "http://192.168.30.24:5220/risks/dossie_log";
+
+        if (employeeField) {
+          apiUrl += `/fio=${employeeField}`;
+          setAdditionalInfo(`Список рискованных запросов: ${employeeField}`);
+        } else {
+          setAdditionalInfo("Список рискованных запросов: Все");
+        }
+        
+        setColumnHeaders([
+          { id: "log_time", label: "Дата" },
+          { id: "user_name", label: "Инициатор запроса" },
+          { id: "fio", label: "ИИН/БИН объекта запроса" },
+          { id: "iin", label: "ФИО Объекта запроса" },
+        ]);
       }
     }
     if (apiUrl === "") {
@@ -664,7 +696,6 @@ const DataInputPage = () => {
       if (startDate) {
         apiUrl += `start_date=${startDate}`;
 
-        // Append '&' only if both start_date and end_date exist
         if (endDate) {
           apiUrl += "&";
         }
@@ -715,7 +746,13 @@ const DataInputPage = () => {
             "Данные не найдены. Пожалуйста, проверьте введенные данные и повторите попытку."
           );
           setRows([]);
-        } else {
+        } else if (error.response && error.response.status === 401) {
+          handleError(
+            "Возникла проблема при получении данных. Пожалуйста, попробуйте войти в портал снова."
+          );
+          setRows([]);
+        }
+        else {
           handleError("При извлечении данных произошла ошибка.");
           setRows([]);
         }
