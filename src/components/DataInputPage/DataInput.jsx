@@ -716,7 +716,6 @@ const DataInputPage = () => {
           console.error("Invalid response data:", searchData);
           return;
         }
-
         setRows(
           (searchData || []).map((data, index) =>
             createData(
@@ -1798,6 +1797,8 @@ const DataInputPage = () => {
                           }}
                         >
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                          <MenuItem value="eias">ЕИАС"</MenuItem>
+
                         </Select>
                         {isFilterChanged && (
                           <Typography
@@ -1844,6 +1845,7 @@ const DataInputPage = () => {
                       >
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
+                        <MenuItem value="eias">ЕИАС"</MenuItem>
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -1890,6 +1892,7 @@ const DataInputPage = () => {
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
+                        <MenuItem value="eias">ЕИАС"</MenuItem>
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -1986,6 +1989,7 @@ const DataInputPage = () => {
                       >
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                        <MenuItem value="eias">ЕИАС"</MenuItem>
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -2036,6 +2040,7 @@ const DataInputPage = () => {
                           <MenuItem value="Itap">Itap</MenuItem>
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                           <MenuItem value="Cascade">Каскад</MenuItem>
+                          <MenuItem value="eias">ЕИАС"</MenuItem>
                         </Select>
                         {isFilterChanged && (
                           <Typography
@@ -2083,6 +2088,7 @@ const DataInputPage = () => {
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
+                        <MenuItem value="eias">ЕИАС"</MenuItem>
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
