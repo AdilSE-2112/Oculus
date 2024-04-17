@@ -54,28 +54,28 @@ function createData(
   member_name,
   other,
 ) {
-  const formattedDate = new Date(date).toLocaleString();
-  const formattedDossieTime = new Date(log_time).toLocaleString();
+  const formattedDate = date ? new Date(date).toLocaleString() : "Нету информации";
+  const formattedDossieTime = log_time ? new Date(log_time).toLocaleString() : "Нету информации";
 
   return {
     date: formattedDate,
-    username,
-    request_body,
-    limit_,
-    time,
-    message,
-    action,
-    fname,
-    lname,
-    user_name,
+    username: username || "Нету информации",
+    request_body: request_body || "Нету информации",
+    limit_: limit_ || "Нету информации",
+    time: time || "Нету информации",
+    message: message || "Нету информации",
+    action: action || "Нету информации",
+    fname: fname || "Нету информации",
+    lname: lname || "Нету информации",
+    user_name: user_name || "Нету информации",
     log_time: formattedDossieTime,
-    fio,
-    iin,
-    date_action,
-    member_bin,
-    performer,
-    member_name,
-    other,
+    fio: fio || "Нету информации",
+    iin: iin || "Нету информации",
+    date_action: date_action || "Нету информации",
+    member_bin: member_bin || "Нету информации",
+    performer: performer || "Нету информации",
+    member_name: member_name || "Нету информации",
+    other: other || "Нету информации",
   };
 }
 
