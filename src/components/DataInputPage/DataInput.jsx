@@ -47,10 +47,16 @@ function createData(
   user_name,
   log_time,
   fio,
-  iin
+  iin,
+  date_action,
+  member_bin,
+  performer,
+  member_name,
+  other,
 ) {
   const formattedDate = new Date(date).toLocaleString();
   const formattedDossieTime = new Date(log_time).toLocaleString();
+
   return {
     date: formattedDate,
     username,
@@ -65,6 +71,11 @@ function createData(
     log_time: formattedDossieTime,
     fio,
     iin,
+    date_action,
+    member_bin,
+    performer,
+    member_name,
+    other,
   };
 }
 
@@ -388,6 +399,28 @@ const DataInputPage = () => {
           { id: "username", label: "Пользователь" },
           { id: "request_body", label: "Запрос" },
           { id: "limit_", label: "Лимит" },
+        ]);
+      }else if (source === "eias" && inputType === "Username") {
+        let additionalInfo;
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
+          additionalInfo = `Кого просматривал сотрудник (начинается с): ${usernameField}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
+          additionalInfo = `Кого просматривал сотрудник (в точности): ${usernameField}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          // { id: "action", label: "Запрос" },
+          { id: "member_bin", label: "ИИН/БИН" },
+          { id: "performer", label: "Исполнитель" },
+          { id: "member_name", label: "Имя" },
+          { id: "other", label: "Другие сведения" },
+
+
+
         ]);
       }
     } else if (infoType === "WhoViewedThisUser") {
@@ -731,7 +764,12 @@ const DataInputPage = () => {
               data.user_name,
               data.log_time,
               data.iin,
-              data.fio
+              data.fio,
+              data.date_action,
+              data.member_bin,
+              data.performer,
+              data.member_name,
+              data.other,
             )
           )
         );
@@ -1797,7 +1835,7 @@ const DataInputPage = () => {
                           }}
                         >
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                          <MenuItem value="eias">ЕИАС"</MenuItem>
+                            
 
                         </Select>
                         {isFilterChanged && (
@@ -1845,7 +1883,7 @@ const DataInputPage = () => {
                       >
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
-                        <MenuItem value="eias">ЕИАС"</MenuItem>
+                        <MenuItem value="eias">ЕИАС</MenuItem>
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -1892,7 +1930,7 @@ const DataInputPage = () => {
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
-                        <MenuItem value="eias">ЕИАС"</MenuItem>
+                          
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -1989,7 +2027,7 @@ const DataInputPage = () => {
                       >
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                        <MenuItem value="eias">ЕИАС"</MenuItem>
+                          
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -2040,7 +2078,7 @@ const DataInputPage = () => {
                           <MenuItem value="Itap">Itap</MenuItem>
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                           <MenuItem value="Cascade">Каскад</MenuItem>
-                          <MenuItem value="eias">ЕИАС"</MenuItem>
+                            
                         </Select>
                         {isFilterChanged && (
                           <Typography
@@ -2088,7 +2126,7 @@ const DataInputPage = () => {
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
-                        <MenuItem value="eias">ЕИАС"</MenuItem>
+                          
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
