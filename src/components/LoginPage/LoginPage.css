@@ -12,18 +12,19 @@
     object-fit: cover; /* Ensure the video covers the entire container */
   }
 .login-page {
-    margin-top: 0;
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center;
     /* background-color: #ffffff; */
     /* background-image: url('../../assets/backgroundImagамеиа кетти дриалоап ким аоманы  1e.PNG'); */
     background-image: url('../../assets/backgroundLoginV3.jpg');
-    background-color: #000000;
+    background-color: #000522;
     background-blend-mode:luminosity;
     background-size: cover; 
     background-position: center; 
     height: 100vh; 
     width: 100vw; 
     position: relative;
-    /* filter: grayscale(100%); */
     * {
         font-family: 'Montserrat', sans-serif;
     }
@@ -57,18 +58,16 @@
     }
 
     .login-form-block {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         padding: 15px 40px 15px 40px;
-        background-color: #0D0F11;
+        backdrop-filter: blur(10px); /* Adjust the blur radius as needed */
+        background-color: transparent;
         border-radius: 9px;
+        border: 2px solid #0f1c36;
         height: 350px;
         width: 350px;
         position: absolute;
         top: 50%;
-        left: 20%;
+        left: 50%;
         transform: translate(-50%, -50%);
 
         display: flex;
@@ -112,7 +111,7 @@
                     }
 
                     input {
-                        background-color:#292929;
+                        background-color:#ffffff;
                         padding-left: 25px;
                         
 
@@ -120,7 +119,7 @@
                 }
 
                 label {
-                    color: #424446;
+                    color: #f6f6f6;
                     font-size: 18px;
                     font-weight: 400;
                     
@@ -157,7 +156,7 @@
                         }
                     }
                     > input {
-                        background-color:#292929;
+                        background-color:#ffffff;
                         padding-left: 25px;
 
                         padding-right: 40px;
@@ -235,5 +234,6 @@
                 }
             }
         }
+
     }
 }
