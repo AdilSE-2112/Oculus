@@ -1,0 +1,17 @@
+.container {
+    background: rgba(4, 4, 15, 0.7); /* semi-transparent white background */
+    backdrop-filter: blur(10px); /* apply blur effect */
+    padding: 20px;
+    height: 90%;
+    border: 1px solid white;
+    margin: 20px;
+  }
+  
+  .inputField {
+    margin-bottom: 10px;
+  }
+  
+  .selectField {
+    margin-bottom: 20px;
+  }
+  

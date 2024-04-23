@@ -5,37 +5,34 @@ import BackgroundImage from '../../assets/BackgroundMain.jpg';
 import Filters from '../Filters/Filters';
 import Table from '../Table/Table';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   container: {
     display: 'grid',
-    placeItems: 'center', // Center content horizontally and vertically
-    minHeight: '100vh', // Ensure the container covers the viewport height
-    backgroundImage: `url(${BackgroundImage})`, // Set the background image
-    backgroundSize: 'cover', // Cover the entire container with the background image
+    placeItems: 'center', // Center content vertically
+    height: '100vh',
+    width: '100vw', // Make the container cover the entire viewport height
+    backgroundImage: `url(${BackgroundImage})`,
+    backgroundSize: '120%',
     backgroundPosition: 'center',
-    gridTemplateColumns: '1fr 2fr 2fr', // Define the columns
-    gridTemplateRows: 'auto auto auto', // Define the rows
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateRows: '92.5px 2fr',
+    gridAutoFlow: 'row',
     gridTemplateAreas: `
       "header header header"
       "filters table table"
     `,
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '1fr', // Adjust to single column layout on smaller screens
-    },
   },
-  header: { gridArea: 'header' },
-  filters: { gridArea: 'filters' },
-  table: { gridArea: 'table' },
-}));
-
-
+  header: { gridArea: 'header', width: '100%', height: '100%' },
+  filters: { gridArea: 'filters', border: '1px solid red', width: '100%', height: '100%' },
+  table: { gridArea: 'table', border: '1px solid red', width: '100%', height: '100%' },
+});
 
 const DataShowPage = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.container}>
-      <div className={classes.header}>
+      <div className={classes.header} style={{border: '1px dashed blue', display: 'flex', width: '100%'}}>
         <HeaderNew />
       </div>
       <div className={classes.filters}>

@@ -1,0 +1,54 @@
+.parentContainer {
+  margin: 20px;
+  border: 1px solid darkblue;
+  
+  height: 100%;
+}
+
+.contenr {
+  width: 100%;
+}
+
+.selector {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    
+  }
+  
+  .button {
+    flex: 1;
+    font-size: 12px;
+    color: white;
+    background: rgba(4, 4, 15, 0.7);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .button.active {
+    border: 1px solid white;
+    border-bottom: none;
+  }
+  
+  .button:not(.active) {
+    border: 1px solid gray;
+    border-bottom: white;
+  }
+  
+  .containerInputs {
+    background: rgba(4, 4, 15, 0.7);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    border: 1px solid white;
+    border-top: none;
+  }
+  
+  input[type="text"], select {
+    margin-bottom: 10px;
+  }
+  
+  .select {
+    margin-bottom: 20px;
+  }
+  

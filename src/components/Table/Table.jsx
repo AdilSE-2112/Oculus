@@ -1,27 +1,15 @@
 import React from "react";
+import "../Table/Tables.css";
 
 const Filters = () => {
   return (
-    <div
-      style={{
-        background: "rgba(4, 4, 15, 0.7)", // semi-transparent white background
-        backdropFilter: 'blur(10px)', // apply blur effect
-        padding: "20px",
-        width: "1180px",
-        height: "705px",
-        marginBottom: "236px",
-        paddingTop: "100px",
-        marginRight: "50px",
-        border: '1px solid white', 
-      }}
-    >
-
+    <div className="container">
       <input
         type="text"
         placeholder="Search..."
-        style={{ marginBottom: "10px" }}
+        className="inputField"
       />
-      <select style={{ marginBottom: "20px" }}>
+      <select className="selectField">
         <option value="">Filter by...</option>
         <option value="category1">Category 1</option>
         <option value="category2">Category 2</option>

@@ -1,0 +1,40 @@
+.header-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border: 5px solid green;
+    width: 100%;
+  }
+  
+  .header-box {
+    background: rgba(4, 4, 15, 0.7);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    border: 1px solid white;
+  }
+  
+  .app-bar {
+    background: transparent;
+    width: 95%;
+    height: 100px;
+  }
+  
+  .toolbar {
+    justify-content: space-between;
+    width: 98%;
+    margin: 0 auto;
+  }
+  
+  .logo {
+    height: 35px;
+    width: 70px;
+    margin: 5px;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  

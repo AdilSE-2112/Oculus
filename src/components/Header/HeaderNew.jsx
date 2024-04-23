@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./HeaderNew.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   AppBar,
@@ -20,7 +21,7 @@ import {
   TableBody,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -43,7 +44,6 @@ const HeaderNew = () => {
       mode: "dark",
     },
   });
-  
 
   useEffect(() => {
     const ws = new WebSocket("ws://192.168.30.24:5220/ws");
@@ -114,41 +114,20 @@ const HeaderNew = () => {
   };
 
   return (
-    <Container >
-      <div style={{ display: 'flex', justifyContent: 'center',  }}>
-      <Box
-        sx={{
-          background: "rgba(4, 4, 15, 0.7)", // semi-transparent white background
-          backdropFilter: 'blur(10px)', // apply blur effect
-          width: "2000px",
-          height: "90px",
-          border: '1px solid white', 
-          marginTop: "-0px",
-        }}
-      >
+    <Container
+      maxWidth="xl"
+      className="header-container"
+      style={{ border: "4px dashed red" }}
+    >
+      <div className="header-box">
         <AppBar
+          className="app-bar"
           position="static"
           color="transparent"
           elevation={0}
-          sx={{ borderBottom: 1, borderColor: "grey.500", width: "1808px", height: "80px"}}
         >
-          <Toolbar
-            variant="dense"
-            sx={{
-              justifyContent: "space-between",
-              width: "98%",
-              margin: "0 auto",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "flex-start",
-                marginLeft: "-20px",
-                marginTop: "20px",
-              }}
-            >
+          <Toolbar className="toolbar">
+            <div className="logo">
               <img
                 src={LogoHeader2}
                 alt="Image Description"
@@ -156,33 +135,39 @@ const HeaderNew = () => {
               />
             </div>
             <ThemeProvider theme={darkTheme}>
-
-            <Box
-              sx={{ display: "flex", alignItems: "center", cursor: "pointer", marginTop: "20px" }}
-            >
-              <IconButton color="inherit" onClick={handleNotificationClick}>
-              <ThemeProvider theme={darkTheme}> 
-                <Badge badgeContent={notificationCount} color="error">
-                  <NotificationsIcon style={{color: "white"}} />
-                </Badge>
-                </ThemeProvider>
-              </IconButton>
-              <AccountCircleRoundedIcon style={{color: "white"}} onClick={handleMenu} />
-              <Typography
-                variant="subtitle1"
-                color="inherit"
-                noWrap
-                sx={{
-                  color: "white",
-                  marginLeft: 1,
-                  fontSize: "20px",
-                  fontFamily: "Montserrat, sans-serif",
-                }}
-              >
-                {username}
-              </Typography>
-              <ExpandMoreIcon style={{color: "white"}} onClick={handleMenu} />
-            </Box>
+              <Box className="user-info">
+                <IconButton color="inherit" onClick={handleNotificationClick}>
+                  <ThemeProvider theme={darkTheme}>
+                    <Badge badgeContent={notificationCount} color="error">
+                      <NotificationsIcon style={{ color: "white" }} />
+                    </Badge>
+                  </ThemeProvider>
+                </IconButton>
+                <AccountCircleRoundedIcon
+                  className="user-icon"
+                  style={{ color: "white" }}
+                  onClick={handleMenu}
+                />
+                <Typography
+                  variant="subtitle1"
+                  color="inherit"
+                  noWrap
+                  className="username"
+                  sx={{
+                    color: "white",
+                    marginLeft: 1,
+                    fontSize: "20px",
+                    fontFamily: "Montserrat, sans-serif",
+                  }}
+                >
+                  {username}
+                </Typography>
+                <ExpandMoreIcon
+                  className="expand-icon"
+                  style={{ color: "white" }}
+                  onClick={handleMenu}
+                />
+              </Box>
             </ThemeProvider>
             <ThemeProvider theme={darkTheme}>
               <Menu
@@ -202,6 +187,7 @@ const HeaderNew = () => {
               >
                 <MenuItem
                   onClick={handleAdminPanelClick}
+                  className="menu-item"
                   sx={{
                     marginLeft: 1,
                     fontSize: "16px",
@@ -212,6 +198,7 @@ const HeaderNew = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={handleLogout}
+                  className="menu-item"
                   sx={{
                     marginLeft: 1,
                     fontSize: "16px",
@@ -234,7 +221,7 @@ const HeaderNew = () => {
               horizontal: "center",
             }}
             style={{
-              marginTop: "35px", 
+              marginTop: "35px",
             }}
           >
             <Paper style={{ maxHeight: "80vh", overflowY: "auto" }}>
@@ -253,8 +240,11 @@ const HeaderNew = () => {
                       const email = newData[0].split("'")[1];
                       const date = new Date(newData[1].trim());
                       const formattedDate = date.toLocaleDateString();
-                      const someValue = `Искал: ${newData[4].replace(/['")]/g, "")}`;
-          
+                      const someValue = `Искал: ${newData[4].replace(
+                        /['")]/g,
+                        ""
+                      )}`;
+
                       return (
                         <TableRow key={index}>
                           <TableCell>{email}</TableCell>
@@ -269,7 +259,6 @@ const HeaderNew = () => {
             </Paper>
           </Popover>
         </ThemeProvider>
-      </Box>
       </div>
     </Container>
   );
