@@ -1,23 +1,161 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../Table/Tables.css";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CustomTablePagination from "../Pagination/CustomTablePagination";
 
-const Filters = () => {
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  TablePagination,
+  IconButton,
+} from "@mui/material";
+
+
+const MainTable = () => {
+  const defaultColumnHeaders = [
+    { id: "date", label: "Дата" },
+    { id: "username", label: "Инициатор запроса" },
+    { id: "request_body", label: "Объект Запрос" },
+    { id: "request_body", label: "Запрос" },
+
+  ];
+  const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
+  const [source, setSource] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const [page, setPage] = useState(0);
+
+  const handleChangePage = (newPage) => {
+    console.log(newPage, typeof newPage);
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (_rowsPerPage) => {
+    setRowsPerPage(_rowsPerPage);
+    setPage(0);
+  };
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
+
+  const [additionalInfo, setAdditionalInfo] = useState(
+    "Сделайте запрос, чтобы увидеть данные"
+  );
+
   return (
     <div className="container">
-      <input
-        type="text"
-        placeholder="Search..."
-        className="inputField"
-      />
-      <select className="selectField">
-        <option value="">Filter by...</option>
-        <option value="category1">Category 1</option>
-        <option value="category2">Category 2</option>
-        <option value="category3">Category 3</option>
-      </select>
-      {/* Add more filter elements as needed */}
+          <TableContainer
+            component={Paper}
+            sx={{
+              width: "100%",
+              mt: 4,
+              bgcolor: "transparent",
+              boxShadow: "none",
+              color: "#fff",
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              color="inherit"
+              noWrap
+              sx={{
+                marginRight: 1,
+                fontSize: "1.55rem",
+                fontFamily: "Montserrat, sans-serif",
+                fontWeight: "600",
+              }}
+            >
+              {additionalInfo}
+            </Typography>
+
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  {columnHeaders
+                    .filter((header) => source !== "Itap" || header.id !== "id")
+                    .map((header) => (
+                      <TableCell
+                        key={header.id}
+                        sx={{
+                          fontSize: "12px",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {header.label}
+                      </TableCell>
+                    ))}
+                  <TableCell align="right"> </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {(rowsPerPage > 0
+                  ? rows.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : rows
+                ).map((row, index) => (
+                  <TableRow
+                    key={row.id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    {columnHeaders
+                      .filter(
+                        (header) => source !== "Itap" || header.id !== "id"
+                      )
+                      .map((header) => (
+                        <TableCell
+                          key={header.id}
+                          align="left"
+                          sx={{
+                            fontSize: "12px",
+                            fontFamily: "Montserrat, sans-serif",
+                            color: "#fff",
+                          }}
+                        >
+                          {header.id === "request_body"
+                            ? Array.isArray(row.request_body)
+                              ? row.request_body.join(", ")
+                              : ""
+                            : row[header.id]}
+                        </TableCell>
+                      ))}
+                    <TableCell
+                      align="left"
+                      sx={{
+                        fontSize: "12px",
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                      }}
+                    ></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <ThemeProvider theme={darkTheme}>
+              <CustomTablePagination
+                rows={rows}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
+            </ThemeProvider>
+          </TableContainer>
     </div>
   );
 };
 
-export default Filters;
+export default MainTable;

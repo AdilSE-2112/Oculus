@@ -5,12 +5,8 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Loading from "../../assets/loading.gif";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import CustomTablePagination from "../Pagination/CustomTablePagination";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
-import EventIcon from "@mui/icons-material/Event";
 import {
   Box,
   Button,
@@ -20,15 +16,7 @@ import {
   MenuItem,
   Select,
   TextField,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Typography,
-  TablePagination,
   IconButton,
 } from "@mui/material";
 
@@ -122,7 +110,7 @@ const Filters = () => {
   const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
   const [infoType, setInfoType] = useState("WhoViewedThisUser");
   const [inputType, setInputType] = useState("IIN");
-  const [source, setSource] = useState("");
+  const [source, setSource] = useState("Itap");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [patronymic, setPatronymic] = useState("");
@@ -132,9 +120,6 @@ const Filters = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorOpen, setErrorOpen] = useState(false);
-  const [action, setAction] = useState("");
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
   const [downloadAvailable, setDownloadAvailable] = useState(false);
 
   const [searchTypeLastName, setSearchTypeLastName] = useState("startingWith");
@@ -144,8 +129,6 @@ const Filters = () => {
     useState("startingWith");
   const [searchTypeFullName, setSearchTypeFullName] = useState("startingWith");
   const [searchTypeUserName, setSearchTypeUserName] = useState("startingWith");
-  const [searchTypeEmployee, setSearchTypeEmployee] = useState("startingWith");
-
   const [showFilters, setShowFilters] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -170,49 +153,24 @@ const Filters = () => {
     setInitialSource(source);
   }, [infoType, inputType, source]);
 
-  const handleSubmit = () => {
-    if (!source) {
-      setErrorMessage("Please choose a source");
-      return;
-    }
-  };
 
-  const handleNameChangeF = (e) => {
-    setFullName(e.target.value);
-  };
+
   const handleToggleFilters = () => {
     setShowFilters(!showFilters);
     setStartDate(null);
     setEndDate(null);
-  };
-  const handleChangePage = (newPage) => {
-    console.log(newPage, typeof newPage);
-    setPage(newPage);
-  };
-  const handleChangeRowsPerPage = (_rowsPerPage) => {
-    setRowsPerPage(_rowsPerPage);
-    setPage(0);
   };
 
   const handleChange = (event) => {
     setSource(event.target.value);
   };
 
-  const handleSourceChange = (event) => {
-    setSource(event.target.value);
-  };
+
 
   const handleNameChange = (event) => {
     setName(event.target.value);
   };
 
-  const handleSurnameChange = (event) => {
-    setSurname(event.target.value);
-  };
-
-  const handlePatronymicChange = (event) => {
-    setPatronymic(event.target.value);
-  };
   const handleError = (message) => {
     setErrorMessage(message);
     setErrorOpen(true);
@@ -1621,7 +1579,534 @@ const Filters = () => {
               </>
             )}
           </div>
-          <div className="Filter2">{renderInputFields()}</div>
+          <div className="Filter2">
+            {renderInputFields()}
+            {infoType !== "Risks" && (
+              <Box mt={2}>
+                <button className="additionalButton"
+                onClick={() => {{handleToggleFilters()}}}
+                >
+                  Указать период
+                </button>
+              </Box>
+            )}
+            {showFilters && infoType !== "Risks" && (
+              <Box mt={2} sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+                <TextField
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                    style: {
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      fontSize: "13px",
+                      "& svg": {
+                        fill: "white", // Color for the icon
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    style: {
+                      color: "white", // Text color for the input
+                      fontSize: "14px",
+                      height: "48px",
+                      width: "230px",
+                      borderColor: "white", // Add white border
+                      borderWidth: "1px", // Border width
+                      borderStyle: "solid", // Border style
+                      "&:hover": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& .MuiFocused": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& fieldset": {
+                        borderColor: "#fff !important",
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                    style: {
+                      fontFamily: "Montserrat, sans-serif",
+                      color: "#fff",
+                      fontSize: "13px",
+                      // '& svg': {
+                      //   fill: 'white', // Color for the icon
+                      //   color: 'white',
+                      //   border: '1px solid red'
+                      // },
+                    },
+                  }}
+                  InputProps={{
+                    style: {
+                      color: "white", // Text color for the input
+                      fontSize: "14px",
+                      height: "48px",
+                      width: "230px",
+                      borderColor: "white", // Add white border
+                      borderWidth: "1px", // Border width
+                      borderStyle: "solid", // Border style
+                      "&:hover": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& .MuiFocused": {
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                      "& fieldset": {
+                        borderColor: "#fff !important",
+                      },
+                    },
+                  }}
+                />
+              </Box>
+            )}
+          </div>
+          <div className="label3">
+          <label> Инф система</label>
+          </div>
+          <div className="Filter3">
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{
+                marginTop: "-10px",
+              }}
+            >
+              <ThemeProvider theme={darkTheme}>
+                {infoType === "WhomThisUserViewed" && (
+                  <>
+                    {inputType === "IIN" && (
+                      <>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="outlined-source"
+                          value={source}
+                          onChange={handleChange}
+                          label=""
+                          sx={{
+                            fontSize: "14px",
+                            fontFamily: "Montserrat, sans-serif",
+                            color: "#fff",
+                            height: "48px",
+                            width: "474px",
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "& .MuiSelect-icon": {
+                              color: "#fff !important",
+                            },
+                          }}
+                        >
+                          <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                        </Select>
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </>
+                    )}
+
+                    {inputType === "Username" && (
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="outlined-source"
+                        value={source}
+                        onChange={handleChange}
+                        label=""
+                        sx={{
+                          fontSize: "14px",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          height: "48px",
+                          width: "474px",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "& .MuiSelect-icon": {
+                            color: "#fff !important",
+                          },
+                        }}
+                      >
+                        <MenuItem value="Itap">Itap</MenuItem>
+                        <MenuItem value="Cascade">Каскад</MenuItem>
+                        <MenuItem value="eias">ЕИАС</MenuItem>
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </Select>
+                    )}
+
+                    {inputType === "FullName" && (
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="outlined-source"
+                        value={source}
+                        onChange={handleChange}
+                        label=""
+                        sx={{
+                          fontSize: "14px",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          height: "48px",
+                          width: "474px",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "& .MuiSelect-icon": {
+                            color: "#fff !important",
+                          },
+                        }}
+                      >
+                        <MenuItem value="Itap">Itap</MenuItem>
+                        <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                        <MenuItem value="Cascade">Каскад</MenuItem>
+
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </Select>
+                    )}
+                  </>
+                )}
+
+                {infoType === "WhoViewedThisUser" && (
+                  <>
+                    {inputType === "IIN" && (
+                      <>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="outlined-source"
+                          value={source}
+                          onChange={handleChange}
+                          label=""
+                          sx={{
+                            fontSize: "14px",
+                            fontFamily: "Montserrat, sans-serif",
+                            color: "#fff",
+                            height: "48px",
+                            width: "474px",
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "& .MuiSelect-icon": {
+                              color: "#fff !important",
+                            },
+                          }}
+                        >
+                          <MenuItem value="Itap">Itap</MenuItem>
+                          <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                          <MenuItem value="Cascade">Каскад</MenuItem>
+                        </Select>
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </>
+                    )}
+                    {inputType === "FullName" && (
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="outlined-source"
+                        value={source}
+                        onChange={handleChange}
+                        label=""
+                        sx={{
+                          fontSize: "14px",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          height: "48px",
+                          width: "474px",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "& .MuiSelect-icon": {
+                            color: "#fff !important",
+                          },
+                        }}
+                      >
+                        <MenuItem value="Itap">Itap</MenuItem>
+                        <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </Select>
+                    )}
+                  </>
+                )}
+                {infoType === "Risks" && (
+                  <>
+                    {inputType === "IIN" && (
+                      <>
+                        <Select
+                          labelId="demo-simple-select-outlined-label"
+                          id="outlined-source"
+                          value={source}
+                          onChange={handleChange}
+                          label=""
+                          sx={{
+                            fontSize: "14px",
+                            fontFamily: "Montserrat, sans-serif",
+                            color: "#fff",
+                            height: "48px",
+                            width: "474px",
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                              borderColor: "#fff !important",
+                            },
+                            "& .MuiSelect-icon": {
+                              color: "#fff !important",
+                            },
+                          }}
+                        >
+                          <MenuItem value="Itap">Itap</MenuItem>
+                          <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                          <MenuItem value="Cascade">Каскад</MenuItem>
+                        </Select>
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </>
+                    )}
+
+                    {inputType === "EmployeeType" && (
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="outlined-source"
+                        value={source}
+                        onChange={handleChange}
+                        label=""
+                        sx={{
+                          fontSize: "14px",
+                          fontFamily: "Montserrat, sans-serif",
+                          color: "#fff",
+                          height: "48px",
+                          width: "474px",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#fff !important",
+                          },
+                          "& .MuiSelect-icon": {
+                            color: "#fff !important",
+                          },
+                        }}
+                      >
+                        <MenuItem value="Itap">Itap</MenuItem>
+                        <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                        <MenuItem value="Cascade">Каскад</MenuItem>
+
+                        {isFilterChanged && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: "red",
+                              fontSize: "0.8rem",
+                              marginTop: 1,
+                            }}
+                          >
+                            Необходимо сделать новый запрос для обновления
+                            данных.
+                          </Typography>
+                        )}
+                      </Select>
+                    )}
+                  </>
+                )}
+              </ThemeProvider>
+            </Box>
+            <div className="search">
+              {inputType !== "ListRisks" && (
+                <Button
+                  variant="contained"
+                  onClick={handleSearch}
+                  sx={{
+                    alignSelf: "flex-start",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "0.75rem",
+                    color: "white",
+                    padding: loading ? "6px 30px 6px 12px" : "6px 12px",
+                    backgroundColor: colors.secondary,
+                    position: "relative",
+                    overflow: "hidden",
+                    color: "fff",
+                  }}
+                  style={{ color: "white" }}
+                >
+                  Поиск
+                  {loading && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: "8px",
+                        top: "50%",
+                        transform: "translateY(-38%)",
+                      }}
+                    >
+                      <img
+                        src={Loading}
+                        alt=""
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </div>
+                  )}
+                </Button>
+              )}
+              {infoType !== "Risks" && downloadAvailable && (
+                <React.Fragment>
+                  <Button
+                    variant="contained"
+                    onClick={handleDownload}
+                    sx={{
+                      mt: 2,
+                      alignSelf: "flex-start",
+                      fontFamily: "Montserrat, sans-serif",
+                      fontSize: "0.75rem",
+                      padding: downloadLoading
+                        ? "6px 30px 6px 12px"
+                        : "6px 12px",
+                      backgroundColor: colors.secondary,
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
+                    style={{ color: "white" }}
+                  >
+                    Скачать результаты
+                    {downloadLoading && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: "8px",
+                          top: "50%",
+                          transform: "translateY(-38%)",
+                        }}
+                      >
+                        <img
+                          src={Loading}
+                          alt=""
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                      </div>
+                    )}
+                  </Button>
+                </React.Fragment>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
