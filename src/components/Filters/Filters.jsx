@@ -9,7 +9,7 @@ const Filters = () => {
   };
 
   return (
-    <div className="parentContainer"> {/* Add a parent container */}
+    <div className="parentContainer">
     <div className="content">
       <div className="selector">
         <button

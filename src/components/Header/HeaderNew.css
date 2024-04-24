@@ -2,7 +2,6 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    border: 5px solid green;
     width: 100%;
   }
   
@@ -22,7 +21,7 @@
   .toolbar {
     justify-content: space-between;
     width: 98%;
-    margin: 0 auto;
+    margin-top: 12px;
   }
   
   .logo {

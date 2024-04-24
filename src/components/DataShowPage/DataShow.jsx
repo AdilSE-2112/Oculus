@@ -7,24 +7,25 @@ import Table from '../Table/Table';
 
 const useStyles = makeStyles({
   container: {
-    display: 'grid',
-    placeItems: 'center', // Center content vertically
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center', // Center content horizontally
     height: '100vh',
     width: '100vw', // Make the container cover the entire viewport height
     backgroundImage: `url(${BackgroundImage})`,
-    backgroundSize: '120%',
+    backgroundSize: 'cover',
     backgroundPosition: 'center',
-    gridTemplateColumns: '1fr 1fr 1fr',
-    gridTemplateRows: '92.5px 2fr',
-    gridAutoFlow: 'row',
-    gridTemplateAreas: `
-      "header header header"
-      "filters table table"
-    `,
   },
-  header: { gridArea: 'header', width: '100%', height: '100%' },
-  filters: { gridArea: 'filters', border: '1px solid red', width: '100%', height: '100%' },
-  table: { gridArea: 'table', border: '1px solid red', width: '100%', height: '100%' },
+
+  content: {
+    display: 'flex',
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center', // Center content horizontally
+  },
+  header: { width: '100%', },
+  filters: { flex: 1, border: '1px solid red', width: '100%', padding: '10px',},
+  table: { flex: 2, border: '1px solid red', width: '100%',  padding: '10px',},
 });
 
 const DataShowPage = () => {
@@ -32,14 +33,16 @@ const DataShowPage = () => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.header} style={{border: '1px dashed blue', display: 'flex', width: '100%'}}>
+      <div className={classes.header}>
         <HeaderNew />
       </div>
-      <div className={classes.filters}>
-        <Filters />
-      </div>
-      <div className={classes.table}>
-        <Table />
+      <div className={classes.content}>
+        <div className={classes.filters}>
+          <Filters />
+        </div>
+        <div className={classes.table}>
+          <Table />
+        </div>
       </div>
     </div>
   );

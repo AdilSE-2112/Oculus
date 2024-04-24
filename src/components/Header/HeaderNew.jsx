@@ -115,9 +115,8 @@ const HeaderNew = () => {
 
   return (
     <Container
-      maxWidth="xl"
+      maxWidth="100xl"
       className="header-container"
-      style={{ border: "4px dashed red" }}
     >
       <div className="header-box">
         <AppBar
