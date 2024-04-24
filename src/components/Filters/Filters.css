@@ -11,8 +11,70 @@
 .selector {
     height: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: row; 
     
+  }
+
+  .Filter1 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px;
+    padding-top: 20px;
+    padding-bottom: none;
+    position: relative;
+  }
+
+  .Filter1 label::after {
+    content: ""; 
+    position: absolute; 
+    left: 40px; 
+    bottom: 28px; 
+    width: 474px; 
+    height: 1px; 
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .Filter1 label {
+    margin-bottom: -10px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif; 
+
+  }
+  .labelsSec {
+    margin-bottom: -10px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif; 
+
+  }
+
+  .Filter1 select {
+    font-size: 14px; 
+    color: #ffff;
+    border-radius: 5px;
+    font-family: 'Montserrat', sans-serif; 
+    width: 474px;
+    height: 48px;
+    background: rgba(4, 4, 15, 0.7);
+
+
+  }
+
+  .Filter2 {
+    padding: 40px;
+    margin-top: -50px;
+    position: relative;
+
+
+  }
+
+    .Filter2 label::after {
+    content: ""; 
+    position: absolute; 
+    left: 40px; 
+    bottom: 28px; 
+    width: 474px; 
+    height: 1px; 
+    background: rgba(255, 255, 255, 0.4);
   }
   
   .button {
