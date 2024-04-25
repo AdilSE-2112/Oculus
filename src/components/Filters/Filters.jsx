@@ -68,7 +68,7 @@ function createData(
     other: other || "Нету информации",
   };
 }
-const Filters = () => {
+const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
   const [activeButton, setActiveButton] = useState("WhoViewedThisUser");
 
   const handleButtonClickActive = (button) => {
@@ -107,7 +107,6 @@ const Filters = () => {
   const navigate = useNavigate();
   const [usernameField, setUsernameField] = useState("");
   const [employeeField, setEmployeeField] = useState("");
-  const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
   const [infoType, setInfoType] = useState("WhoViewedThisUser");
   const [inputType, setInputType] = useState("IIN");
   const [source, setSource] = useState("Itap");
@@ -141,9 +140,7 @@ const Filters = () => {
   const [initialInputType, setInitialInputType] = useState("");
   const [initialSource, setInitialSource] = useState("");
   const [searchClicked, setSearchClicked] = useState(false);
-  const [additionalInfo, setAdditionalInfo] = useState(
-    "Сделайте запрос, чтобы увидеть данные"
-  );
+
 
   const [isFilterChanged, setIsFilterChanged] = useState(false);
 
@@ -152,8 +149,6 @@ const Filters = () => {
     setInitialInputType(inputType);
     setInitialSource(source);
   }, [infoType, inputType, source]);
-
-
 
   const handleToggleFilters = () => {
     setShowFilters(!showFilters);
@@ -164,8 +159,6 @@ const Filters = () => {
   const handleChange = (event) => {
     setSource(event.target.value);
   };
-
-
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -223,7 +216,6 @@ const Filters = () => {
     setLoggedInUser(username);
   };
 
-  const [rows, setRows] = useState([]);
 
   const handleSearch = async () => {
     setSearchClicked(true);
@@ -705,7 +697,7 @@ const Filters = () => {
     Axios.get(apiUrl, { headers })
       .then((response) => {
         const searchData = response.data;
-
+        setResult(response.data) 
         if (!Array.isArray(searchData)) {
           console.error("Invalid response data:", searchData);
           return;
@@ -1530,6 +1522,7 @@ const Filters = () => {
           </button>
         </div>
         <div className="containerInputs">
+          <div className="Filters">
           <div className="Filter1">
             {infoType === "WhomThisUserViewed" && (
               <>
@@ -1583,8 +1576,13 @@ const Filters = () => {
             {renderInputFields()}
             {infoType !== "Risks" && (
               <Box mt={2}>
-                <button className="additionalButton"
-                onClick={() => {{handleToggleFilters()}}}
+                <button
+                  className="additionalButton"
+                  onClick={() => {
+                    {
+                      handleToggleFilters();
+                    }
+                  }}
                 >
                   Указать период
                 </button>
@@ -1679,7 +1677,7 @@ const Filters = () => {
             )}
           </div>
           <div className="label3">
-          <label> Информационные системы</label>
+            <label> Информационные системы</label>
           </div>
           <div className="Filter3">
             <Box
@@ -2072,7 +2070,7 @@ const Filters = () => {
                     variant="contained"
                     onClick={handleDownload}
                     sx={{
-                      mt: 2,
+                      mt: 0,
                       alignSelf: "flex-start",
                       fontFamily: "Montserrat, sans-serif",
                       fontSize: "0.75rem",
@@ -2107,6 +2105,21 @@ const Filters = () => {
               )}
             </div>
           </div>
+          </div>
+          {/* <div className="checking">
+            <div>awdwa</div>
+            <div>awdwada</div>
+            <div>awdwada</div> 
+            <div>awdwada</div> 
+            <div>awdwada</div>
+            <div>awdwada</div>
+            <div>awdwada</div>
+            <div>awdwada</div>
+            <div>awdwada</div>
+            <div>awdwada</div>
+            <div>awdwada</div>
+
+          </div> */}
         </div>
       </div>
     </div>

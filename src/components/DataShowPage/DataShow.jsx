@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import HeaderNew from '../Header/HeaderNew';
 import BackgroundImage from '../../assets/BackgroundMain.jpg';
@@ -29,7 +29,20 @@ const useStyles = makeStyles({
 });
 
 const DataShowPage = () => {
+
   const classes = useStyles();
+  const [result, setResult] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [additionalInfo, setAdditionalInfo] = useState(
+    "Сделайте запрос, чтобы увидеть данные"
+  );
+  const [columnHeaders, setColumnHeaders] = useState([
+    { id: "date", label: "Дата" },
+    { id: "username", label: "Пользователь" },
+    { id: "request_body", label: "Запрос" },
+  ]);
+
+
 
   return (
     <div className={classes.container}>
@@ -38,10 +51,10 @@ const DataShowPage = () => {
       </div>
       <div className={classes.content}>
         <div className={classes.filters}>
-          <Filters />
+          <Filters setResult={setResult} setRows={setRows} setColumnHeaders={setColumnHeaders} setAdditionalInfo={setAdditionalInfo}/>
         </div>
         <div className={classes.table}>
-          <Table />
+          <Table result={result} rows={rows} columnHeaders={columnHeaders} additionalInfo={additionalInfo}/>
         </div>
       </div>
     </div>

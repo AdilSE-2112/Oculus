@@ -17,18 +17,10 @@ import {
 } from "@mui/material";
 
 
-const MainTable = () => {
-  const defaultColumnHeaders = [
-    { id: "date", label: "Дата" },
-    { id: "username", label: "Инициатор запроса" },
-    { id: "request_body", label: "Объект Запрос" },
-    { id: "request_body", label: "Запрос" },
-
-  ];
-  const [columnHeaders, setColumnHeaders] = useState(defaultColumnHeaders);
+const MainTable = ({result, rows, columnHeaders, additionalInfo}) => {
+  console.log(result, rows);
   const [source, setSource] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [rows, setRows] = useState([]);
   const [page, setPage] = useState(0);
 
   const handleChangePage = (newPage) => {
@@ -45,9 +37,6 @@ const MainTable = () => {
     },
   });
 
-  const [additionalInfo, setAdditionalInfo] = useState(
-    "Сделайте запрос, чтобы увидеть данные"
-  );
 
   return (
     <div className="container">
