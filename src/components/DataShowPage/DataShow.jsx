@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import HeaderNew from '../Header/HeaderNew';
 import BackgroundImage from '../../assets/BackgroundMain.jpg';
 import Filters from '../Filters/Filters';
-import Table from '../Table/Table';
+import Table from '../Table/MainTable';
 
 const useStyles = makeStyles({
   container: {

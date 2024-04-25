@@ -1,15 +1,27 @@
+html, body, .app {
+  height: 100%;
+  margin: 0;
+}
 .parentContainer {
   margin: 15px;
-  overflow: 'hidden';
+  overflow: hidden;
+  height: calc(100% - 30px);
+  
+
+  
 }
 
-.contenr {
+
+.content {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  /* overflow-y: scroll; */
+  overflow: hidden;
+  height: 100%;
 }
+
 
 .selector {
-    height: 100%;
     display: flex;
     flex-direction: row; 
     
@@ -55,6 +67,7 @@
     width: 474px;
     height: 48px;
     background: rgba(4, 4, 15, 0.7);
+    
 
 
   }
@@ -128,12 +141,14 @@
   }
   
   .containerInputs {
+    flex: 1;
     background: rgba(4, 4, 15, 0.7);
     backdrop-filter: blur(10px);
-    min-height: 700px;
+    height: 100%;
     border: 1px solid white;
     border-top: none;
-  }
+    overflow-y: scroll;
+    }
   
   input[type="text"], select {
     margin-bottom: 10px;

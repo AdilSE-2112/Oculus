@@ -98,10 +98,12 @@
 
                 .login-container {
                     width: 319px;
+                    height: 31px;
+                    margin-top: -25px;
                     position: relative;
                     .icon {
                         position: absolute;
-                        bottom: -1px;
+                        bottom: -18px;
                         svg {
                             opacity: 0.7;
                             width: 20px;

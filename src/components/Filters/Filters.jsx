@@ -1679,7 +1679,7 @@ const Filters = () => {
             )}
           </div>
           <div className="label3">
-          <label> Инф система</label>
+          <label> Информационные системы</label>
           </div>
           <div className="Filter3">
             <Box
