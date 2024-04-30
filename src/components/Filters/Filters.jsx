@@ -68,7 +68,12 @@ function createData(
     other: other || "Нету информации",
   };
 }
-const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
+const Filters = ({
+  setResult,
+  setRows,
+  setColumnHeaders,
+  setAdditionalInfo,
+}) => {
   const [activeButton, setActiveButton] = useState("WhoViewedThisUser");
 
   const handleButtonClickActive = (button) => {
@@ -140,7 +145,6 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
   const [initialInputType, setInitialInputType] = useState("");
   const [initialSource, setInitialSource] = useState("");
   const [searchClicked, setSearchClicked] = useState(false);
-
 
   const [isFilterChanged, setIsFilterChanged] = useState(false);
 
@@ -215,7 +219,6 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
   const handleLogin = (username) => {
     setLoggedInUser(username);
   };
-
 
   const handleSearch = async () => {
     setSearchClicked(true);
@@ -697,7 +700,7 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
     Axios.get(apiUrl, { headers })
       .then((response) => {
         const searchData = response.data;
-        setResult(response.data) 
+        setResult(response.data);
         if (!Array.isArray(searchData)) {
           console.error("Invalid response data:", searchData);
           return;
@@ -855,7 +858,6 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
       if (startDate) {
         downloadUrl += `start_date=${startDate}`;
 
-        // Append '&' only if both start_date and end_date exist
         if (endDate) {
           downloadUrl += "&";
         }
@@ -867,7 +869,6 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
     }
     console.log("DOWNLOAD URL:", downloadUrl);
 
-    // Assuming you have logic to download the file using Axios or fetch
     Axios.get(downloadUrl, {
       responseType: "blob",
       headers: {
@@ -893,10 +894,6 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
       });
   };
 
-  const getExtension = (contentType) => {
-    return contentType.split("/")[1];
-  };
-
   const renderInputFields = () => {
     switch (inputType) {
       case "IIN":
@@ -906,7 +903,7 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
               <label className="labelsSec">Данные объекта</label>
             </div>
             <Box display="flex" alignItems="center">
-              <TextField
+              {/* <TextField
                 required
                 id="outlined-required"
                 label={
@@ -963,8 +960,8 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     fontSize: "14px",
                   },
                 }}
-              />
-              <div
+              /> */}
+              {/* <div
                 style={{
                   color: "#fff",
                   fontSize: "12px",
@@ -973,8 +970,20 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                 }}
               >
                 {inn.length}/12
-              </div>
+              </div> */}
             </Box>
+            <div className="iinInputContainer">
+              <input
+                type="text"
+                value={inn}
+                onChange={handleInnChange}
+                placeholder={
+                  infoType === "Risks"
+                    ? "ИИН/БИН(Не обязательное поле)"
+                    : "ИИН/БИН"
+                }
+              />
+            </div>
           </ThemeProvider>
         );
       case "Username":
@@ -984,7 +993,17 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
               <label className="labelsSec">Данные объекта</label>
             </div>
             <Box display="flex" alignItems="center" gap="10px">
-              <Select
+              <select
+                className="additionalSelect"
+                value={searchTypeUserName}
+                onChange={(e) => {
+                  setSearchTypeUserName(e.target.value);
+                }}
+              >
+                <option value="startingWith">Начинается с</option>
+                <option value="exactly">В точности с</option>
+              </select>
+              {/* <Select
                 value={searchTypeUserName}
                 onChange={(e) => setSearchTypeUserName(e.target.value)}
                 sx={{
@@ -1010,8 +1029,16 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
               >
                 <MenuItem value="startingWith">Начинается с</MenuItem>
                 <MenuItem value="exactly">В точности с</MenuItem>
-              </Select>
-              <TextField
+              </Select> */}
+              <div className="usernameInputContainer">
+                <input
+                  type="text"
+                  value={usernameField}
+                  onChange={handleUsernameFieldChange}
+                  placeholder="Учётная запись"
+                />
+              </div>
+              {/* <TextField
                 required
                 id="outlined-username"
                 label="Учётная запись"
@@ -1049,7 +1076,7 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     fontSize: "14px",
                   },
                 }}
-              />
+              /> */}
             </Box>
           </ThemeProvider>
         );
@@ -1089,7 +1116,15 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                 <MenuItem value="startingWith">Начинается с</MenuItem>
                 <MenuItem value="exactly">В точности с</MenuItem>
               </Select> */}
-              <TextField
+              <div className="employeeInputContainer">
+                <input
+                  type="text"
+                  value={employeeField}
+                  onChange={handleEmployeeFieldChange}
+                  placeholder="Сотрудник(Не обязательное поле)"
+                />
+              </div>
+              {/* <TextField
                 required
                 id="outlined-username"
                 label="Сотрудник(Не обязательное поле)"
@@ -1127,7 +1162,7 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     fontSize: "14px",
                   },
                 }}
-              />
+              /> */}
             </Box>
           </ThemeProvider>
         );
@@ -1142,7 +1177,22 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     <label className="labelsSec">Данные объекта</label>
                   </div>
                   <Box display="flex" alignItems="center" gap="10px">
-                    <Select
+                    <select
+                      className="additionalSelect"
+                      value={
+                        source === "Cascade"
+                          ? "startingWith"
+                          : searchTypeLastName
+                      }
+                      onChange={(e) => {
+                        setSearchTypeLastName(e.target.value);
+                      }}
+                      disabled={source === "Cascade" || infoType === "Risks"}
+                    >
+                      <option value="startingWith">Начинается с</option>
+                      <option value="exactly">В точности с</option>
+                    </select>
+                    {/* <Select
                       value={
                         source === "Cascade"
                           ? "startingWith"
@@ -1175,8 +1225,16 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     >
                       <MenuItem value="startingWith">Начинается с</MenuItem>
                       <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select>
-                    <TextField
+                    </Select> */}
+                    <div className="fioInputContainer">
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value.trim())}
+                        placeholder="Фамилия"
+                      />
+                    </div>
+                    {/* <TextField
                       required
                       id="outlined-lastname"
                       label="Фамилия"
@@ -1221,10 +1279,25 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                           fontSize: "14px",
                         },
                       }}
-                    />
+                    /> */}
                   </Box>
                   <Box display="flex" alignItems="center" gap="10px">
-                    <Select
+                    <select
+                      className="additionalSelect"
+                      value={
+                        source === "Cascade"
+                          ? "startingWith"
+                          : searchTypeFirstName
+                      }
+                      onChange={(e) => {
+                        setSearchTypeFirstName(e.target.value);
+                      }}
+                      disabled={source === "Cascade" || infoType === "Risks"}
+                    >
+                      <option value="startingWith">Начинается с</option>
+                      <option value="exactly">В точности с</option>
+                    </select>
+                    {/* <Select
                       value={
                         source === "Cascade"
                           ? "startingWith"
@@ -1257,8 +1330,17 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     >
                       <MenuItem value="startingWith">Начинается с</MenuItem>
                       <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select>
-                    <TextField
+                    </Select> */}
+
+                    <div className="fioInputContainer">
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value.trim())}
+                        placeholder="Имя"
+                      />
+                    </div>
+                    {/* <TextField
                       required
                       id="outlined-firstname"
                       label="Имя"
@@ -1303,10 +1385,25 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                           fontSize: "14px",
                         },
                       }}
-                    />
+                    /> */}
                   </Box>
                   <Box display="flex" alignItems="center" gap="10px">
-                    <Select
+                    <select
+                      className="additionalSelect"
+                      value={
+                        source === "Cascade"
+                          ? "startingWith"
+                          : searchTypeMiddleName
+                      }
+                      onChange={(e) => {
+                        setSearchTypeMiddleName(e.target.value);
+                      }}
+                      disabled={source === "Cascade" || infoType === "Risks"}
+                    >
+                      <option value="startingWith">Начинается с</option>
+                      <option value="exactly">В точности с</option>
+                    </select>
+                    {/* <Select
                       value={
                         source === "Cascade"
                           ? "startingWith"
@@ -1339,8 +1436,16 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     >
                       <MenuItem value="startingWith">Начинается с</MenuItem>
                       <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select>
-                    <TextField
+                    </Select> */}
+                    <div className="fioInputContainer">
+                      <input
+                        type="text"
+                        value={middleName}
+                        onChange={(e) => setMiddleName(e.target.value.trim())}
+                        placeholder="Отчество"
+                      />
+                    </div>
+                    {/* <TextField
                       required
                       id="outlined-middlename"
                       label="Отчество"
@@ -1385,7 +1490,7 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                           fontSize: "14px",
                         },
                       }}
-                    />
+                    /> */}
                   </Box>
                 </>
               ) : (
@@ -1394,7 +1499,17 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     <label className="labelsSec">Данные объекта</label>
                   </div>
                   <Box display="flex" alignItems="center" gap="10px">
-                    <Select
+                    <select
+                      className="additionalSelect"
+                      value={searchTypeFullName}
+                      onChange={(e) => {
+                        setSearchTypeFullName(e.target.value);
+                      }}
+                    >
+                      <option value="startingWith">Начинается с</option>
+                      <option value="exactly">В точности с</option>
+                    </select>
+                    {/* <Select
                       value={searchTypeFullName}
                       onChange={(e) => setSearchTypeFullName(e.target.value)}
                       sx={{
@@ -1420,8 +1535,17 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                     >
                       <MenuItem value="startingWith">Начинается с</MenuItem>
                       <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select>
-                    <TextField
+                    </Select> */}
+
+                    <div className="fioInputContainer">
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={handleNameChange}
+                        placeholder="ФИО"
+                      />
+                    </div>
+                    {/* <TextField
                       required
                       id="outlined-fullname"
                       label="ФИО"
@@ -1466,7 +1590,7 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                           fontSize: "14px",
                         },
                       }}
-                    />
+                    /> */}
                   </Box>
                 </>
               )}
@@ -1523,568 +1647,612 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
         </div>
         <div className="containerInputs">
           <div className="Filters">
-          <div className="Filter1">
-            {infoType === "WhomThisUserViewed" && (
-              <>
-                <label>Поиск ОЗ через</label>
-                <select
-                  value={inputType}
-                  onChange={(e) => {
-                    setInputType(e.target.value);
-                    handleButtonClick(e.target.value);
-                  }}
-                >
-                  <option value="IIN">ИИН/БИН</option>
-                  <option value="Username">Учётная запись</option>
-                  <option value="FullName">ФИО</option>
-                </select>
-              </>
-            )}
-            {infoType === "WhoViewedThisUser" && (
-              <>
-                <label>Поиск по ИЗ через</label>
-                <select
-                  value={inputType}
-                  onChange={(e) => {
-                    setInputType(e.target.value);
-                    handleButtonClick(e.target.value);
-                  }}
-                >
-                  <option value="IIN">ИИН/БИН</option>
-                  <option value="FullName">ФИО</option>
-                </select>
-              </>
-            )}
-
-            {infoType === "Risks" && (
-              <>
-                <label>Поиск РИСКОВ через</label>
-                <select
-                  value={inputType}
-                  onChange={(e) => {
-                    setInputType(e.target.value);
-                    handleButtonClick(e.target.value);
-                  }}
-                >
-                  <option value="IIN">ИИН/БИН</option>
-                  <option value="EmployeeType">Сотрудник</option>
-                </select>
-              </>
-            )}
-          </div>
-          <div className="Filter2">
-            {renderInputFields()}
-            {infoType !== "Risks" && (
-              <Box mt={2}>
-                <button
-                  className="additionalButton"
-                  onClick={() => {
-                    {
-                      handleToggleFilters();
-                    }
-                  }}
-                >
-                  Указать период
-                </button>
-              </Box>
-            )}
-            {showFilters && infoType !== "Risks" && (
-              <Box mt={2} sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-                <TextField
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                    style: {
-                      fontFamily: "Montserrat, sans-serif",
-                      color: "#fff",
-                      fontSize: "13px",
-                      "& svg": {
-                        fill: "white", // Color for the icon
-                      },
-                    },
-                  }}
-                  InputProps={{
-                    style: {
-                      color: "white", // Text color for the input
-                      fontSize: "14px",
-                      height: "48px",
-                      width: "230px",
-                      borderColor: "white", // Add white border
-                      borderWidth: "1px", // Border width
-                      borderStyle: "solid", // Border style
-                      "&:hover": {
-                        "& fieldset": {
-                          borderColor: "#fff !important",
-                        },
-                      },
-                      "& .MuiFocused": {
-                        "& fieldset": {
-                          borderColor: "#fff !important",
-                        },
-                      },
-                      "& fieldset": {
-                        borderColor: "#fff !important",
-                      },
-                    },
-                  }}
-                />
-
-                <TextField
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                    style: {
-                      fontFamily: "Montserrat, sans-serif",
-                      color: "#fff",
-                      fontSize: "13px",
-                      // '& svg': {
-                      //   fill: 'white', // Color for the icon
-                      //   color: 'white',
-                      //   border: '1px solid red'
-                      // },
-                    },
-                  }}
-                  InputProps={{
-                    style: {
-                      color: "white", // Text color for the input
-                      fontSize: "14px",
-                      height: "48px",
-                      width: "230px",
-                      borderColor: "white", // Add white border
-                      borderWidth: "1px", // Border width
-                      borderStyle: "solid", // Border style
-                      "&:hover": {
-                        "& fieldset": {
-                          borderColor: "#fff !important",
-                        },
-                      },
-                      "& .MuiFocused": {
-                        "& fieldset": {
-                          borderColor: "#fff !important",
-                        },
-                      },
-                      "& fieldset": {
-                        borderColor: "#fff !important",
-                      },
-                    },
-                  }}
-                />
-              </Box>
-            )}
-          </div>
-          <div className="label3">
-            <label> Информационные системы</label>
-          </div>
-          <div className="Filter3">
-            <Box
-              display="flex"
-              alignItems="center"
-              sx={{
-                marginTop: "-10px",
-              }}
-            >
-              <ThemeProvider theme={darkTheme}>
-                {infoType === "WhomThisUserViewed" && (
-                  <>
-                    {inputType === "IIN" && (
-                      <>
-                        <Select
-                          labelId="demo-simple-select-outlined-label"
-                          id="outlined-source"
-                          value={source}
-                          onChange={handleChange}
-                          label=""
-                          sx={{
-                            fontSize: "14px",
-                            fontFamily: "Montserrat, sans-serif",
-                            color: "#fff",
-                            height: "48px",
-                            width: "474px",
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "& .MuiSelect-icon": {
-                              color: "#fff !important",
-                            },
-                          }}
-                        >
-                          <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                        </Select>
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </>
-                    )}
-
-                    {inputType === "Username" && (
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="outlined-source"
-                        value={source}
-                        onChange={handleChange}
-                        label=""
-                        sx={{
-                          fontSize: "14px",
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          height: "48px",
-                          width: "474px",
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "& .MuiSelect-icon": {
-                            color: "#fff !important",
-                          },
-                        }}
-                      >
-                        <MenuItem value="Itap">Itap</MenuItem>
-                        <MenuItem value="Cascade">Каскад</MenuItem>
-                        <MenuItem value="eias">ЕИАС</MenuItem>
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </Select>
-                    )}
-
-                    {inputType === "FullName" && (
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="outlined-source"
-                        value={source}
-                        onChange={handleChange}
-                        label=""
-                        sx={{
-                          fontSize: "14px",
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          height: "48px",
-                          width: "474px",
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "& .MuiSelect-icon": {
-                            color: "#fff !important",
-                          },
-                        }}
-                      >
-                        <MenuItem value="Itap">Itap</MenuItem>
-                        <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                        <MenuItem value="Cascade">Каскад</MenuItem>
-
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </Select>
-                    )}
-                  </>
-                )}
-
-                {infoType === "WhoViewedThisUser" && (
-                  <>
-                    {inputType === "IIN" && (
-                      <>
-                        <Select
-                          labelId="demo-simple-select-outlined-label"
-                          id="outlined-source"
-                          value={source}
-                          onChange={handleChange}
-                          label=""
-                          sx={{
-                            fontSize: "14px",
-                            fontFamily: "Montserrat, sans-serif",
-                            color: "#fff",
-                            height: "48px",
-                            width: "474px",
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "& .MuiSelect-icon": {
-                              color: "#fff !important",
-                            },
-                          }}
-                        >
-                          <MenuItem value="Itap">Itap</MenuItem>
-                          <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                          <MenuItem value="Cascade">Каскад</MenuItem>
-                        </Select>
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </>
-                    )}
-                    {inputType === "FullName" && (
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="outlined-source"
-                        value={source}
-                        onChange={handleChange}
-                        label=""
-                        sx={{
-                          fontSize: "14px",
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          height: "48px",
-                          width: "474px",
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "& .MuiSelect-icon": {
-                            color: "#fff !important",
-                          },
-                        }}
-                      >
-                        <MenuItem value="Itap">Itap</MenuItem>
-                        <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </Select>
-                    )}
-                  </>
-                )}
-                {infoType === "Risks" && (
-                  <>
-                    {inputType === "IIN" && (
-                      <>
-                        <Select
-                          labelId="demo-simple-select-outlined-label"
-                          id="outlined-source"
-                          value={source}
-                          onChange={handleChange}
-                          label=""
-                          sx={{
-                            fontSize: "14px",
-                            fontFamily: "Montserrat, sans-serif",
-                            color: "#fff",
-                            height: "48px",
-                            width: "474px",
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "#fff !important",
-                            },
-                            "& .MuiSelect-icon": {
-                              color: "#fff !important",
-                            },
-                          }}
-                        >
-                          <MenuItem value="Itap">Itap</MenuItem>
-                          <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                          <MenuItem value="Cascade">Каскад</MenuItem>
-                        </Select>
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </>
-                    )}
-
-                    {inputType === "EmployeeType" && (
-                      <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="outlined-source"
-                        value={source}
-                        onChange={handleChange}
-                        label=""
-                        sx={{
-                          fontSize: "14px",
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          height: "48px",
-                          width: "474px",
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "#fff !important",
-                          },
-                          "& .MuiSelect-icon": {
-                            color: "#fff !important",
-                          },
-                        }}
-                      >
-                        <MenuItem value="Itap">Itap</MenuItem>
-                        <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                        <MenuItem value="Cascade">Каскад</MenuItem>
-
-                        {isFilterChanged && (
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: "red",
-                              fontSize: "0.8rem",
-                              marginTop: 1,
-                            }}
-                          >
-                            Необходимо сделать новый запрос для обновления
-                            данных.
-                          </Typography>
-                        )}
-                      </Select>
-                    )}
-                  </>
-                )}
-              </ThemeProvider>
-            </Box>
-            <div className="search">
-              {inputType !== "ListRisks" && (
-                <Button
-                  variant="contained"
-                  onClick={handleSearch}
-                  sx={{
-                    alignSelf: "flex-start",
-                    fontFamily: "Montserrat, sans-serif",
-                    fontSize: "0.75rem",
-                    color: "white",
-                    padding: loading ? "6px 30px 6px 12px" : "6px 12px",
-                    backgroundColor: colors.secondary,
-                    position: "relative",
-                    overflow: "hidden",
-                    color: "fff",
-                  }}
-                  style={{ color: "white" }}
-                >
-                  Поиск
-                  {loading && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: "8px",
-                        top: "50%",
-                        transform: "translateY(-38%)",
-                      }}
-                    >
-                      <img
-                        src={Loading}
-                        alt=""
-                        style={{ width: "20px", height: "20px" }}
-                      />
-                    </div>
-                  )}
-                </Button>
+            <div className="Filter1">
+              {infoType === "WhomThisUserViewed" && (
+                <>
+                  <label>Поиск ОЗ через</label>
+                  <select
+                    value={inputType}
+                    onChange={(e) => {
+                      setInputType(e.target.value);
+                      handleButtonClick(e.target.value);
+                    }}
+                  >
+                    <option value="IIN">ИИН/БИН</option>
+                    <option value="Username">Учётная запись</option>
+                    <option value="FullName">ФИО</option>
+                  </select>
+                </>
               )}
-              {infoType !== "Risks" && downloadAvailable && (
-                <React.Fragment>
+              {infoType === "WhoViewedThisUser" && (
+                <>
+                  <label>Поиск по ИЗ через</label>
+                  <select
+                    value={inputType}
+                    onChange={(e) => {
+                      setInputType(e.target.value);
+                      handleButtonClick(e.target.value);
+                    }}
+                  >
+                    <option value="IIN">ИИН/БИН</option>
+                    <option value="FullName">ФИО</option>
+                  </select>
+                </>
+              )}
+
+              {infoType === "Risks" && (
+                <>
+                  <label>Поиск РИСКОВ через</label>
+                  <select
+                    value={inputType}
+                    onChange={(e) => {
+                      setInputType(e.target.value);
+                      handleButtonClick(e.target.value);
+                    }}
+                  >
+                    <option value="IIN">ИИН/БИН</option>
+                    <option value="EmployeeType">Сотрудник</option>
+                  </select>
+                </>
+              )}
+            </div>
+            <div className="Filter2">
+              {renderInputFields()}
+              {infoType !== "Risks" && (
+                <Box mt={2}>
+                  <button
+                    className="additionalButton"
+                    onClick={() => {
+                      {
+                        handleToggleFilters();
+                      }
+                    }}
+                  >
+                    Указать период
+                  </button>
+                </Box>
+              )}
+              {showFilters && infoType !== "Risks" && (
+                <Box mt={2} sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+                      <input className="dataInput"
+                        id="startDate"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        min="2018-01-01"
+                        
+                      />
+                  {/* <TextField
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    InputLabelProps={{
+                      shrink: true,
+                      style: {
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        fontSize: "13px",
+                        "& svg": {
+                          fill: "white", // Color for the icon
+                        },
+                      },
+                    }}
+                    InputProps={{
+                      style: {
+                        color: "white", // Text color for the input
+                        fontSize: "14px",
+                        height: "48px",
+                        width: "230px",
+                        borderColor: "white", // Add white border
+                        borderWidth: "1px", // Border width
+                        borderStyle: "solid", // Border style
+                        "&:hover": {
+                          "& fieldset": {
+                            borderColor: "#fff !important",
+                          },
+                        },
+                        "& .MuiFocused": {
+                          "& fieldset": {
+                            borderColor: "#fff !important",
+                          },
+                        },
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                    }}
+                  /> */}
+                  <input className="dataInput"
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        min="2018-01-01"
+                        
+                      />
+                  {/* <TextField
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    InputLabelProps={{
+                      shrink: true,
+                      style: {
+                        fontFamily: "Montserrat, sans-serif",
+                        color: "#fff",
+                        fontSize: "13px",
+                        // '& svg': {
+                        //   fill: 'white', // Color for the icon
+                        //   color: 'white',
+                        //   border: '1px solid red'
+                        // },
+                      },
+                    }}
+                    InputProps={{
+                      style: {
+                        color: "white", // Text color for the input
+                        fontSize: "14px",
+                        height: "48px",
+                        width: "230px",
+                        borderColor: "white", // Add white border
+                        borderWidth: "1px", // Border width
+                        borderStyle: "solid", // Border style
+                        "&:hover": {
+                          "& fieldset": {
+                            borderColor: "#fff !important",
+                          },
+                        },
+                        "& .MuiFocused": {
+                          "& fieldset": {
+                            borderColor: "#fff !important",
+                          },
+                        },
+                        "& fieldset": {
+                          borderColor: "#fff !important",
+                        },
+                      },
+                    }}
+                  /> */}
+                </Box>
+              )}
+            </div>
+            <div className="label3">
+              <label> Информационные системы</label>
+            </div>
+            <div className="Filter3">
+              <Box
+                display="flex"
+                alignItems="center"
+                sx={{
+                  marginTop: "-10px",
+                }}
+              >
+                <ThemeProvider theme={darkTheme}>
+                  {infoType === "WhomThisUserViewed" && (
+                    <>
+                      {inputType === "IIN" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Досье">Досье "ИС СЭР"</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                          </Select> */}
+                          {isFilterChanged && (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: "red",
+                                fontSize: "0.8rem",
+                                marginTop: 1,
+                              }}
+                            >
+                              Необходимо сделать новый запрос для обновления
+                              данных.
+                            </Typography>
+                          )}
+                        </>
+                      )}
+
+                      {inputType === "Username" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Itap">Itap</option>
+                            <option value="eias">ЕИАС</option>
+                            <option value="Cascade">Каскад</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Itap">Itap</MenuItem>
+                            <MenuItem value="Cascade">Каскад</MenuItem>
+                            <MenuItem value="eias">ЕИАС</MenuItem>
+                            {isFilterChanged && (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "red",
+                                  fontSize: "0.8rem",
+                                  marginTop: 1,
+                                }}
+                              >
+                                Необходимо сделать новый запрос для обновления
+                                данных.
+                              </Typography>
+                            )}
+                          </Select> */}
+                        </>
+                      )}
+
+                      {inputType === "FullName" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Itap">Itap</option>
+                            <option value="Досье">Досье "ИС СЭР"</option>
+                            <option value="Cascade">Каскад</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Itap">Itap</MenuItem>
+                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                            <MenuItem value="Cascade">Каскад</MenuItem>
+
+                            {isFilterChanged && (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "red",
+                                  fontSize: "0.8rem",
+                                  marginTop: 1,
+                                }}
+                              >
+                                Необходимо сделать новый запрос для обновления
+                                данных.
+                              </Typography>
+                            )}
+                          </Select> */}
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {infoType === "WhoViewedThisUser" && (
+                    <>
+                      {inputType === "IIN" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Itap">Itap</option>
+                            <option value="Досье">Досье "ИС СЭР"</option>
+                            <option value="Cascade">Каскад</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Itap">Itap</MenuItem>
+                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                            <MenuItem value="Cascade">Каскад</MenuItem>
+                          </Select> */}
+                          {isFilterChanged && (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: "red",
+                                fontSize: "0.8rem",
+                                marginTop: 1,
+                              }}
+                            >
+                              Необходимо сделать новый запрос для обновления
+                              данных.
+                            </Typography>
+                          )}
+                        </>
+                      )}
+                      {inputType === "FullName" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Itap">Itap</option>
+                            <option value="Досье">Досье "ИС СЭР"</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Itap">Itap</MenuItem>
+                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+
+                            {isFilterChanged && (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "red",
+                                  fontSize: "0.8rem",
+                                  marginTop: 1,
+                                }}
+                              >
+                                Необходимо сделать новый запрос для обновления
+                                данных.
+                              </Typography>
+                            )}
+                          </Select> */}
+                        </>
+                      )}
+                    </>
+                  )}
+                  {infoType === "Risks" && (
+                    <>
+                      {inputType === "IIN" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Itap">Itap</option>
+                            <option value="Досье">Досье "ИС СЭР"</option>
+                            <option value="Cascade">Каскад</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Itap">Itap</MenuItem>
+                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                            <MenuItem value="Cascade">Каскад</MenuItem>
+                          </Select> */}
+                          {isFilterChanged && (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: "red",
+                                fontSize: "0.8rem",
+                                marginTop: 1,
+                              }}
+                            >
+                              Необходимо сделать новый запрос для обновления
+                              данных.
+                            </Typography>
+                          )}
+                        </>
+                      )}
+
+                      {inputType === "EmployeeType" && (
+                        <>
+                          <select
+                            className="infSystem"
+                            value={source}
+                            onChange={handleChange}
+                          >
+                            <option value="Itap">Itap</option>
+                            <option value="Досье">Досье "ИС СЭР"</option>
+                            <option value="Cascade">Каскад</option>
+                          </select>
+                          {/* <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="outlined-source"
+                            value={source}
+                            onChange={handleChange}
+                            label=""
+                            sx={{
+                              fontSize: "14px",
+                              fontFamily: "Montserrat, sans-serif",
+                              color: "#fff",
+                              height: "48px",
+                              width: "474px",
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "#fff !important",
+                              },
+                              "& .MuiSelect-icon": {
+                                color: "#fff !important",
+                              },
+                            }}
+                          >
+                            <MenuItem value="Itap">Itap</MenuItem>
+                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
+                            <MenuItem value="Cascade">Каскад</MenuItem>
+
+                            {isFilterChanged && (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "red",
+                                  fontSize: "0.8rem",
+                                  marginTop: 1,
+                                }}
+                              >
+                                Необходимо сделать новый запрос для обновления
+                                данных.
+                              </Typography>
+                            )}
+                          </Select> */}
+                        </>
+                      )}
+                    </>
+                  )}
+                </ThemeProvider>
+              </Box>
+              <div className="search">
+                {inputType !== "ListRisks" && (
                   <Button
                     variant="contained"
-                    onClick={handleDownload}
+                    onClick={handleSearch}
                     sx={{
-                      mt: 0,
                       alignSelf: "flex-start",
                       fontFamily: "Montserrat, sans-serif",
                       fontSize: "0.75rem",
-                      padding: downloadLoading
-                        ? "6px 30px 6px 12px"
-                        : "6px 12px",
+                      color: "white",
+                      padding: loading ? "6px 30px 6px 12px" : "6px 12px",
                       backgroundColor: colors.secondary,
                       position: "relative",
                       overflow: "hidden",
+                      color: "fff",
                     }}
                     style={{ color: "white" }}
                   >
-                    Скачать результаты
-                    {downloadLoading && (
+                    Поиск
+                    {loading && (
                       <div
                         style={{
                           position: "absolute",
@@ -2101,10 +2269,48 @@ const Filters = ({setResult, setRows, setColumnHeaders, setAdditionalInfo}) => {
                       </div>
                     )}
                   </Button>
-                </React.Fragment>
-              )}
+                )}
+                {infoType !== "Risks" && downloadAvailable && (
+                  <React.Fragment>
+                    <Button
+                      variant="contained"
+                      onClick={handleDownload}
+                      sx={{
+                        mt: 0,
+                        alignSelf: "flex-start",
+                        fontFamily: "Montserrat, sans-serif",
+                        fontSize: "0.75rem",
+                        padding: downloadLoading
+                          ? "6px 30px 6px 12px"
+                          : "6px 12px",
+                        backgroundColor: colors.secondary,
+                        position: "relative",
+                        overflow: "hidden",
+                      }}
+                      style={{ color: "white" }}
+                    >
+                      Скачать результаты
+                      {downloadLoading && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: "8px",
+                            top: "50%",
+                            transform: "translateY(-38%)",
+                          }}
+                        >
+                          <img
+                            src={Loading}
+                            alt=""
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        </div>
+                      )}
+                    </Button>
+                  </React.Fragment>
+                )}
+              </div>
             </div>
-          </div>
           </div>
           {/* <div className="checking">
             <div>awdwa</div>

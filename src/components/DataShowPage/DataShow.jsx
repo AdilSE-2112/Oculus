@@ -1,35 +1,51 @@
-import React, {useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import HeaderNew from '../Header/HeaderNew';
-import BackgroundImage from '../../assets/BackgroundMain.jpg';
-import Filters from '../Filters/Filters';
-import Table from '../Table/MainTable';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import HeaderNew from "../Header/HeaderNew";
+import BackgroundImage from "../../assets/BackgroundMain.jpg";
+import Filters from "../Filters/Filters";
+import Table from "../Table/MainTable";
 
 const useStyles = makeStyles({
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center', // Center content horizontally
-    height: '100vh',
-    width: '100vw', // Make the container cover the entire viewport height
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // Center content horizontally
+    height: "100vh",
+    width: "100vw", 
     backgroundImage: `url(${BackgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    overflow: "hidden",
   },
 
   content: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    width: '100%',
-    justifyContent: 'center', // Center content horizontally
+    width: "100%",
+    justifyContent: "center",
+    overflow: "hidden",
+    
   },
-  header: { width: '100%', },
-  filters: { flex: 1, border: '1px solid red', width: '100%', padding: '10px',},
-  table: { flex: 2, border: '1px solid red', width: '100%',  padding: '10px',},
+  header: { width: "100%" },
+  filters: {
+    flex: 1,
+    width: "100%",
+    height: "calc(100vh - 100px)%",
+    padding: "10px",
+    overflowY: "auto",
+    boxSizing: "border-box",
+    // maxHeight: 'calc(100vh - 100px)', 
+  },
+  table: {
+    flex: 2,
+    width: "100%",
+    height: "calc(100vh - 100px)%",
+    padding: "10px",
+    boxSizing: "border-box",
+  },
 });
 
 const DataShowPage = () => {
-
   const classes = useStyles();
   const [result, setResult] = useState([]);
   const [rows, setRows] = useState([]);
@@ -42,8 +58,6 @@ const DataShowPage = () => {
     { id: "request_body", label: "Запрос" },
   ]);
 
-
-
   return (
     <div className={classes.container}>
       <div className={classes.header}>
@@ -51,10 +65,20 @@ const DataShowPage = () => {
       </div>
       <div className={classes.content}>
         <div className={classes.filters}>
-          <Filters setResult={setResult} setRows={setRows} setColumnHeaders={setColumnHeaders} setAdditionalInfo={setAdditionalInfo}/>
+          <Filters
+            setResult={setResult}
+            setRows={setRows}
+            setColumnHeaders={setColumnHeaders}
+            setAdditionalInfo={setAdditionalInfo}
+          />
         </div>
         <div className={classes.table}>
-          <Table result={result} rows={rows} columnHeaders={columnHeaders} additionalInfo={additionalInfo}/>
+          <Table
+            result={result}
+            rows={rows}
+            columnHeaders={columnHeaders}
+            additionalInfo={additionalInfo}
+          />
         </div>
       </div>
     </div>

@@ -39,7 +39,7 @@ html, body, .app {
     position: absolute; 
     left: 40px; 
     bottom: 28px; 
-    width: 474px; 
+    width: 80%;
     height: 1px; 
     background: rgba(255, 255, 255, 0.4);
   }
@@ -50,7 +50,8 @@ html, body, .app {
 
   }
   .labelsSec {
-    margin-bottom: -10px;
+    margin: 10px 0px 0px 0px;
+    
     font-size: 16px;
     font-family: 'Montserrat', sans-serif; 
 
@@ -61,7 +62,7 @@ html, body, .app {
     color: #ffff;
     border-radius: 5px;
     font-family: 'Montserrat', sans-serif; 
-    width: 474px;
+    width: 93.5%;
     height: 48px;
     background: rgba(4, 4, 15, 0.7);
 
@@ -81,7 +82,7 @@ html, body, .app {
     position: absolute; 
     left: 40px; 
     bottom: 28px; 
-    width: 474px; 
+    width: 80%;
     height: 1px; 
     background: rgba(255, 255, 255, 0.4);
   }
@@ -111,9 +112,32 @@ html, body, .app {
   .downloadButton{
     padding: 20px 0px 0px 0px;
   }
-  .Filters{
-    overflow-y: auto;
-    }
+  .Filters {
+    
+    overflow: auto;
+    position: relative;
+    max-height: 100% 
+}
+
+
+.Filters::-webkit-scrollbar {
+    width: 10px; 
+}
+
+.Filters::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 5px; 
+}
+
+.Filters {
+    scrollbar-width: thin; 
+    scrollbar-color: #888 transparent; 
+}
+
+
+.Filters::-webkit-scrollbar-track {
+    background: transparent; 
+}
   .search {
     margin-top: 20px;
     gap: 10px;
@@ -172,3 +196,117 @@ html, body, .app {
     margin: 20px;
     
   }
+
+  .iinInputContainer {
+    position: relative;
+
+  }
+  
+  .iinInputContainer input {
+    flex: 1; 
+    font-size: 14px; 
+    padding: 0px 0px 0px 5px;
+    padding-right: 50px;
+    color: #ffff;
+    border-radius: 5px;
+    border: 1px solid #767676;
+    font-family: 'Montserrat', sans-serif; 
+    width: 83%;
+    height: 48px;
+    background: rgba(4, 4, 15, 0.7);
+  }
+  
+  .character-count {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    right: 40px;
+    color: #fff;
+    font-size: 12px;
+  }
+  
+  .additionalSelect {
+    font-size: 14px; 
+    color: #ffff;
+    border-radius: 5px;
+    font-family: 'Montserrat', sans-serif; 
+    width: 33%;
+    height: 48px;
+    background: rgba(4, 4, 15, 0.7);
+    }
+
+    .usernameInputContainer {
+      width: 100%;
+    }
+
+    .usernameInputContainer input {
+      flex: 1; 
+      font-size: 14px; 
+      padding: 0px 0px 0px 5px;
+      color: #ffff;
+      border-radius: 5px;
+      border: 1px solid #767676;
+      font-family: 'Montserrat', sans-serif; 
+      width: 89%;
+      height: 48px;
+      background: rgba(4, 4, 15, 0.7);
+    }
+
+
+    .employeeInputContainer{
+      width: 100%;
+    }
+    .employeeInputContainer input {
+      flex: 1; 
+      font-size: 14px; 
+      padding: 0px 0px 0px 5px;
+      color: #ffff;
+      border-radius: 5px;
+      border: 1px solid #767676;
+      font-family: 'Montserrat', sans-serif; 
+      width: 92%;
+      height: 48px;
+      background: rgba(4, 4, 15, 0.7);
+    }
+
+    .fioInputContainer {
+      width: 100%;
+      
+    }
+    .fioInputContainer input{
+      flex: 1; 
+      font-size: 14px; 
+      padding: 0px 0px 0px 5px;
+      color: #ffff;
+      border-radius: 5px;
+      border: 1px solid #767676;
+      font-family: 'Montserrat', sans-serif; 
+      width: 89%;
+      height: 48px;
+      background: rgba(4, 4, 15, 0.7);
+    
+    }
+
+    .infSystem{
+      margin-top: 4px;
+      margin-bottom: -3px;
+      font-size: 14px; 
+      color: #ffff;
+      border-radius: 5px;
+      font-family: 'Montserrat', sans-serif; 
+      width: 93%;
+      height: 48px;
+      background: rgba(4, 4, 15, 0.7);
+    }
+
+    .dataInput {
+      font-size: 14px; 
+      color: #ffff;
+      border-radius: 5px;
+      border: 1px solid #767676;
+      font-family: 'Montserrat', sans-serif; 
+      width: 44.5%;
+      height: 48px;
+      background: rgba(4, 4, 15, 0.7);
+  
+    }
