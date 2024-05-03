@@ -6,6 +6,8 @@ import DataShowPage from './components/DataShowPage/DataShow';
 import DataOutputPage from './components/DataOutputPage/DataOutput';
 import AdminPanel from './components/AdminPanel/AdminPanel';
 import { AuthProvider } from './components/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
+
 
 const App = () => {
   return (
@@ -13,11 +15,12 @@ const App = () => {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path='/data-input' element={<DataInputPage />} />
-            <Route path='/data-show' element={<DataShowPage />} />
-            <Route path='/data-output' element={<DataOutputPage />} />
-            <Route path='/admin-panel' element={<AdminPanel />} />
+          <Route path="/" element={<LoginPage />} />
+            <Route path='/data-input' element={<PrivateRoute element={<DataInputPage />} redirectTo="/" />} />
+            <Route path='/data-output' element={<PrivateRoute element={<DataOutputPage />} redirectTo="/" />} />
+            <Route path='/admin-panel' element={<PrivateRoute element={<AdminPanel />} redirectTo="/" />} />
+            <Route path='/data-show' element={<PrivateRoute element={<DataShowPage />} redirectTo="/" />} />
+
           </Routes>
         </div>
       </Router>
