@@ -7,4 +7,29 @@
     margin: 15px 15px 15px 0px;
     overflow: hidden;
   }
-  
+  .table-container-wrapper {
+    max-height: 90%; 
+    overflow-y: auto; 
+  }
+
+.table-container-wrapper::-webkit-scrollbar {
+  width: 8px; 
+}
+
+
+.table-container-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5); 
+  border-radius: 4px; 
+}
+
+.table-container-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.7); 
+}
+
+.table-container-wrapper::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.table-container-wrapper::-webkit-scrollbar-track {
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+}

@@ -411,6 +411,26 @@ const Filters = ({
           { id: "user_name", label: "Имя Полььзователя" },
         ]);
       }
+      else if (source === "eias" && inputType === "IIN") {
+        let additionalInfo;
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
+          additionalInfo = `Журнал для (начинается с): ${inn}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
+          additionalInfo = `Журнал для (в точности): ${inn}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          // { id: "action", label: "Запрос" },
+          { id: "member_bin", label: "ИИН/БИН" },
+          { id: "performer", label: "Исполнитель" },
+          { id: "member_name", label: "Имя" },
+          { id: "other", label: "Другие сведения" },
+        ]);
+      }
       // else if (source === "Itap" && inputType === "FullName") {
       //   apiUrl = `http://192.168.30.24:5220/log/search=${name}`;
       //   setAdditionalInfo(`Кто просматривал объект : ${name}`);
@@ -1637,7 +1657,7 @@ const Filters = ({
               }
             }}
           >
-            ИНИЦИАТОР ЗАПРОСА
+            ОБЪЕКТ ЗАПРОСА
           </button>
           <button
             className={`button ${
@@ -1651,7 +1671,7 @@ const Filters = ({
               }
             }}
           >
-            ОБЪЕКТ ЗАПРОСА
+            ИНИЦИАТОР ЗАПРОСА
           </button>
           <button
             className={`button ${activeButton === "Risks" && "active"}`}
@@ -2029,6 +2049,8 @@ const Filters = ({
                             <option value="Itap">Itap</option>
                             <option value="Досье">Досье "ИС СЭР"</option>
                             <option value="Cascade">Каскад</option>
+                            <option value="eias">ЕИАС</option>
+
                           </select>
                           {/* <Select
                             labelId="demo-simple-select-outlined-label"

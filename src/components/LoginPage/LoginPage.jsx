@@ -32,7 +32,7 @@ function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/data-input');
+      navigate('/data-show');
     }
   }, [isAuthenticated, navigate]);
 
@@ -73,7 +73,7 @@ function Login() {
   
         // Redirect only if the token is valid
         if (checkTokenValidity(response.data.access_token)) {
-          navigate("/data-input");
+          navigate("/data-show");
         } else {
           // Token expired, clear stored token and logout
           localStorage.removeItem("access_token");
