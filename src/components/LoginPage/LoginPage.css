@@ -115,6 +115,8 @@
                     input {
                         background-color:#ffffff;
                         padding-left: 25px;
+                        color: #000000;
+
                         
 
                     }
@@ -160,14 +162,14 @@
                     > input {
                         background-color:#ffffff;
                         padding-left: 25px;
-
+                        
                         padding-right: 40px;
                     }
 
 
                     .password-input {
                         width: 100%;
-                        color: #fff;
+                        color: #000000;
                     }
                     .toggle-password {
                         position: absolute;
