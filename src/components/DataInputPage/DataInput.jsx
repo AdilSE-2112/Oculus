@@ -52,10 +52,14 @@ function createData(
   member_bin,
   performer,
   member_name,
-  other,
+  other
 ) {
-  const formattedDate = date ? new Date(date).toLocaleString() : "Нету информации";
-  const formattedDossieTime = log_time ? new Date(log_time).toLocaleString() : "Нету информации";
+  const formattedDate = date
+    ? new Date(date).toLocaleString()
+    : "Нету информации";
+  const formattedDossieTime = log_time
+    ? new Date(log_time).toLocaleString()
+    : "Нету информации";
 
   return {
     date: formattedDate,
@@ -400,7 +404,7 @@ const DataInputPage = () => {
           { id: "request_body", label: "Запрос" },
           { id: "limit_", label: "Лимит" },
         ]);
-      }else if (source === "eias" && inputType === "Username") {
+      } else if (source === "eias" && inputType === "Username") {
         let additionalInfo;
         if (searchTypeUserName === "startingWith") {
           apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
@@ -418,34 +422,8 @@ const DataInputPage = () => {
           { id: "performer", label: "Исполнитель" },
           { id: "member_name", label: "Имя" },
           { id: "other", label: "Другие сведения" },
-
-
-
         ]);
-      }
-      else if (source === "eias" && inputType === "IIN") {
-        let additionalInfo;
-        if (searchTypeUserName === "startingWith") {
-          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
-          additionalInfo = `Журнал для (начинается с): ${inn}`;
-        } else if (searchTypeUserName === "exactly") {
-          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
-          additionalInfo = `Журнал для (в точности): ${inn}`;
-        }
-        setAdditionalInfo(additionalInfo);
-
-        setColumnHeaders([
-          { id: "date", label: "Дата" },
-          // { id: "action", label: "Запрос" },
-          { id: "member_bin", label: "ИИН/БИН" },
-          { id: "performer", label: "Исполнитель" },
-          { id: "member_name", label: "Имя" },
-          { id: "other", label: "Другие сведения" },
-
-
-
-        ]);
-      }
+      } 
     } else if (infoType === "WhoViewedThisUser") {
       if (source === "Досье" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/dossie_log/action=${inn}`;
@@ -570,6 +548,26 @@ const DataInputPage = () => {
           { id: "username", label: "Пользователь" },
           { id: "request_body", label: "Запрос" },
           { id: "limit_", label: "Лимит" },
+        ]);
+      }
+      else if (source === "eias" && inputType === "IIN") {
+        let additionalInfo;
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
+          additionalInfo = `Журнал для (начинается с): ${inn}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
+          additionalInfo = `Журнал для (в точности): ${inn}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          // { id: "action", label: "Запрос" },
+          { id: "member_bin", label: "ИИН/БИН" },
+          { id: "performer", label: "Исполнитель" },
+          { id: "member_name", label: "Имя" },
+          { id: "other", label: "Другие сведения" },
         ]);
       }
 
@@ -707,7 +705,7 @@ const DataInputPage = () => {
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      }else if (source === "Досье" && inputType === "IIN") {
+      } else if (source === "Досье" && inputType === "IIN") {
         apiUrl = "http://192.168.30.24:5220/risks/dossie_log";
 
         if (inn) {
@@ -716,14 +714,14 @@ const DataInputPage = () => {
         } else {
           setAdditionalInfo("Список рискованных запросов: Все");
         }
-        
+
         setColumnHeaders([
           { id: "log_time", label: "Дата" },
           { id: "user_name", label: "Инициатор запроса" },
           { id: "fio", label: "ИИН/БИН объекта запроса" },
           { id: "iin", label: "ФИО Объекта запроса" },
         ]);
-      }else if (source === "Досье" && inputType === "EmployeeType") {
+      } else if (source === "Досье" && inputType === "EmployeeType") {
         apiUrl = "http://192.168.30.24:5220/risks/dossie_log";
 
         if (employeeField) {
@@ -732,7 +730,7 @@ const DataInputPage = () => {
         } else {
           setAdditionalInfo("Список рискованных запросов: Все");
         }
-        
+
         setColumnHeaders([
           { id: "log_time", label: "Дата" },
           { id: "user_name", label: "Инициатор запроса" },
@@ -792,7 +790,7 @@ const DataInputPage = () => {
               data.member_bin,
               data.performer,
               data.member_name,
-              data.other,
+              data.other
             )
           )
         );
@@ -811,8 +809,7 @@ const DataInputPage = () => {
             "Возникла проблема при получении данных. Пожалуйста, попробуйте войти в портал снова."
           );
           setRows([]);
-        }
-        else {
+        } else {
           handleError("При извлечении данных произошла ошибка.");
           setRows([]);
         }
@@ -1580,7 +1577,7 @@ const DataInputPage = () => {
                 }
               }}
             >
-              Инициатор запроса
+              Объект запроса
             </Button>
             <Button
               variant="contained"
@@ -1601,7 +1598,7 @@ const DataInputPage = () => {
                 }
               }}
             >
-              Объект запроса
+              Инициатор запроса
             </Button>
 
             <Button
@@ -1680,6 +1677,7 @@ const DataInputPage = () => {
                 >
                   ФИО
                 </Button>
+                
               </>
             )}
             {infoType === "WhoViewedThisUser" && (
@@ -1718,6 +1716,26 @@ const DataInputPage = () => {
                 >
                   ФИО
                 </Button>
+                {source === "eias" && (
+                <Button
+                  variant="contained"
+                  style={{
+                    fontSize: "12px",
+                    fontFamily: "Montserrat, sans-serif",
+                    padding: "2px 4px",
+                    backgroundColor:
+                      inputType === "NameComp"
+                        ? colors.secondary
+                        : colors.primary,
+                  }}
+                  onClick={() => {
+                    setInputType("NameComp");
+                    handleButtonClick("NameComp");
+                  }}
+                >
+                  Наименование
+                </Button>
+                )}
               </>
             )}
 
@@ -1858,8 +1876,6 @@ const DataInputPage = () => {
                           }}
                         >
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                          <MenuItem value="eias">ЕИАС</MenuItem>
-
                         </Select>
                         {isFilterChanged && (
                           <Typography
@@ -1953,7 +1969,7 @@ const DataInputPage = () => {
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
-                          
+
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -2005,6 +2021,7 @@ const DataInputPage = () => {
                           <MenuItem value="Itap">Itap</MenuItem>
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                           <MenuItem value="Cascade">Каскад</MenuItem>
+                          <MenuItem value="eias">ЕИАС</MenuItem>
                         </Select>
                         {isFilterChanged && (
                           <Typography
@@ -2050,7 +2067,7 @@ const DataInputPage = () => {
                       >
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                          
+
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -2101,7 +2118,6 @@ const DataInputPage = () => {
                           <MenuItem value="Itap">Itap</MenuItem>
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                           <MenuItem value="Cascade">Каскад</MenuItem>
-                            
                         </Select>
                         {isFilterChanged && (
                           <Typography
@@ -2149,7 +2165,7 @@ const DataInputPage = () => {
                         <MenuItem value="Itap">Itap</MenuItem>
                         <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
                         <MenuItem value="Cascade">Каскад</MenuItem>
-                          
+
                         {isFilterChanged && (
                           <Typography
                             variant="caption"
@@ -2421,44 +2437,51 @@ const DataInputPage = () => {
               />
             </ThemeProvider>
           </TableContainer>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, marginBottom: 2 }}>
-          {infoType !== "Risks" && downloadAvailable && (
-            <React.Fragment>
-              <Button
-                variant="contained"
-                onClick={handleDownload}
-                sx={{
-                  mt: 2,
-                  alignSelf: "flex-start",
-                  fontFamily: "Montserrat, sans-serif",
-                  fontSize: "0.75rem",
-                  padding: downloadLoading ? "6px 30px 6px 12px" : "6px 12px",
-                  backgroundColor: colors.secondary,
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-                style={{ color: "white" }}
-              >
-                Скачать результаты
-                {downloadLoading && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: "8px",
-                      top: "50%",
-                      transform: "translateY(-38%)",
-                    }}
-                  >
-                    <img
-                      src={Loading}
-                      alt=""
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  </div>
-                )}
-              </Button>
-            </React.Fragment>
-          )}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 2,
+              marginBottom: 2,
+            }}
+          >
+            {infoType !== "Risks" && downloadAvailable && (
+              <React.Fragment>
+                <Button
+                  variant="contained"
+                  onClick={handleDownload}
+                  sx={{
+                    mt: 2,
+                    alignSelf: "flex-start",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "0.75rem",
+                    padding: downloadLoading ? "6px 30px 6px 12px" : "6px 12px",
+                    backgroundColor: colors.secondary,
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                  style={{ color: "white" }}
+                >
+                  Скачать результаты
+                  {downloadLoading && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: "8px",
+                        top: "50%",
+                        transform: "translateY(-38%)",
+                      }}
+                    >
+                      <img
+                        src={Loading}
+                        alt=""
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </div>
+                  )}
+                </Button>
+              </React.Fragment>
+            )}
           </Box>
         </Box>
       </Container>
