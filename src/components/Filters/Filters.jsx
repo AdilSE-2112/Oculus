@@ -362,11 +362,30 @@ const Filters = ({
       } else if (source === "eias" && inputType === "Username") {
         let additionalInfo;
         if (searchTypeUserName === "startingWith") {
-          apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
+          apiUrl = `http://192.168.30.24:5220/simdata/username_partial=${usernameField}`;
           additionalInfo = `Кого просматривал сотрудник (начинается с): ${usernameField}`;
         } else if (searchTypeUserName === "exactly") {
           apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
           additionalInfo = `Кого просматривал сотрудник (в точности): ${usernameField}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          // { id: "action", label: "Запрос" },
+          { id: "member_bin", label: "ИИН/БИН" },
+          { id: "performer", label: "Исполнитель" },
+          { id: "member_name", label: "Имя" },
+          { id: "other", label: "Другие сведения" },
+        ]);
+      }else if (source === "eias" && inputType === "FullName") {
+        let additionalInfo;
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_name=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (начинается с): ${name}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/simdata/username=${name}`;
+          additionalInfo = `Кого просматривал сотрудник (в точности): ${name}`;
         }
         setAdditionalInfo(additionalInfo);
 
@@ -1714,14 +1733,14 @@ const Filters = ({
               )}
               {showFilters && infoType !== "Risks" && (
                 <Box mt={2} sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-                      <input className="dataInput"
-                        id="startDate"
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        min="2018-01-01"
-                        
-                      />
+                  <input
+                    className="dataInput"
+                    id="startDate"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    min="2018-01-01"
+                  />
                   {/* <TextField
                     type="date"
                     value={startDate}
@@ -1762,13 +1781,13 @@ const Filters = ({
                       },
                     }}
                   /> */}
-                  <input className="dataInput"
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        min="2018-01-01"
-                        
-                      />
+                  <input
+                    className="dataInput"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    min="2018-01-01"
+                  />
                   {/* <TextField
                     type="date"
                     value={endDate}
@@ -2247,7 +2266,6 @@ const Filters = ({
                       backgroundColor: colors.secondary,
                       position: "relative",
                       overflow: "hidden",
-                      color: "fff",
                     }}
                     style={{ color: "white" }}
                   >

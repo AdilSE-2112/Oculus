@@ -404,10 +404,33 @@ const DataInputPage = () => {
         let additionalInfo;
         if (searchTypeUserName === "startingWith") {
           apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
-          additionalInfo = `Кого просматривал сотрудник (начинается с): ${usernameField}`;
+          additionalInfo = `Журнал для (начинается с): ${usernameField}`;
         } else if (searchTypeUserName === "exactly") {
           apiUrl = `http://192.168.30.24:5220/simdata/username=${usernameField}`;
-          additionalInfo = `Кого просматривал сотрудник (в точности): ${usernameField}`;
+          additionalInfo = `Журнал для (в точности): ${usernameField}`;
+        }
+        setAdditionalInfo(additionalInfo);
+
+        setColumnHeaders([
+          { id: "date", label: "Дата" },
+          // { id: "action", label: "Запрос" },
+          { id: "member_bin", label: "ИИН/БИН" },
+          { id: "performer", label: "Исполнитель" },
+          { id: "member_name", label: "Имя" },
+          { id: "other", label: "Другие сведения" },
+
+
+
+        ]);
+      }
+      else if (source === "eias" && inputType === "IIN") {
+        let additionalInfo;
+        if (searchTypeUserName === "startingWith") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
+          additionalInfo = `Журнал для (начинается с): ${inn}`;
+        } else if (searchTypeUserName === "exactly") {
+          apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
+          additionalInfo = `Журнал для (в точности): ${inn}`;
         }
         setAdditionalInfo(additionalInfo);
 
@@ -1835,7 +1858,7 @@ const DataInputPage = () => {
                           }}
                         >
                           <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                            
+                          <MenuItem value="eias">ЕИАС</MenuItem>
 
                         </Select>
                         {isFilterChanged && (
