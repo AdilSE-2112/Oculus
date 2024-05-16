@@ -7,6 +7,7 @@ import DataOutputPage from './components/DataOutputPage/DataOutput';
 import AdminPanel from './components/AdminPanel/AdminPanel';
 import { AuthProvider } from './components/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import './global/global.css';
 
 
 const App = () => {
