@@ -116,6 +116,7 @@ const Filters = ({
   const [inputType, setInputType] = useState("IIN");
   const [source, setSource] = useState("Itap");
   const [name, setName] = useState("");
+  const [eiasName, setEiasName] = useState("");
   const [surname, setSurname] = useState("");
   const [patronymic, setPatronymic] = useState("");
   const [inn, setInn] = useState("");
@@ -167,22 +168,21 @@ const Filters = ({
   const handleNameChange = (event) => {
     setName(event.target.value);
   };
+  const handleEiasNameChange = (event) => {
+    setEiasName(event.target.value);
+  };
 
   const handleError = (message) => {
     setErrorMessage(message);
     setErrorOpen(true);
   };
   const handleInnChange = (e) => {
-    // Remove non-digit characters
     const cleanedInput = e.target.value.replace(/\D/g, "");
 
-    // Limit the input to 12 characters
     const truncatedInput = cleanedInput.slice(0, 12);
 
-    // Update the state variable
     setInn(truncatedInput);
 
-    // Check if the input has exactly 12 digits
   };
 
   const count = value.length;
@@ -199,14 +199,12 @@ const Filters = ({
       type === "WhoViewedThisUser" ||
       type === "Risks"
     ) {
-      // For the first set of buttons
       setInfoType(type);
     } else if (
       (type === "IIN" || type === "Username" || type === "FullName",
       type === "ListRisks",
       type === "EmployeeType")
     ) {
-      // For the second set of buttons
       setInputType(type);
     }
 
@@ -316,6 +314,8 @@ const Filters = ({
         apiUrl = `http://192.168.30.24:5220/dossie_log/username=${inn}`;
         setAdditionalInfo(`Кого просматривал пользователь с ИИН/БИН: ${inn}`);
 
+        console.log(apiUrl);
+
         setColumnHeaders([
           { id: "log_time", label: "Дата" },
           { id: "action", label: "Запрос" },
@@ -372,13 +372,12 @@ const Filters = ({
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
-          // { id: "action", label: "Запрос" },
           { id: "member_bin", label: "ИИН/БИН" },
           { id: "performer", label: "Исполнитель" },
           { id: "member_name", label: "Имя" },
           { id: "other", label: "Другие сведения" },
         ]);
-      }else if (source === "eias" && inputType === "FullName") {
+      } else if (source === "eias" && inputType === "FullName") {
         let additionalInfo;
         if (searchTypeUserName === "startingWith") {
           apiUrl = `http://192.168.30.24:5220/simdata/member_name=${name}`;
@@ -391,7 +390,6 @@ const Filters = ({
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
-          // { id: "action", label: "Запрос" },
           { id: "member_bin", label: "ИИН/БИН" },
           { id: "performer", label: "Исполнитель" },
           { id: "member_name", label: "Имя" },
@@ -410,9 +408,9 @@ const Filters = ({
           { id: "lname", label: "Фамилия" },
           { id: "user_name", label: "Имя Полььзователя" },
         ]);
-      }
-      else if (source === "eias" && inputType === "IIN") {
+      } else if (source === "eias" && inputType === "IIN") {
         let additionalInfo;
+        if(inn) {
         if (searchTypeUserName === "startingWith") {
           apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
           additionalInfo = `Журнал для (начинается с): ${inn}`;
@@ -420,28 +418,21 @@ const Filters = ({
           apiUrl = `http://192.168.30.24:5220/simdata/member_bin=${inn}`;
           additionalInfo = `Журнал для (в точности): ${inn}`;
         }
+      } else {
+        apiUrl = `http://192.168.30.24:5220/simdata/member_name=${eiasName}`;
+        additionalInfo = `Журнал для (начинается с): ${eiasName}`;
+
+      }
         setAdditionalInfo(additionalInfo);
 
         setColumnHeaders([
           { id: "date", label: "Дата" },
-          // { id: "action", label: "Запрос" },
           { id: "member_bin", label: "ИИН/БИН" },
           { id: "performer", label: "Исполнитель" },
           { id: "member_name", label: "Имя" },
           { id: "other", label: "Другие сведения" },
         ]);
       }
-      // else if (source === "Itap" && inputType === "FullName") {
-      //   apiUrl = `http://192.168.30.24:5220/log/search=${name}`;
-      //   setAdditionalInfo(`Кто просматривал объект : ${name}`);
-
-      //   setColumnHeaders([
-      //     { id: "date", label: "Дата" },
-      //     { id: "username", label: "Пользователь" },
-      //     { id: "request_body", label: "Запрос" },
-      //     { id: "limit_", label: "Лимит" },
-      //   ]);
-      // }
       else if (source === "Itap" && inputType === "IIN") {
         apiUrl = `http://192.168.30.24:5220/log/iin=${inn}`;
         setAdditionalInfo(`Кто просматривал объект с ИИН/БИН: ${inn}`);
@@ -544,17 +535,6 @@ const Filters = ({
           { id: "limit_", label: "Лимит" },
         ]);
       }
-
-      // else if (source === "Cascade" && inputType === "FullName") {
-      //   apiUrl = `http://192.168.30.24:5220/users_log/message=${name}`;
-      //   setAdditionalInfo(`Кто просматривал объект : ${name}`);
-
-      //   setColumnHeaders([
-      //     { id: "time", label: "Дата" },
-      //     { id: "username", label: "Пользователь" },
-      //     { id: "message", label: "Запрос" },
-      //   ]);
-      // }
       else if (source === "Cascade" && inputType === "FullName") {
         apiUrl = "http://192.168.30.24:5220/users_log/message/";
         let fullNameInfo = "";
@@ -583,36 +563,6 @@ const Filters = ({
           { id: "message", label: "Запрос" },
         ]);
       }
-
-      // else if (source === "Itap" && inputType === "FullName") {
-      //   apiUrl = "http://192.168.30.24:5220/log/search/";
-      //   let fullNameInfo = "";
-
-      //   if (lastName || firstName || middleName) {
-      //     if (lastName) fullNameInfo += `${lastName} `;
-      //     if (firstName) fullNameInfo += `${firstName} `;
-      //     if (middleName) fullNameInfo += middleName;
-
-      //     setAdditionalInfo(`Кто просматривал объект: ${fullNameInfo}`);
-      //   }
-
-      //   if (inputType === "FullName") {
-      //     apiUrl += "fio/?";
-
-      //     if (lastName) apiUrl += `lname=${lastName}&`;
-      //     if (firstName) apiUrl += `fname=${firstName}&`;
-      //     if (middleName) apiUrl += `mname=${middleName}&`;
-      //   }
-
-      //   apiUrl = apiUrl.slice(0, -1);
-
-      //   setColumnHeaders([
-      //     { id: "date", label: "Дата" },
-      //     { id: "username", label: "Пользователь" },
-      //     { id: "request_body", label: "Запрос" },
-      //     { id: "limit_", label: "Лимит" },
-      //   ]);
-      // }
     } else if (infoType === "Risks") {
       if (source === "Itap" && inputType === "IIN") {
         apiUrl = "http://192.168.30.24:5220/risks/log";
@@ -942,74 +892,6 @@ const Filters = ({
               <label className="labelsSec">Данные объекта</label>
             </div>
             <Box display="flex" alignItems="center">
-              {/* <TextField
-                required
-                id="outlined-required"
-                label={
-                  infoType === "Risks"
-                    ? "ИИН/БИН(Не обязательное поле)"
-                    : "ИИН/БИН"
-                }
-                defaultValue=""
-                margin="normal"
-                variant="outlined"
-                value={inn}
-                onChange={handleInnChange}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    fontSize: "12px",
-                  },
-                }}
-                InputProps={{
-                  style: {
-                    color: "#fff",
-                    fontSize: "14px",
-                    height: "48px",
-                    width: "474px",
-                    "&:hover": {
-                      "& fieldset": {
-                        borderColor: "#fff !important",
-                      },
-                    },
-                    "& .MuiFocused": {
-                      "& fieldset": {
-                        borderColor: "#fff !important",
-                      },
-                    },
-                    "& fieldset": {
-                      borderColor: "#fff !important",
-                    },
-                  },
-                  endAdornment: (
-                    <InputAdornment position="end" sx={{ marginRight: "-5px" }}>
-                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#fff",
-                    },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-              /> */}
-              {/* <div
-                style={{
-                  color: "#fff",
-                  fontSize: "12px",
-                  marginLeft: "10px",
-                  marginTop: "5px",
-                }}
-              >
-                {inn.length}/12
-              </div> */}
             </Box>
             <div className="iinInputContainer">
               <input
@@ -1042,33 +924,6 @@ const Filters = ({
                 <option value="startingWith">Начинается с</option>
                 <option value="exactly">В точности с</option>
               </select>
-              {/* <Select
-                value={searchTypeUserName}
-                onChange={(e) => setSearchTypeUserName(e.target.value)}
-                sx={{
-                  fontSize: "14px",
-                  fontFamily: "Montserrat, sans-serif",
-                  color: "#fff",
-                  height: "48px",
-                  width: "160px",
-                  marginTop: "7px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "& .MuiSelect-icon": {
-                    color: "#fff !important",
-                  },
-                }}
-              >
-                <MenuItem value="startingWith">Начинается с</MenuItem>
-                <MenuItem value="exactly">В точности с</MenuItem>
-              </Select> */}
               <div className="usernameInputContainer">
                 <input
                   type="text"
@@ -1077,45 +932,6 @@ const Filters = ({
                   placeholder="Учётная запись"
                 />
               </div>
-              {/* <TextField
-                required
-                id="outlined-username"
-                label="Учётная запись"
-                defaultValue=""
-                margin="normal"
-                variant="outlined"
-                value={usernameField}
-                onChange={handleUsernameFieldChange}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#fff", height: "48px", width: "308px" },
-                  notchedOutline: {
-                    borderColor: colors.borderColor,
-                  },
-                  endAdornment: (
-                    <InputAdornment position="end" sx={{ marginRight: "-5px" }}>
-                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#fff",
-                    },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-              /> */}
             </Box>
           </ThemeProvider>
         );
@@ -1127,34 +943,6 @@ const Filters = ({
               <label className="labelsSec">Данные объекта</label>
             </div>
             <Box display="flex" alignItems="center" gap="10px">
-              {/* <Select
-                value={searchTypeEmployee}
-                onChange={(e) => setSearchTypeEmployee(e.target.value)}
-                disabled={inputType === "EmployeeType"}
-                sx={{
-                  fontSize: "14px",
-                  fontFamily: "Montserrat, sans-serif",
-                  color: "#fff",
-                  height: "48px",
-                  width: "160px",
-                  marginTop: "7px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#fff !important",
-                  },
-                  "& .MuiSelect-icon": {
-                    color: "#fff !important",
-                  },
-                }}
-              >
-                <MenuItem value="startingWith">Начинается с</MenuItem>
-                <MenuItem value="exactly">В точности с</MenuItem>
-              </Select> */}
               <div className="employeeInputContainer">
                 <input
                   type="text"
@@ -1163,45 +951,6 @@ const Filters = ({
                   placeholder="Сотрудник(Не обязательное поле)"
                 />
               </div>
-              {/* <TextField
-                required
-                id="outlined-username"
-                label="Сотрудник(Не обязательное поле)"
-                defaultValue=""
-                margin="normal"
-                variant="outlined"
-                value={employeeField}
-                onChange={handleEmployeeFieldChange}
-                InputLabelProps={{
-                  style: {
-                    fontFamily: "Montserrat, sans-serif",
-                    color: "#fff",
-                    fontSize: "12px",
-                  },
-                }}
-                InputProps={{
-                  style: { color: "#fff", height: "48px", width: "474px" },
-                  notchedOutline: {
-                    borderColor: colors.borderColor,
-                  },
-                  endAdornment: (
-                    <InputAdornment position="end" sx={{ marginRight: "-5px" }}>
-                      <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#fff",
-                    },
-                  },
-                  "& .MuiOutlinedInput-input": {
-                    color: "#fff",
-                    fontSize: "14px",
-                  },
-                }}
-              /> */}
             </Box>
           </ThemeProvider>
         );
@@ -1231,41 +980,7 @@ const Filters = ({
                       <option value="startingWith">Начинается с</option>
                       <option value="exactly">В точности с</option>
                     </select>
-                    {/* <Select
-                      value={
-                        source === "Cascade"
-                          ? "startingWith"
-                          : searchTypeLastName
-                      }
-                      onChange={(e) => setSearchTypeLastName(e.target.value)}
-                      disabled={source === "Cascade" || infoType === "Risks"}
-                      // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
-
-                      sx={{
-                        fontSize: "14px",
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                        height: "48px",
-                        width: "160px",
-                        marginTop: "7px",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "& .MuiSelect-icon": {
-                          color: "#fff !important",
-                        },
-                      }}
-                    >
-                      <MenuItem value="startingWith">Начинается с</MenuItem>
-                      <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select> */}
-                    <div className="fioInputContainer">
+                   <div className="fioInputContainer">
                       <input
                         type="text"
                         value={lastName}
@@ -1273,52 +988,6 @@ const Filters = ({
                         placeholder="Фамилия"
                       />
                     </div>
-                    {/* <TextField
-                      required
-                      id="outlined-lastname"
-                      label="Фамилия"
-                      defaultValue=""
-                      margin="normal"
-                      variant="outlined"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value.trim())}
-                      InputLabelProps={{
-                        style: {
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                      InputProps={{
-                        style: {
-                          color: "#fff",
-                          height: "48px",
-                          width: "308px",
-                        },
-                        notchedOutline: {
-                          borderColor: "#fff",
-                        },
-                        endAdornment: (
-                          <InputAdornment
-                            position="end"
-                            sx={{ marginRight: "-5px" }}
-                          >
-                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "#fff",
-                          },
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                    /> */}
                   </Box>
                   <Box display="flex" alignItems="center" gap="10px">
                     <select
@@ -1336,41 +1005,6 @@ const Filters = ({
                       <option value="startingWith">Начинается с</option>
                       <option value="exactly">В точности с</option>
                     </select>
-                    {/* <Select
-                      value={
-                        source === "Cascade"
-                          ? "startingWith"
-                          : searchTypeFirstName
-                      }
-                      onChange={(e) => setSearchTypeFirstName(e.target.value)}
-                      disabled={source === "Cascade" || infoType === "Risks"}
-                      // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
-
-                      sx={{
-                        fontSize: "14px",
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                        height: "48px",
-                        width: "160px",
-                        marginTop: "7px",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "& .MuiSelect-icon": {
-                          color: "#fff !important",
-                        },
-                      }}
-                    >
-                      <MenuItem value="startingWith">Начинается с</MenuItem>
-                      <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select> */}
-
                     <div className="fioInputContainer">
                       <input
                         type="text"
@@ -1379,53 +1013,7 @@ const Filters = ({
                         placeholder="Имя"
                       />
                     </div>
-                    {/* <TextField
-                      required
-                      id="outlined-firstname"
-                      label="Имя"
-                      defaultValue=""
-                      margin="normal"
-                      variant="outlined"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value.trim())}
-                      InputLabelProps={{
-                        style: {
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                      InputProps={{
-                        style: {
-                          color: "#fff",
-                          height: "48px",
-                          width: "308px",
-                        },
-                        notchedOutline: {
-                          borderColor: colors.borderColor,
-                        },
-                        endAdornment: (
-                          <InputAdornment
-                            position="end"
-                            sx={{ marginRight: "-5px" }}
-                          >
-                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "#fff",
-                          },
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                    /> */}
-                  </Box>
+                    </Box>
                   <Box display="flex" alignItems="center" gap="10px">
                     <select
                       className="additionalSelect"
@@ -1442,41 +1030,7 @@ const Filters = ({
                       <option value="startingWith">Начинается с</option>
                       <option value="exactly">В точности с</option>
                     </select>
-                    {/* <Select
-                      value={
-                        source === "Cascade"
-                          ? "startingWith"
-                          : searchTypeMiddleName
-                      }
-                      onChange={(e) => setSearchTypeMiddleName(e.target.value)}
-                      disabled={source === "Cascade" || infoType === "Risks"}
-                      // defaultValue={source === "Itap" || source === "Cascade" ? "startingWith" : "startingWith"}
-
-                      sx={{
-                        fontSize: "14px",
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                        height: "48px",
-                        width: "160px",
-                        marginTop: "7px",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "& .MuiSelect-icon": {
-                          color: "#fff !important",
-                        },
-                      }}
-                    >
-                      <MenuItem value="startingWith">Начинается с</MenuItem>
-                      <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select> */}
-                    <div className="fioInputContainer">
+                   <div className="fioInputContainer">
                       <input
                         type="text"
                         value={middleName}
@@ -1484,53 +1038,7 @@ const Filters = ({
                         placeholder="Отчество"
                       />
                     </div>
-                    {/* <TextField
-                      required
-                      id="outlined-middlename"
-                      label="Отчество"
-                      defaultValue=""
-                      margin="normal"
-                      variant="outlined"
-                      value={middleName}
-                      onChange={(e) => setMiddleName(e.target.value.trim())}
-                      InputLabelProps={{
-                        style: {
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                      InputProps={{
-                        style: {
-                          color: "#fff",
-                          height: "48px",
-                          width: "308px",
-                        },
-                        notchedOutline: {
-                          borderColor: colors.borderColor,
-                        },
-                        endAdornment: (
-                          <InputAdornment
-                            position="end"
-                            sx={{ marginRight: "-5px" }}
-                          >
-                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "#fff",
-                          },
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                    /> */}
-                  </Box>
+                    </Box>
                 </>
               ) : (
                 <>
@@ -1548,35 +1056,7 @@ const Filters = ({
                       <option value="startingWith">Начинается с</option>
                       <option value="exactly">В точности с</option>
                     </select>
-                    {/* <Select
-                      value={searchTypeFullName}
-                      onChange={(e) => setSearchTypeFullName(e.target.value)}
-                      sx={{
-                        fontSize: "14px",
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                        height: "48px",
-                        width: "160px",
-                        marginTop: "7px",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#fff !important",
-                        },
-                        "& .MuiSelect-icon": {
-                          color: "#fff !important",
-                        },
-                      }}
-                    >
-                      <MenuItem value="startingWith">Начинается с</MenuItem>
-                      <MenuItem value="exactly">В точности с</MenuItem>
-                    </Select> */}
-
-                    <div className="fioInputContainer">
+                  <div className="fioInputContainer">
                       <input
                         type="text"
                         value={name}
@@ -1584,53 +1064,7 @@ const Filters = ({
                         placeholder="ФИО"
                       />
                     </div>
-                    {/* <TextField
-                      required
-                      id="outlined-fullname"
-                      label="ФИО"
-                      defaultValue=""
-                      margin="normal"
-                      variant="outlined"
-                      value={name}
-                      onChange={handleNameChange}
-                      InputLabelProps={{
-                        style: {
-                          fontFamily: "Montserrat, sans-serif",
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                      InputProps={{
-                        style: {
-                          color: "#fff",
-                          height: "48px",
-                          width: "308px",
-                        },
-                        notchedOutline: {
-                          borderColor: colors.borderColor,
-                        },
-                        endAdornment: (
-                          <InputAdornment
-                            position="end"
-                            sx={{ marginRight: "-5px" }}
-                          >
-                            <SearchIcon sx={{ fontSize: 20, color: "#fff" }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "#fff",
-                          },
-                        },
-                        "& .MuiOutlinedInput-input": {
-                          color: "#fff",
-                          fontSize: "14px",
-                        },
-                      }}
-                    /> */}
-                  </Box>
+                     </Box>
                 </>
               )}
             </>
@@ -1694,6 +1128,9 @@ const Filters = ({
                     value={inputType}
                     onChange={(e) => {
                       setInputType(e.target.value);
+                      if (e.target.value == 'IIN') {
+                        setSource('Досье')
+                      }
                       handleButtonClick(e.target.value);
                     }}
                   >
@@ -1761,46 +1198,6 @@ const Filters = ({
                     onChange={(e) => setStartDate(e.target.value)}
                     min="2018-01-01"
                   />
-                  {/* <TextField
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                      style: {
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                        fontSize: "13px",
-                        "& svg": {
-                          fill: "white", // Color for the icon
-                        },
-                      },
-                    }}
-                    InputProps={{
-                      style: {
-                        color: "white", // Text color for the input
-                        fontSize: "14px",
-                        height: "48px",
-                        width: "230px",
-                        borderColor: "white", // Add white border
-                        borderWidth: "1px", // Border width
-                        borderStyle: "solid", // Border style
-                        "&:hover": {
-                          "& fieldset": {
-                            borderColor: "#fff !important",
-                          },
-                        },
-                        "& .MuiFocused": {
-                          "& fieldset": {
-                            borderColor: "#fff !important",
-                          },
-                        },
-                        "& fieldset": {
-                          borderColor: "#fff !important",
-                        },
-                      },
-                    }}
-                  /> */}
                   <input
                     className="dataInput"
                     type="date"
@@ -1808,49 +1205,7 @@ const Filters = ({
                     onChange={(e) => setEndDate(e.target.value)}
                     min="2018-01-01"
                   />
-                  {/* <TextField
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                      style: {
-                        fontFamily: "Montserrat, sans-serif",
-                        color: "#fff",
-                        fontSize: "13px",
-                        // '& svg': {
-                        //   fill: 'white', // Color for the icon
-                        //   color: 'white',
-                        //   border: '1px solid red'
-                        // },
-                      },
-                    }}
-                    InputProps={{
-                      style: {
-                        color: "white", // Text color for the input
-                        fontSize: "14px",
-                        height: "48px",
-                        width: "230px",
-                        borderColor: "white", // Add white border
-                        borderWidth: "1px", // Border width
-                        borderStyle: "solid", // Border style
-                        "&:hover": {
-                          "& fieldset": {
-                            borderColor: "#fff !important",
-                          },
-                        },
-                        "& .MuiFocused": {
-                          "& fieldset": {
-                            borderColor: "#fff !important",
-                          },
-                        },
-                        "& fieldset": {
-                          borderColor: "#fff !important",
-                        },
-                      },
-                    }}
-                  /> */}
-                </Box>
+                  </Box>
               )}
             </div>
             <div className="label3">
@@ -1876,34 +1231,6 @@ const Filters = ({
                           >
                             <option value="Досье">Досье "ИС СЭР"</option>
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                          </Select> */}
                           {isFilterChanged && (
                             <Typography
                               variant="caption"
@@ -1931,50 +1258,7 @@ const Filters = ({
                             <option value="eias">ЕИАС</option>
                             <option value="Cascade">Каскад</option>
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Itap">Itap</MenuItem>
-                            <MenuItem value="Cascade">Каскад</MenuItem>
-                            <MenuItem value="eias">ЕИАС</MenuItem>
-                            {isFilterChanged && (
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  color: "red",
-                                  fontSize: "0.8rem",
-                                  marginTop: 1,
-                                }}
-                              >
-                                Необходимо сделать новый запрос для обновления
-                                данных.
-                              </Typography>
-                            )}
-                          </Select> */}
-                        </>
+                          </>
                       )}
 
                       {inputType === "FullName" && (
@@ -1988,50 +1272,6 @@ const Filters = ({
                             <option value="Досье">Досье "ИС СЭР"</option>
                             <option value="Cascade">Каскад</option>
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Itap">Itap</MenuItem>
-                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                            <MenuItem value="Cascade">Каскад</MenuItem>
-
-                            {isFilterChanged && (
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  color: "red",
-                                  fontSize: "0.8rem",
-                                  marginTop: 1,
-                                }}
-                              >
-                                Необходимо сделать новый запрос для обновления
-                                данных.
-                              </Typography>
-                            )}
-                          </Select> */}
                         </>
                       )}
                     </>
@@ -2050,38 +1290,7 @@ const Filters = ({
                             <option value="Досье">Досье "ИС СЭР"</option>
                             <option value="Cascade">Каскад</option>
                             <option value="eias">ЕИАС</option>
-
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Itap">Itap</MenuItem>
-                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                            <MenuItem value="Cascade">Каскад</MenuItem>
-                          </Select> */}
                           {isFilterChanged && (
                             <Typography
                               variant="caption"
@@ -2107,49 +1316,7 @@ const Filters = ({
                             <option value="Itap">Itap</option>
                             <option value="Досье">Досье "ИС СЭР"</option>
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Itap">Itap</MenuItem>
-                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-
-                            {isFilterChanged && (
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  color: "red",
-                                  fontSize: "0.8rem",
-                                  marginTop: 1,
-                                }}
-                              >
-                                Необходимо сделать новый запрос для обновления
-                                данных.
-                              </Typography>
-                            )}
-                          </Select> */}
+                         
                         </>
                       )}
                     </>
@@ -2167,37 +1334,7 @@ const Filters = ({
                             <option value="Досье">Досье "ИС СЭР"</option>
                             <option value="Cascade">Каскад</option>
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Itap">Itap</MenuItem>
-                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                            <MenuItem value="Cascade">Каскад</MenuItem>
-                          </Select> */}
-                          {isFilterChanged && (
+                           {isFilterChanged && (
                             <Typography
                               variant="caption"
                               sx={{
@@ -2224,56 +1361,22 @@ const Filters = ({
                             <option value="Досье">Досье "ИС СЭР"</option>
                             <option value="Cascade">Каскад</option>
                           </select>
-                          {/* <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="outlined-source"
-                            value={source}
-                            onChange={handleChange}
-                            label=""
-                            sx={{
-                              fontSize: "14px",
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#fff",
-                              height: "48px",
-                              width: "474px",
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "&.MuiFocused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "#fff !important",
-                              },
-                              "& .MuiSelect-icon": {
-                                color: "#fff !important",
-                              },
-                            }}
-                          >
-                            <MenuItem value="Itap">Itap</MenuItem>
-                            <MenuItem value="Досье">Досье "ИС СЭР"</MenuItem>
-                            <MenuItem value="Cascade">Каскад</MenuItem>
-
-                            {isFilterChanged && (
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  color: "red",
-                                  fontSize: "0.8rem",
-                                  marginTop: 1,
-                                }}
-                              >
-                                Необходимо сделать новый запрос для обновления
-                                данных.
-                              </Typography>
-                            )}
-                          </Select> */}
-                        </>
+                         </>
                       )}
                     </>
                   )}
                 </ThemeProvider>
               </Box>
+              {source === "eias" && infoType === "WhoViewedThisUser" && inputType === "IIN" && (
+                <div className="iinInputContainer">
+                  <input
+                    type="text"
+                    value={eiasName}
+                    onChange={handleEiasNameChange}
+                    placeholder="Наименование организации или ФИО(Не обязательное поле)"
+                  />
+                </div>
+              )}
               <div className="search">
                 {inputType !== "ListRisks" && (
                   <Button
@@ -2352,20 +1455,6 @@ const Filters = ({
               </div>
             </div>
           </div>
-          {/* <div className="checking">
-            <div>awdwa</div>
-            <div>awdwada</div>
-            <div>awdwada</div> 
-            <div>awdwada</div> 
-            <div>awdwada</div>
-            <div>awdwada</div>
-            <div>awdwada</div>
-            <div>awdwada</div>
-            <div>awdwada</div>
-            <div>awdwada</div>
-            <div>awdwada</div>
-
-          </div> */}
         </div>
       </div>
     </div>

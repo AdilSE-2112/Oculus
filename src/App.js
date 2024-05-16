@@ -16,10 +16,10 @@ const App = () => {
         <div className="App">
           <Routes>
           <Route path="/" element={<LoginPage />} />
-            <Route path='/data-input' element={<PrivateRoute element={<DataInputPage />} redirectTo="/" />} />
+            <Route path='/data-input' element={<DataInputPage />} />
             <Route path='/data-output' element={<PrivateRoute element={<DataOutputPage />} redirectTo="/" />} />
             <Route path='/admin-panel' element={<PrivateRoute element={<AdminPanel />} redirectTo="/" />} />
-            <Route path='/data-show' element={<PrivateRoute element={<DataShowPage />} redirectTo="/" />} />
+            <Route path='/data-show' element={<DataShowPage />} />
 
           </Routes>
         </div>

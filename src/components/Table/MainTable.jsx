@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 
 const MainTable = ({ result, rows, columnHeaders, additionalInfo }) => {
-  console.log(result, rows);
   const [source, setSource] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);

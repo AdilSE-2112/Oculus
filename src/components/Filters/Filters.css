@@ -226,7 +226,7 @@ html, body, .app {
     border: 1px solid #767676;
     font-family: 'Montserrat', sans-serif; 
     height: 48px;
-    width: calc(100% - 60px);
+    width: calc(100% - 57px);
     background: rgba(4, 4, 15, 0.7);
   }
   

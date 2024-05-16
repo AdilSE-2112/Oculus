@@ -59,7 +59,7 @@
 
     .login-form-block {
         padding: 15px 40px 15px 40px;
-        backdrop-filter: blur(10px); /* Adjust the blur radius as needed */
+        backdrop-filter: blur(10px); 
         background-color: transparent;
         border-radius: 9px;
         border: 2px solid #0f1c36;
