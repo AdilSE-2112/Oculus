@@ -13,11 +13,12 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import { usePage } from "../Context/PageContext";
 
 const MainTable = ({ result, rows, columnHeaders, additionalInfo }) => {
   const [source, setSource] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = useState(0);
+  const {page, setPage} = usePage();
 
   const handleChangePage = (newPage) => {
     setPage(newPage);

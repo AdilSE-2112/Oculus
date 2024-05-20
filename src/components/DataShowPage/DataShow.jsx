@@ -4,6 +4,7 @@ import HeaderNew from "../Header/HeaderNew";
 import BackgroundImage from "../../assets/BackgroundMain.jpg";
 import Filters from "../Filters/Filters";
 import Table from "../Table/MainTable";
+import { PageProvider } from "../Context/PageContext";
 
 const useStyles = makeStyles({
   container: {
@@ -63,24 +64,26 @@ const DataShowPage = () => {
       <div className={classes.header}>
         <HeaderNew />
       </div>
-      <div className={classes.content}>
-        <div className={classes.filters}>
-          <Filters
-            setResult={setResult}
-            setRows={setRows}
-            setColumnHeaders={setColumnHeaders}
-            setAdditionalInfo={setAdditionalInfo}
-          />
+      <PageProvider>
+        <div className={classes.content}>
+          <div className={classes.filters}>
+            <Filters
+              setResult={setResult}
+              setRows={setRows}
+              setColumnHeaders={setColumnHeaders}
+              setAdditionalInfo={setAdditionalInfo}
+            />
+          </div>
+          <div className={classes.table}>
+            <Table
+              result={result}
+              rows={rows}
+              columnHeaders={columnHeaders}
+              additionalInfo={additionalInfo}
+            />
+          </div>
         </div>
-        <div className={classes.table}>
-          <Table
-            result={result}
-            rows={rows}
-            columnHeaders={columnHeaders}
-            additionalInfo={additionalInfo}
-          />
-        </div>
-      </div>
+      </PageProvider>
     </div>
   );
 };

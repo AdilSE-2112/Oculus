@@ -5,8 +5,8 @@ import DataInputPage from './components/DataInputPage/DataInput';
 import DataShowPage from './components/DataShowPage/DataShow';
 import DataOutputPage from './components/DataOutputPage/DataOutput';
 import AdminPanel from './components/AdminPanel/AdminPanel';
-import { AuthProvider } from './components/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
+import { AuthProvider } from './components/Context/AuthContext';
+import PrivateRoute from './components/Context/PrivateRoute';
 import './global/global.css';
 
 

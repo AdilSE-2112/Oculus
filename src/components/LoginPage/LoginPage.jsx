@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "../LoginPage/LoginPage.css";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../Context/AuthContext";
 import { Snackbar, Alert } from "@mui/material";
 import Loading from "../../assets/loading.gif";
 

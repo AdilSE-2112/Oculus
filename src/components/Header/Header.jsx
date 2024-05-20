@@ -24,7 +24,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LogoHeader2 from "../../assets/LOGOL.png";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../Context/AuthContext";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);

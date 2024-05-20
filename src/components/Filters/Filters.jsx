@@ -19,6 +19,7 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
+import { usePage } from "../Context/PageContext";
 
 function createData(
   date,
@@ -75,6 +76,7 @@ const Filters = ({
   setAdditionalInfo,
 }) => {
   const [activeButton, setActiveButton] = useState("WhoViewedThisUser");
+  const { page, setPage } = usePage();
 
   const handleButtonClickActive = (button) => {
     setActiveButton(button);
@@ -121,7 +123,7 @@ const Filters = ({
   const [patronymic, setPatronymic] = useState("");
   const [inn, setInn] = useState("");
   const [value, setValue] = useState("");
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorOpen, setErrorOpen] = useState(false);
