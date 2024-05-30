@@ -70,6 +70,7 @@ const MainTable = ({ result, rows, columnHeaders, additionalInfo }) => {
                   .map((header) => (
                     <TableCell
                       key={header.id}
+                      className="table-cell"
                       sx={{
                         fontSize: "12px",
                         fontFamily: "Montserrat, sans-serif",
@@ -102,6 +103,7 @@ const MainTable = ({ result, rows, columnHeaders, additionalInfo }) => {
                     .map((header) => (
                       <TableCell
                         key={header.id}
+                        className="table-cell"
                         align="left"
                         sx={{
                           fontSize: "12px",
