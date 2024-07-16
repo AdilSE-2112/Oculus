@@ -158,6 +158,9 @@ html, body, .app {
     display: flex; 
     justify-content: flex-start;  }
   
+    .titleLabel{
+      margin: 3px;
+    }
   .button {
     height: 40px;
     flex: 1;
@@ -324,3 +327,4 @@ html, body, .app {
       background: rgba(4, 4, 15, 0.7);
   
     }
+    

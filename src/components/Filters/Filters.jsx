@@ -1125,7 +1125,7 @@ const Filters = ({
             <div className="Filter1">
               {infoType === "WhomThisUserViewed" && (
                 <>
-                  <label>Поиск ОЗ через</label>
+                  <label className="titleLabel">Поиск ОЗ через</label>
                   <select
                     value={inputType}
                     onChange={(e) => {
@@ -1144,7 +1144,7 @@ const Filters = ({
               )}
               {infoType === "WhoViewedThisUser" && (
                 <>
-                  <label>Поиск по ИЗ через</label>
+                  <label className="titleLabel">Поиск по ИЗ через</label>
                   <select
                     value={inputType}
                     onChange={(e) => {
@@ -1160,7 +1160,7 @@ const Filters = ({
 
               {infoType === "Risks" && (
                 <>
-                  <label>Поиск РИСКОВ через</label>
+                  <label className="titleLabel">Поиск РИСКОВ через</label>
                   <select
                     value={inputType}
                     onChange={(e) => {

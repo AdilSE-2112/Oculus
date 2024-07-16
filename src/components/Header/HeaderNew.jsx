@@ -104,33 +104,28 @@ const HeaderNew = () => {
   };
 
   const handleAdminPanelClick = () => {
-    const url = "/admin-panel";
-    window.open(url, "_blank");
+    navigate("/admin-panel");
     handleClose();
   };
+  const handleIconClick = () => {
+    navigate("/data-show");
+  }
 
   const handleNotificationClick = () => {
     setNotificationOpen(!notificationOpen);
   };
 
   return (
-    <Container
-      maxWidth="100xl"
-      className="header-container"
-    >
+    <Container maxWidth="100xl" className="header-container">
       <div className="header-box">
-        <AppBar
-          className="app-bar"
-          position="static"
-          color="transparent"
-          elevation={0}
-        >
+        <AppBar className="app-bar" position="static" color="transparent" elevation={0}>
           <Toolbar className="toolbar">
             <div className="logo">
               <img
                 src={LogoHeader2}
                 alt="Image Description"
                 style={{ height: "35px", width: "70px", margin: "5px" }}
+                onClick={handleIconClick}
               />
             </div>
             <ThemeProvider theme={darkTheme}>
@@ -239,10 +234,7 @@ const HeaderNew = () => {
                       const email = newData[0].split("'")[1];
                       const date = new Date(newData[1].trim());
                       const formattedDate = date.toLocaleDateString();
-                      const someValue = `Искал: ${newData[4].replace(
-                        /['")]/g,
-                        ""
-                      )}`;
+                      const someValue = `Искал: ${newData[4].replace(/['")]/g, "")}`;
 
                       return (
                         <TableRow key={index}>

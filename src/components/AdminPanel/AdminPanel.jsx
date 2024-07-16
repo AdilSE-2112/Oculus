@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "../DataInputPage/DataInput.css";
-import Header from "../Header/Header";
+import HeaderNew from "../Header/HeaderNew";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import colors from "../../themes/palette.json";
+import "../AdminPanel/style.css";
 
 import {
   Box,
@@ -63,169 +64,117 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="data-input-page">
-      <Header />
+    <div className="admin-page">
+      <HeaderNew />
       <ThemeProvider theme={darkTheme}>
-        <Container
-          sx={{
-            color: "white",
-            width: "1400px",
-            minHeight: "1500px",
-            paddingTop: 4,
-          }}
-        >
+        <div className="register-wrapter">
+          <div className="register-block">
+          <div className="title">
+            <h2>Форма Регистрации</h2>
+            </div>
+            <div className="register-items">
+            <div className="colomn1">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Имя пользователя"
+              value={formData.username}
+              onChange={handleInputChange}
+              className="input-field"
+              required
+            />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Почта"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="input-field"
+              required
+            />
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Пароль"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="input-field"
+              required
+            />
+            <input
+              type="text"
+              id="reason"
+              name="access"
+              placeholder="Причина доступа"
+              value={formData.access}
+              onChange={handleInputChange}
+              className="input-field"
+              required
+            />
+            </div>
+            <div className="colomn2">
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              placeholder="Имя"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className="input-field"
+            />
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              placeholder="Фамилия"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className="input-field"
+            />
+            <input
+              type="text"
+              id="address"
+              name="address"
+              placeholder="Адрес"
+              value={formData.address}
+              onChange={handleInputChange}
+              className="input-field"
+            />
+            <input
+              type="text"
+              id="phoneNumber"
+              name="phoneNumber"
+              placeholder="Номер телефона"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              className="input-field"
+            />
+            </div>
+            <button className="button" onClick={handleRegistration}>
+              Register
+            </button>
+          </div>
+          <Snackbar
+            open={isSuccessSnackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+            message="User registered successfully"
+          />
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
               justifyContent: "center",
-              bgcolor: "#0D0F11",
-              p: 5,
-              borderRadius: "10px",
-              
+              alignItems: "flex-end",
+              height: "100vh",
             }}
           >
-            <Typography
-              variant="subtitle1"
-              color="inherit"
-              noWrap
-              sx={{
-                fontSize: "1.75rem",
-                fontFamily: "Montserrat, sans-serif",
-                marginBottom: 2,
-              }}
-            >
-             Форма Регестрации
-            </Typography>
-            <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
-              marginBottom: 2,
-              margin: "auto",
-              maxWidth: "800px", // Adjust the maximum width as needed
-
-
-            }}
-          >
-            {/* First Column */}
-            <Box sx={{ width: "45%" }}>
-            <TextField
-              required
-              id="username"
-              label="Имя пользоватля"
-              variant="outlined"
-              value={formData.username}
-              onChange={handleInputChange}
-              name="username"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            <TextField
-              required
-              id="email"
-              label="Почта"
-              variant="outlined"
-              value={formData.email}
-              onChange={handleInputChange}
-              name="email"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            <TextField
-              required
-              id="password"
-              label="Пароль"
-              type="password"
-              variant="outlined"
-              value={formData.password}
-              onChange={handleInputChange}
-              name="password"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-             <TextField
-              required
-              id="reason"
-              label="Причина доступа"
-              type="access"
-              variant="outlined"
-              value={formData.access}
-              onChange={handleInputChange}
-              name="access"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            </Box>
-            <Box sx={{ width: "45%" }}>
-             <TextField
-              id="firstName"
-              label="Имя"
-              variant="outlined"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              name="firstName"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            <TextField
-              id="lastName"
-              label="Фамилия"
-              variant="outlined"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              name="lastName"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            <TextField
-              id="address"
-              label="Адрес"
-              variant="outlined"
-              value={formData.address}
-              onChange={handleInputChange}
-              name="address"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            <TextField
-              id="phoneNumber"
-              label="Номер телефона"
-              variant="outlined"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              name="phoneNumber"
-              sx={{ marginBottom: 2, width: "300px" }}
-            />
-            </Box>
-            </Box>
-            <Button
-              variant="contained"
-              onClick={handleRegistration}
-              sx={{
-                fontFamily: "Montserrat, sans-serif",
-                fontSize: "0.75rem",
-                marginLeft: "-57px",
-
-
-              }}
-            >
-              Register
-            </Button>
+            {/* Add any additional components or content for the bottom box */}
           </Box>
-        </Container>
-        <Snackbar
-          open={isSuccessSnackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-          message="User registered successfully"
-        />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-end",
-            height: "100vh",
-          }}
-        >
-          {/* Add any additional components or content for the bottom box */}
-        </Box>
+          </div>
+          </div>
       </ThemeProvider>
     </div>
   );
